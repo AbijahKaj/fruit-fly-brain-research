@@ -29,7 +29,7 @@
  *   H2 prefers back-to-front (regressive) motion on its own eye.
  */
 import type { Ommatidia } from "../eye/ommatidia";
-import { buildCSR, unitsWhere, type GraphJSON } from "./graph";
+import { buildCSR, unitsWhere, unitTau, type Graph } from "./graph";
 import { HRCorrelator } from "./hr";
 import { RateNet } from "./rate-net";
 import type { Brain, EyeInput, MotorCommand } from "./types";
@@ -101,15 +101,15 @@ export class ConnectomeBrain implements Brain {
   /** Resting (rL - rR) with zero flow, removed from the readout. */
   private offset = 0;
 
+  readonly lattice = "fibonacci" as const;
+
   constructor(
-    readonly graph: GraphJSON,
+    readonly graph: Graph,
     ommL: Ommatidia,
     ommR: Ommatidia,
   ) {
     const csr = buildCSR(graph);
-    const tau = new Float32Array(graph.units.count);
-    for (let i = 0; i < tau.length; i++) tau[i] = graph.types[graph.units.type[i]!]!.tau;
-    this.net = new RateNet(csr, tau, { wScale: this.params.wScale });
+    this.net = new RateNet(csr, unitTau(graph), { wScale: this.params.wScale });
     this.hrL = new HRCorrelator(ommL);
     this.hrR = new HRCorrelator(ommR);
 
@@ -122,7 +122,7 @@ export class ConnectomeBrain implements Brain {
     this.dnR = unitsWhere(graph, (t, s) => DNG02.test(t) && s === "R");
     this.mnL = unitsWhere(graph, (t, s) => STEERING_MN.test(t) && s === "L");
     this.mnR = unitsWhere(graph, (t, s) => STEERING_MN.test(t) && s === "R");
-    this.name = `connectome: ${graph.units.count} units, ${graph.edges.count} edges`;
+    this.name = `connectome: ${graph.n} units, ${graph.m} edges`;
   }
 
   reset(): void {

@@ -26,6 +26,8 @@ export interface Ommatidia {
   azNext: Int32Array;
   /** Mean angular spacing between neighbours, radians. */
   spacing: number;
+  /** Optional: connectome column index per ommatidium (columns lattice only). */
+  col?: Int32Array;
 }
 
 const DEG = Math.PI / 180;
@@ -57,9 +59,30 @@ export function buildOmmatidia(side: EyeSide, target = 750): Ommatidia {
     }
   }
 
-  const count = azList.length;
-  const az = Float32Array.from(azList);
-  const el = Float32Array.from(elList);
+  return finish(side, Float32Array.from(azList), Float32Array.from(elList), spacing);
+}
+
+/**
+ * Lattice from connectome columns: one ommatidium per optic-lobe column,
+ * at the direction the extractor calibrated from T4 preferred directions.
+ */
+export function ommatidiaFromColumns(
+  side: EyeSide,
+  columns: { count: number; side: Int8Array; az: Float32Array; el: Float32Array },
+  spacingDeg = 5,
+): Ommatidia {
+  const want = side === "left" ? 0 : 1;
+  const idx: number[] = [];
+  for (let c = 0; c < columns.count; c++) if (columns.side[c] === want) idx.push(c);
+  const az = Float32Array.from(idx, (c) => columns.az[c]!);
+  const el = Float32Array.from(idx, (c) => columns.el[c]!);
+  const omm = finish(side, az, el, spacingDeg * DEG);
+  omm.col = Int32Array.from(idx);
+  return omm;
+}
+
+function finish(side: EyeSide, az: Float32Array, el: Float32Array, spacing: number): Ommatidia {
+  const count = az.length;
   const dirs = new Float32Array(count * 3);
   for (let i = 0; i < count; i++) {
     const a = az[i]!;

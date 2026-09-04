@@ -3,7 +3,8 @@
  */
 import type { Ommatidia } from "../eye/ommatidia";
 
-export type EyeView = "luminance" | "highpass";
+/** luminance: what the eye sees. highpass: photoreceptor output. brain: T4a - T4b per column. */
+export type EyeView = "luminance" | "highpass" | "brain";
 
 export class Hud {
   view: EyeView = "luminance";
@@ -12,23 +13,32 @@ export class Hud {
   constructor(
     private readonly canvas: HTMLCanvasElement,
     private readonly stats: HTMLElement,
-    private readonly ommL: Ommatidia,
-    private readonly ommR: Ommatidia,
   ) {
     this.ctx = canvas.getContext("2d")!;
   }
 
-  drawEyes(logL: Float32Array, hpL: Float32Array, logR: Float32Array, hpR: Float32Array): void {
+  drawEyes(
+    ommL: Ommatidia,
+    logL: Float32Array,
+    hpL: Float32Array,
+    brainL: Float32Array | undefined,
+    ommR: Ommatidia,
+    logR: Float32Array,
+    hpR: Float32Array,
+    brainR: Float32Array | undefined,
+  ): void {
     const { ctx, canvas } = this;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = "#9aa3ad";
     ctx.font = "11px ui-monospace, monospace";
-    ctx.fillText(`eyes (${this.view})  L ${this.ommL.count}  R ${this.ommR.count}`, 6, 12);
-    this.drawEye(this.ommL, logL, hpL);
-    this.drawEye(this.ommR, logR, hpR);
+    const view = this.view === "brain" && !brainL ? "luminance" : this.view;
+    const label = view === "brain" ? "T4a − T4b" : view;
+    ctx.fillText(`eyes (${label})  L ${ommL.count}  R ${ommR.count}`, 6, 12);
+    this.drawEye(ommL, logL, hpL, view === "brain" ? brainL : undefined, view);
+    this.drawEye(ommR, logR, hpR, view === "brain" ? brainR : undefined, view);
   }
 
-  private drawEye(omm: Ommatidia, log: Float32Array, hp: Float32Array): void {
+  private drawEye(omm: Ommatidia, log: Float32Array, hp: Float32Array, brain: Float32Array | undefined, view: EyeView): void {
     const { ctx, canvas } = this;
     const top = 18;
     const h = canvas.height - top - 4;
@@ -40,13 +50,14 @@ export class Hud {
     for (let i = 0; i < omm.count; i++) {
       const x = 4 + ((omm.az[i]! + azSpan / 2) / azSpan) * w;
       const y = top + ((elTop - omm.el[i]!) / elSpan) * h;
-      if (this.view === "luminance") {
+      if (view === "luminance") {
         // log(0.02)..log(1.02) -> 0..1
         const v = Math.max(0, Math.min(1, (log[i]! + 3.9) / 3.9));
         const g = Math.round(40 + v * 215);
         ctx.fillStyle = `rgb(${g},${g},${g})`;
       } else {
-        const v = Math.max(-1, Math.min(1, hp[i]! * 4));
+        const raw = brain ? brain[i]! * 3 : hp[i]! * 4;
+        const v = Math.max(-1, Math.min(1, raw));
         ctx.fillStyle = v >= 0 ? `rgba(255,90,70,${0.15 + v * 0.85})` : `rgba(70,140,255,${0.15 - v * 0.85})`;
       }
       ctx.fillRect(x - 1.5, y - 1.5, 3, 3);
@@ -65,13 +76,19 @@ export class Hud {
     const w = canvas.width - 4;
     ctx.font = "10px ui-monospace, monospace";
     for (const [label, idx] of groups) {
-      const gw = (idx.length / total) * w;
-      const cell = gw / idx.length;
-      for (let k = 0; k < idx.length; k++) {
-        const v = Math.max(0, Math.min(1, rates[idx[k]!]!));
+      const gw = Math.max(2, (idx.length / total) * w);
+      // one bar per pixel column: average the units that fall in it
+      const bins = Math.max(1, Math.floor(gw));
+      const per = idx.length / bins;
+      for (let b = 0; b < bins; b++) {
+        const k0 = Math.floor(b * per);
+        const k1 = Math.max(k0 + 1, Math.floor((b + 1) * per));
+        let sum = 0;
+        for (let k = k0; k < k1 && k < idx.length; k++) sum += rates[idx[k]!]!;
+        const v = Math.max(0, Math.min(1, sum / (k1 - k0)));
         const g = Math.round(v * 255);
         ctx.fillStyle = `rgb(${g},${Math.round(g * 0.55)},${Math.round(40 + (1 - v) * 40)})`;
-        ctx.fillRect(x + k * cell, top, Math.max(1, cell), h);
+        ctx.fillRect(x + b * (gw / bins), top, gw / bins + 0.5, h);
       }
       ctx.fillStyle = "#9aa3ad";
       ctx.fillText(label, x + 1, 10);

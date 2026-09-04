@@ -2,3 +2,4 @@ raw/
 .venv/
 __pycache__/
 out/*.json
+out/*.bin

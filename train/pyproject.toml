@@ -1,0 +1,6 @@
+[project]
+name = "fruit-fly-brain-train"
+version = "0.1.0"
+description = "Fit per-type / per-pair parameters of the MaleCNS optic-lobe graph so T4/T5 become direction selective; exports params the browser loads"
+requires-python = ">=3.11"
+dependencies = ["torch>=2.4", "numpy>=2", "flyvis>=1.2", "scipy>=1.13"]

@@ -14,6 +14,7 @@ import type { Brain, EyeInput, MotorCommand } from "./types";
 
 export class StubBrain implements Brain {
   readonly name = "stub: HR correlator + P controller";
+  readonly lattice = "fibonacci" as const;
 
   /** Turn command per unit of summed flow. */
   gain = 60;

@@ -58,8 +58,8 @@ Hosted MaleCNS scene (Chrome):
 | [`research-notes.md`](research-notes.md) | Paper, numbers, companion papers, download URLs |
 | [`sources/neuroglancer.md`](sources/neuroglancer.md) | How to use Neuroglancer on this data |
 | [`app/`](app/) | TypeScript web app: 3D scene, eye sampling, graph runtime, HUD (milestones 1–2 done) |
-| [`data/`](data/) | Python extraction from the public MaleCNS tables → graph JSON, with a report of static checks |
-| `train/` | Planned PyTorch side: same graph, parameter fitting on the GPU box |
+| [`data/`](data/) | Python extraction from the public MaleCNS tables → graph files, with reports of static checks |
+| [`train/`](train/) | PyTorch side: flyvis parameter transfer, reference simulations, the DS trainer for the GPU box |
 
 MaleCNS is **CC-BY**. Cite Berg et al., *Cell* 2026, and the [FlyEM project](https://www.janelia.org/project-team/flyem/male-cns-connectome).
 
@@ -101,6 +101,7 @@ Lightest file worth downloading later: `body-annotations-male-cns-v1.0-minconf-0
 - trainable set stays small: per-type time constants and rest, one scale per synapse type; individual edges keep their connectome weight
 - export params, swap into the browser runtime (Worker at ~100 Hz substeps, or WebGPU)
 - done when: T4/T5 units are direction selective and milestone 2 still passes
+- **status: infrastructure done, fit pending.** 65.8k units / 1.97M edges / 1,771 columns run in a Web Worker at 120 fps; retinotopy is calibrated from the wiring (T4 Mi9→Mi4 offsets); flyvis parameters transfer (synapse counts agree within ~30%) and the medulla rests at the flyvis operating point. T4/T5 are not yet direction selective in the browser. The trainer in [`train/`](train/) is written and smoke-tested; run it on the 5090 and drop `fitted-params.json` into the app. Lessons in [`train/README.md`](train/README.md).
 
 **4. Deciding where to go** — the known visual reflex pathways, chained.
 
