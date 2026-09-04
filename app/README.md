@@ -31,9 +31,24 @@ Controls: `[` `]` drum speed, space stops the drum, `b` cycles off / stub / conn
 
 `RateNet.step` is one loop over `indptr / pre / w` (Int32Array, Float32Array) with per-unit `tau` and a clamp. Nothing else touches the arrays, so the same kernel can move to a Web Worker, WASM, or a WebGPU compute pass without changing the graph format. 1072 units and 26k edges at 1 ms substeps costs well under a millisecond per frame in plain JS.
 
-## Milestone 3 status
+## Milestone 3 result
 
-The infrastructure is complete and runs at 120 fps with the network in a worker (~1.4 ms per 2 ms substep for 662k edges; the 1.97M-edge graph steps at 4 ms). The eye samples the scene at the real 1,771 column directions, one virtual photoreceptor per column drives L1/L2/L3, and the medulla rests where flyvis rests (Mi1 0.53 vs 0.58, Mi4 1.76 vs 1.62). What is **not** there yet: T4/T5 direction selectivity in the browser. Hand calibration gets the operating point right but not the tuning; fitting on the GPU box (`train/train_optic.py`) is the next step, and its output drops in as `fitted-params.json`.
+The 65.8k-unit optic lobe runs in a worker at 120 fps (4 ms substeps). The eye samples the scene at the real 1,771 column directions, one virtual photoreceptor per column drives L1/L2/L3, and the network runs with parameters fitted on the GPU box (`public/graphs/fitted-params.json`, from `train/train_optic.py`).
+
+Closed loop, HS readout, out gain 4:
+
+| drum ω (rad/s) | fly yaw rate |
+| --- | --- |
+| 1.0 | 0.40 |
+| 2.0 | 1.08 |
+| −1.0 | −0.80 |
+| −2.0 | −0.84 |
+
+Open loop the HS cells lateralise (left 1.5 / right 0 for one rotation, 1.9 / 3.4 for the other), and the T4 view (`v` twice) shows per-column T4a − T4b responses flipping with drum direction on both eyes.
+
+What is hand-written here: the virtual photoreceptor, Weber adaptation, the pooling-cell input scale (`lptcScale`, cells that receive thousands of T4/T5 or LC synapses), the homeostatic rest for those pooling cells, and the HS → wing mapping. Everything from the lamina to the lobula plate is synapse counts, fitted per-type and per-pair parameters, and the connectome's own retinotopy.
+
+**Open:** with the DNg02 readout the fly does not turn. In this graph DNg02 sits at a constant rate: the central-brain bridge units run at the default synapse scale and its posterior-slope relay (PS080) is nearly silent under strong inhibition from PLP034. Calibrating that hop (the milestone-2 recipe, at this graph's operating point) is the next piece of work.
 
 ## Milestone 2 result
 

@@ -135,6 +135,8 @@ const outGainSlider = $<HTMLInputElement>("outGain");
 const flipReadout = $<HTMLInputElement>("flipReadout");
 const readoutSel = $<HTMLSelectElement>("readout");
 
+let readoutTouched = false;
+readoutSel.addEventListener("input", () => (readoutTouched = true));
 const syncBrainControls = (): void => {
   const gain = parseFloat(wScaleSlider.value);
   const outputGain = parseFloat(outGainSlider.value);
@@ -144,12 +146,19 @@ const syncBrainControls = (): void => {
   if (connectome) {
     Object.assign(connectome.params, { wScale: 0.03 * gain, outputGain, readoutSign });
     const ro = readoutSel.value as "dng02" | "mn";
-    if (ro !== connectome.params.readout) {
+    if (readoutTouched && ro !== connectome.params.readout) {
       connectome.params.readout = ro;
       connectome.reset();
     }
   }
-  if (optic) Object.assign(optic.params, { wScale: gain, outputGain, readoutSign });
+  if (optic) {
+    Object.assign(optic.params, { wScale: gain, outputGain, readoutSign });
+    const ro = readoutSel.value === "mn" ? "hs" : "dng02";
+    if (readoutTouched && ro !== optic.params.readout) {
+      optic.params.readout = ro;
+      optic.reset();
+    }
+  }
 };
 for (const el of [wScaleSlider, outGainSlider, flipReadout, readoutSel]) el.addEventListener("input", syncBrainControls);
 brainSel.addEventListener("change", () => {

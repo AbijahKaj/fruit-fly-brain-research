@@ -10,7 +10,7 @@
  * sign times a default scale, and get a homeostatic bias instead.
  */
 import type { Graph } from "./graph";
-import { typeName } from "./graph";
+import { typeName, roleName } from "./graph";
 
 export function hasFlyvisType(fv: FlyvisParams, t: string): boolean {
   return fv.types[fvName(t)] !== undefined;
@@ -56,7 +56,19 @@ export async function loadFlyvis(url: string): Promise<FlyvisParams> {
 const ALIAS: Record<string, string> = { TmY9a: "TmY9", TmY9b: "TmY9" };
 const fvName = (t: string): string => ALIAS[t] ?? t;
 
-export function applyFlyvis(g: Graph, fv: FlyvisParams, defaultScale: number): Applied {
+const LPI = /^LPi/;
+
+/** Units that pool thousands of optic-lobe synapses: lobula-plate cells, LPi, looming LCs (role "input"). */
+export function isPooling(g: Graph, i: number): boolean {
+  return roleName(g, i) === "input" || LPI.test(typeName(g, i));
+}
+
+/**
+ * @param defaultScale synapse-count scale for edges flyvis does not cover
+ * @param lptcScale    same, for edges onto pooling cells (see isPooling): at the default
+ *                     scale their thousands of T4/T5/LC inputs pin them at the ceiling
+ */
+export function applyFlyvis(g: Graph, fv: FlyvisParams, defaultScale: number, lptcScale = defaultScale): Applied {
   const n = g.n;
   const tau = new Float32Array(n);
   const bias = new Float32Array(n);
@@ -85,7 +97,8 @@ export function applyFlyvis(g: Graph, fv: FlyvisParams, defaultScale: number): A
       w[e] = g.weight[e]! * p.sign * p.strength;
       nCoveredEdges++;
     } else {
-      w[e] = g.weight[e]! * g.sign[a]! * defaultScale;
+      const scale = isPooling(g, b) ? lptcScale : defaultScale;
+      w[e] = g.weight[e]! * g.sign[a]! * scale;
     }
   }
   return { tau, bias, w, covered, nCoveredTypes: typeCovered.filter(Boolean).length, nCoveredEdges };

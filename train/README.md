@@ -23,6 +23,17 @@ Smoke test on a laptop: `train_optic.py --device cpu --steps 3 --max-el 12 --bat
 | `graph_torch.py` | Binary graph loader; `FlyvisModel`: sparse rate model with trainable per-type tau/bias and per-pair strength |
 | `train_optic.py` | Drifting gratings on the real column lattice → DS objective for T4/T5 a–d per eye → `fitted-params.json` |
 
+## Fit result (fit2, RTX 5090)
+
+`train_optic.py --steps 1500 --batch 16 --T 100 --reg 0.3 --loss corr`, 11 minutes, 22 GB. Log in `runs/fit2.log`. `eval_ds.py` over 8 grating directions:
+
+| | flyvis init | fitted |
+| --- | --- | --- |
+| mean DSI (16 groups) | 0.00 | 0.47 |
+| mean tuning correlation with cos(θ − PD) | 0.09 | 0.96 |
+
+Every T4/T5 subtype on both eyes peaks at its expected direction (T4a right eye at front-to-back, left eye mirrored; T4c up; T4d down). The first loss (normalised MSE to 1 + cos) sat at the trivial flat solution; the correlation loss with a modulation-depth term is what worked.
+
 ## What we learned transferring flyvis
 
 - **Synapse counts agree.** Per-pair totals in MaleCNS are within ~30% of the flyvis (hemibrain-era) table, so per-pair strengths transfer.

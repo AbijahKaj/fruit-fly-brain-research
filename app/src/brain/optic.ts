@@ -5,7 +5,12 @@
  *     -> histaminergic drive on the lamina (L1, L2, L3) of that column
  *     -> the extracted graph: lamina -> medulla -> T4/T5 -> lobula plate
  *        -> posterior slope -> DNg02 -> VNC -> wing MNs
- *     -> readout: DNg02 population rate, left vs right
+ *     -> readout: HS left vs right (default), or DNg02 left vs right
+ *
+ * Status: with fitted parameters the loop closes through the lobula plate
+ * (HS readout). The HS -> posterior slope -> DNg02 hop that worked in the
+ * small milestone-2 graph is not yet calibrated in this graph: the central
+ * brain runs at the default synapse scale and DNg02 sits at a constant rate.
  *
  * Compared with milestone 2 the hand-written correlator is gone. Direction
  * selectivity has to come from the wiring (Mi9 leading, Mi4 trailing) plus
@@ -18,7 +23,7 @@
  */
 import type { Ommatidia } from "../eye/ommatidia";
 import { unitsWhere, typeName, sideName, type Graph } from "./graph";
-import { applyFlyvis, flyvisRestV, type FlyvisParams } from "./flyvis";
+import { applyFlyvis, flyvisRestV, isPooling, type FlyvisParams } from "./flyvis";
 import { RemoteNet } from "./remote-net";
 import type { Brain, EyeInput, MotorCommand } from "./types";
 
@@ -37,6 +42,10 @@ export interface OpticParams {
   stimMax: number;
   /** Default synapse scale for edges flyvis does not cover. */
   defaultScale: number;
+  /** Scale for edges onto lobula-plate cells (thousands of T4/T5 synapses each). */
+  lptcScale: number;
+  /** Where the turn is read: DNg02 L/R through the real posterior-slope wiring, or HS L/R directly. */
+  readout: "dng02" | "hs";
   /** Tonic drive on lobula plate tangential cells. */
   lptcBias: number;
   /** Flight-state drive on DNg02 (see connectome.ts). */
@@ -62,6 +71,8 @@ export class OpticBrain implements Brain {
     adaptTau: 1.0,
     stimMax: 1.5,
     defaultScale: 0.02,
+    lptcScale: 0.001,
+    readout: "hs",
     lptcBias: 0.2,
     dnBias: 0.5,
     restTarget: 0.3,
@@ -93,6 +104,8 @@ export class OpticBrain implements Brain {
   private adapted = false;
   readonly coverage: { types: number; edges: number; units: number };
   private readonly lptc: Int32Array;
+  private readonly hsL: Int32Array;
+  private readonly hsR: Int32Array;
   private readonly dnL: Int32Array;
   private readonly dnR: Int32Array;
   readonly groups: Record<string, Int32Array>;
@@ -113,7 +126,7 @@ export class OpticBrain implements Brain {
     ommR: Ommatidia,
   ) {
     if (!ommL.col || !ommR.col) throw new Error("OpticBrain needs column-based ommatidia");
-    const applied = applyFlyvis(graph, fv, this.params.defaultScale);
+    const applied = applyFlyvis(graph, fv, this.params.defaultScale, this.params.lptcScale);
     let nCov = 0;
     for (let i = 0; i < graph.n; i++) nCov += applied.covered[i]!;
     this.coverage = { types: applied.nCoveredTypes, edges: applied.nCoveredEdges, units: nCov };
@@ -159,6 +172,8 @@ export class OpticBrain implements Brain {
     this.t4bByOmm = { L: lists(ommL, t4b), R: lists(ommR, t4b) };
 
     this.lptc = unitsWhere(graph, (t) => LPTC.test(t));
+    this.hsL = unitsWhere(graph, (t, s) => /^HS[ENS]$/.test(t) && s === "L");
+    this.hsR = unitsWhere(graph, (t, s) => /^HS[ENS]$/.test(t) && s === "R");
     this.dnL = unitsWhere(graph, (t, s) => DNG02.test(t) && s === "L");
     this.dnR = unitsWhere(graph, (t, s) => DNG02.test(t) && s === "R");
     const g = (re: RegExp, side?: string): Int32Array =>
@@ -182,9 +197,17 @@ export class OpticBrain implements Brain {
       DNg02: g(/^DNg02_/),
       MN: unitsWhere(graph, (_t, _s, r) => r === "output"),
     };
-    // Homeostatic bias for every unit except DNs and MNs (those keep their explicit drives):
-    // flyvis-covered types target the flyvis resting membrane value under grey, others a fixed rate.
-    this.homeoUnits = unitsWhere(graph, (_t, _s, r) => r !== "dn" && r !== "output");
+    // Homeostatic bias for the pooling cells (LPTCs, LPi, looming LCs), which flyvis does not
+    // cover, and, with raw flyvis params, for the covered optic types too (targeting the flyvis
+    // resting membrane value under grey). Fitted params already carry the right optic biases.
+    // The central brain and VNC run as in milestone 2: no bias, DNg02 tonic drive only.
+    const fitted = fv.source.startsWith("fitted");
+    const homeo: number[] = [];
+    for (let i = 0; i < graph.n; i++) {
+      const t = typeName(graph, i);
+      if (isPooling(graph, i) || (graph.role[i] === 5 && !fitted && flyvisRestV(fv, t) !== undefined)) homeo.push(i);
+    }
+    this.homeoUnits = Int32Array.from(homeo);
     this.homeoTargets = new Float32Array(this.homeoUnits.length);
     for (let k = 0; k < this.homeoUnits.length; k++) {
       const rv = flyvisRestV(fv, typeName(graph, this.homeoUnits[k]!));
@@ -192,7 +215,7 @@ export class OpticBrain implements Brain {
     }
     let lamCount = 0;
     lam.forEach((a) => (lamCount += a.length));
-    this.name = `optic-v2: ${graph.n} units, ${graph.m} edges, ${graph.columns.count} columns; flyvis params on ${this.coverage.types} types / ${this.coverage.edges} edges (${lamCount} lamina inputs)`;
+    this.name = `optic-v2: ${graph.n} units, ${graph.m} edges, ${graph.columns.count} columns; ${fitted ? "fitted" : "flyvis"} params on ${this.coverage.types} types / ${this.coverage.edges} edges (${lamCount} lamina inputs)`;
     void this.reset();
   }
 
@@ -215,7 +238,7 @@ export class OpticBrain implements Brain {
       } else {
         await this.net.settle(0.5);
       }
-      this.offset = this.net.meanRate(this.dnL) - this.net.meanRate(this.dnR);
+      this.offset = this.readoutDiff();
       this.calibrated = true;
     });
   }
@@ -271,13 +294,21 @@ export class OpticBrain implements Brain {
     this.adapted = true;
     if (this.calibrated) this.net.step(dt);
 
-    const diff = this.net.meanRate(this.dnL) - this.net.meanRate(this.dnR) - this.offset;
+    const diff = this.readoutDiff() - this.offset;
     const raw = this.calibrated ? p.readoutSign * p.outputGain * diff : 0;
     this.turn = Math.max(-p.maxTurn, Math.min(p.maxTurn, raw));
     return {
       left: clamp01(p.baseAmp + this.turn / 2),
       right: clamp01(p.baseAmp - this.turn / 2),
     };
+  }
+
+  /** Left minus right at the chosen readout level. */
+  private readoutDiff(): number {
+    const n = this.net;
+    return this.params.readout === "hs"
+      ? n.meanRate(this.hsL) - n.meanRate(this.hsR)
+      : n.meanRate(this.dnL) - n.meanRate(this.dnR);
   }
 
   /** Per-ommatidium T4a - T4b mean rate (front-to-back minus back-to-front). */
