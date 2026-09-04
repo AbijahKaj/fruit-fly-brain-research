@@ -64,10 +64,17 @@ class FlyvisModel(torch.nn.Module):
     Trainable: log tau per type, bias per type, log strength per pair.
     """
 
-    def __init__(self, g: Graph, fv: dict, default_scale: float = 0.02, device: str = "cpu", r_max: float = 10.0):
+    def __init__(self, g: Graph, fv: dict, default_scale: float = 0.02, device: str = "cpu", r_max: float = 10.0,
+                 extra_post_types: list[str] | None = None, extra_scale: float = 0.001):
+        """
+        extra_post_types: graph types flyvis does not know whose *input* pairs become trainable
+        (init: transmitter sign of the pre type x extra_scale, the browser's pooling scale).
+        Their tau/bias are trainable too and exported alongside the flyvis types.
+        """
         super().__init__()
         self.g = g
         self.device = device
+        self.extra_post_types = list(extra_post_types or [])
         # Soft rate ceiling: r = r_max * tanh(relu(x) / r_max). Keeps the untrained
         # network bounded (the browser uses a hard clamp) while gradients survive.
         self.r_max = r_max
@@ -78,15 +85,27 @@ class FlyvisModel(torch.nn.Module):
         bias0 = np.array([fv["types"].get(fv_name(t), {}).get("bias", 0.0) for t in tnames], np.float32)
         self.log_tau = torch.nn.Parameter(torch.log(torch.tensor(tau0)))
         self.bias = torch.nn.Parameter(torch.tensor(bias0))
-        # per-pair strengths
-        pair_key = {(p["pre"], p["post"]): k for k, p in enumerate(fv["pairs"])}
-        strength0 = np.array([p["strength"] for p in fv["pairs"]], np.float32)
-        pair_sign = np.array([p["sign"] for p in fv["pairs"]], np.float32)
-        self.log_strength = torch.nn.Parameter(torch.log(torch.tensor(strength0) + 1e-4))
-        self.register_buffer("pair_sign", torch.tensor(pair_sign))
-        # edge -> pair index (or -1)
+        # per-pair strengths: flyvis pairs, then the input pairs of the extra post types
+        self.pairs = [(p["pre"], p["post"]) for p in fv["pairs"]]
+        strength0 = [p["strength"] for p in fv["pairs"]]
+        pair_sign = [p["sign"] for p in fv["pairs"]]
+        self.n_fv_pairs = len(self.pairs)
         tp = np.array([fv_name(tnames[t]) for t in g.unit_type[g.pre]])
         tq = np.array([fv_name(tnames[t]) for t in g.unit_type[g.post]])
+        pair_key = {k: i for i, k in enumerate(self.pairs)}
+        if self.extra_post_types:
+            sel = np.isin(tq, self.extra_post_types)
+            pre_sign = g.unit_sign[g.pre]
+            for a, b, sg in sorted(set(zip(tp[sel], tq[sel], pre_sign[sel].astype(int)))):
+                if (a, b) in pair_key:
+                    continue
+                pair_key[(a, b)] = len(self.pairs)
+                self.pairs.append((a, b))
+                strength0.append(extra_scale)
+                pair_sign.append(float(sg) if sg != 0 else 1.0)
+        self.log_strength = torch.nn.Parameter(torch.log(torch.tensor(strength0, dtype=torch.float32) + 1e-4))
+        self.register_buffer("pair_sign", torch.tensor(pair_sign, dtype=torch.float32))
+        # edge -> pair index (or -1)
         eidx = np.array([pair_key.get((a, b), -1) for a, b in zip(tp, tq)], np.int64)
         self.register_buffer("edge_pair", torch.tensor(eidx))
         self.register_buffer("edge_count", torch.tensor(g.count, dtype=torch.float32))
@@ -98,6 +117,16 @@ class FlyvisModel(torch.nn.Module):
         self.register_buffer("unit_type_t", torch.tensor(g.unit_type.astype(np.int64)))
         self.n = n
         self.to(device)
+
+    def grad_masks(self, train_types: list[str] | None, train_extra_pairs_only: bool) -> dict[str, torch.Tensor]:
+        """Masks to freeze everything except the given types' tau/bias and (optionally) the extra pairs."""
+        tmask = torch.ones_like(self.log_tau)
+        if train_types is not None:
+            tmask = torch.tensor([1.0 if t in train_types else 0.0 for t in self.g.types], device=self.log_tau.device)
+        pmask = torch.ones_like(self.log_strength)
+        if train_extra_pairs_only:
+            pmask[: self.n_fv_pairs] = 0.0
+        return {"log_tau": tmask, "bias": tmask, "log_strength": pmask}
 
     def weights(self) -> torch.Tensor:
         s = torch.exp(self.log_strength)
@@ -126,8 +155,9 @@ class FlyvisModel(torch.nn.Module):
             out.append(r[:, rec] if rec is not None else r)
         return torch.stack(out)
 
-    def export(self, path: Path, fv: dict) -> None:
-        """Write params in the flyvis-params.json format the browser loads."""
+    def export(self, path: Path, fv: dict, rest_v: dict[str, float] | None = None, source: str | None = None) -> None:
+        """Write params in the flyvis-params.json format the browser loads.
+        rest_v: resting membrane per extra type under grey, for the browser's homeostat target."""
         out = json.loads(json.dumps(fv))
         tau = torch.exp(self.log_tau).detach().cpu().numpy()
         bias = self.bias.detach().cpu().numpy()
@@ -136,8 +166,15 @@ class FlyvisModel(torch.nn.Module):
             if key in out["types"]:
                 out["types"][key]["tau"] = float(tau[k])
                 out["types"][key]["bias"] = float(bias[k])
+            elif t in self.extra_post_types:
+                rv = (rest_v or {}).get(t)
+                out["types"][t] = {"tau": float(tau[k]), "bias": float(bias[k]), **({"restV": float(rv)} if rv is not None else {})}
         s = torch.exp(self.log_strength).detach().cpu().numpy()
+        sg = self.pair_sign.detach().cpu().numpy()
         for k, p in enumerate(out["pairs"]):
             p["strength"] = float(s[k])
-        out["source"] = "fitted on MaleCNS optic-v2 (train/train_optic.py), init " + fv.get("source", "")
+        for k in range(self.n_fv_pairs, len(self.pairs)):
+            a, b = self.pairs[k]
+            out["pairs"].append({"pre": a, "post": b, "strength": float(s[k]), "sign": float(sg[k])})
+        out["source"] = (source or "fitted on MaleCNS optic-v2 (train/train_optic.py)") + ", init " + fv.get("source", "")
         path.write_text(json.dumps(out, indent=1))

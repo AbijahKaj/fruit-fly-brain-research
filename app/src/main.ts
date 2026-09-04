@@ -10,6 +10,7 @@
 import * as THREE from "three";
 import { buildWorld, FLY_LAYER } from "./world/scene";
 import { FlyBody } from "./world/fly";
+import { Loomer } from "./world/loom";
 import { buildOmmatidia, ommatidiaFromColumns, type Ommatidia } from "./eye/ommatidia";
 import { CompoundEye } from "./eye/eye";
 import { Photoreceptors } from "./eye/photoreceptor";
@@ -136,6 +137,8 @@ Promise.all([loadGraph(`${BASE}graphs/optic-v2`), loadParams()])
 
 const currentBrain = (): Brain | undefined => (brainKey === "off" ? undefined : brains[brainKey]);
 
+const loomer = new Loomer(world.scene);
+
 // ---------- ui ----------
 const hud = new Hud($<HTMLCanvasElement>("eyes"), $("stats"));
 const netCanvas = $<HTMLCanvasElement>("net");
@@ -223,6 +226,10 @@ window.addEventListener("keydown", (e) => {
     case "v":
       hud.view = hud.view === "luminance" ? "highpass" : hud.view === "highpass" ? "brain" : "luminance";
       break;
+    case "l":
+      if (loomer.active) loomer.stop();
+      else loomer.launch(body.state.position, body.state.yaw);
+      break;
   }
 });
 
@@ -243,6 +250,7 @@ const loop = new SimLoop({
     world.drum.rotation.y += drumOmega * dt;
     world.drum.position.x = body.state.position.x;
     world.drum.position.z = body.state.position.z;
+    loomer.update(dt, body.state.position, body.state.yaw);
 
     // 2. eye: render once, sample every registered lattice
     world.flyRoot.updateMatrixWorld(true);
@@ -318,6 +326,7 @@ const loop = new SimLoop({
       ["t", time],
       ["brain", status],
       ["drum ω", drumOmega],
+      ["loom", loomer.active ? `${loomer.distance.toFixed(1)} away, hits ${loomer.hits}` : "off"],
       ["yaw rate", body.state.yawRate],
       ["slip", body.state.yawRate - drumOmega],
       ["heading°", ((body.state.yaw * 180) / Math.PI) % 360],
@@ -345,6 +354,11 @@ Object.assign(window, {
     },
     eye,
     setDrum,
+    loomer,
+    /** Launch an approach from azimuth azDeg (positive = right); opts override LoomParams. */
+    loom(azDeg = 45, opts: Record<string, unknown> = {}) {
+      loomer.launch(body.state.position, body.state.yaw, { az: (azDeg * Math.PI) / 180, ...opts });
+    },
     reset,
     loop,
   },

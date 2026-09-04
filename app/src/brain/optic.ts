@@ -30,6 +30,7 @@ import type { Brain, EyeInput, MotorCommand } from "./types";
 
 const LAMINA = /^L[123]$/;
 const LPTC = /^(HS[ENST]|VS|VST1|VST2|VSm|H2|DCH|VCH)$/;
+const LOOMING = /^(LC4|LPLC2)$/;
 const DNG02 = /^DNg02_/;
 
 export interface OpticParams {
@@ -62,6 +63,8 @@ export interface OpticParams {
   netDt: number;
   /** Rate ceiling. flyvis has none; keep it high so it only guards against blow-up. */
   rMax: number;
+  loomGain: number;
+  loomThreshold: number;
 }
 
 export class OpticBrain implements Brain {
@@ -85,6 +88,10 @@ export class OpticBrain implements Brain {
     maxTurn: 0.5,
     netDt: 0.004,
     rMax: 5,
+    /** Looming: turn away from the eye whose LC4/LPLC2 population fires more. 0 = off. */
+    loomGain: 0,
+    /** Rate above the calibrated rest that counts as looming (dead zone). */
+    loomThreshold: 0.02,
   };
   readonly net: NetBackend;
   calibrated = false;
@@ -109,6 +116,10 @@ export class OpticBrain implements Brain {
   private readonly hsR: Int32Array;
   private readonly dnL: Int32Array;
   private readonly dnR: Int32Array;
+  /** Looming detectors per eye (LC4 + LPLC2), with receptive-field centres from their presynaptic columns. */
+  readonly lc: { L: Int32Array; R: Int32Array; az: Float32Array; el: Float32Array };
+  private loomRest = { L: 0, R: 0 };
+  loom = { L: 0, R: 0 };
   readonly groups: Record<string, Int32Array>;
   /** Per-ommatidium T4a and T4b unit lists for the HUD direction map. */
   private readonly t4aByOmm: { L: Int32Array[]; R: Int32Array[] };
@@ -180,6 +191,34 @@ export class OpticBrain implements Brain {
     this.dnR = unitsWhere(graph, (t, s) => DNG02.test(t) && s === "R");
     const g = (re: RegExp, side?: string): Int32Array =>
       unitsWhere(graph, (t, s) => re.test(t) && (side === undefined || s === side));
+    this.lc = { L: g(LOOMING, "L"), R: g(LOOMING, "R"), az: new Float32Array(graph.n).fill(NaN), el: new Float32Array(graph.n).fill(NaN) };
+    {
+      // RF centre = synapse-weighted mean direction of columnar presynaptic partners.
+      const isLC = new Uint8Array(graph.n);
+      for (const i of this.lc.L) isLC[i] = 1;
+      for (const i of this.lc.R) isLC[i] = 1;
+      const sx = new Float32Array(graph.n);
+      const sy = new Float32Array(graph.n);
+      const sz = new Float32Array(graph.n);
+      const cols = graph.columns;
+      for (let e = 0; e < graph.m; e++) {
+        const b = graph.post[e]!;
+        if (!isLC[b]) continue;
+        const c = graph.col[graph.pre[e]!]!;
+        if (c < 0) continue;
+        const w = graph.weight[e]!;
+        const a = cols.az[c]!;
+        const el = cols.el[c]!;
+        sx[b] = sx[b]! + w * Math.sin(a) * Math.cos(el);
+        sy[b] = sy[b]! + w * Math.sin(el);
+        sz[b] = sz[b]! + w * Math.cos(a) * Math.cos(el);
+      }
+      for (let i = 0; i < graph.n; i++) {
+        if (!isLC[i] || sx[i] === 0 && sy[i] === 0 && sz[i] === 0) continue;
+        this.lc.az[i] = Math.atan2(sx[i]!, sz[i]!);
+        this.lc.el[i] = Math.atan2(sy[i]!, Math.hypot(sx[i]!, sz[i]!));
+      }
+    }
     this.groups = {
       L1: g(/^L1$/),
       Mi1: g(/^Mi1$/),
@@ -196,6 +235,11 @@ export class OpticBrain implements Brain {
       HSL: g(/^HS[ENS]$/, "L"),
       HSR: g(/^HS[ENS]$/, "R"),
       VS: g(/^VS/),
+      LC4L: g(/^LC4$/, "L"),
+      LC4R: g(/^LC4$/, "R"),
+      LPLC2L: g(/^LPLC2$/, "L"),
+      LPLC2R: g(/^LPLC2$/, "R"),
+      DNp: g(/^DNp0[1-6]$/),
       DNg02: g(/^DNg02_/),
       MN: unitsWhere(graph, (_t, _s, r) => r === "output"),
     };
@@ -241,6 +285,7 @@ export class OpticBrain implements Brain {
         await this.net.settle(0.5);
       }
       this.offset = this.readoutDiff();
+      this.loomRest = { L: this.net.meanRate(this.lc.L), R: this.net.meanRate(this.lc.R) };
       this.calibrated = true;
     });
   }
@@ -297,7 +342,11 @@ export class OpticBrain implements Brain {
     if (this.calibrated) this.net.step(dt);
 
     const diff = this.readoutDiff() - this.offset;
-    const raw = this.calibrated ? p.readoutSign * p.outputGain * diff : 0;
+    this.loom.L = Math.max(0, this.net.meanRate(this.lc.L) - this.loomRest.L - p.loomThreshold);
+    this.loom.R = Math.max(0, this.net.meanRate(this.lc.R) - this.loomRest.R - p.loomThreshold);
+    // Looming on the left eye -> turn right (turn > 0 = yaw right).
+    const avoid = p.loomGain * (this.loom.L - this.loom.R);
+    const raw = this.calibrated ? p.readoutSign * p.outputGain * diff + avoid : 0;
     this.turn = Math.max(-p.maxTurn, Math.min(p.maxTurn, raw));
     return {
       left: clamp01(p.baseAmp + this.turn / 2),
@@ -347,6 +396,13 @@ export class OpticBrain implements Brain {
       hsR: n.meanRate(g["HSR"]!),
       dng02L: n.meanRate(this.dnL),
       dng02R: n.meanRate(this.dnR),
+      lc4L: n.meanRate(g["LC4L"]!),
+      lc4R: n.meanRate(g["LC4R"]!),
+      lplc2L: n.meanRate(g["LPLC2L"]!),
+      lplc2R: n.meanRate(g["LPLC2R"]!),
+      loomL: this.loom.L,
+      loomR: this.loom.R,
+      dnp: n.meanRate(g["DNp"]!),
     };
   }
 
