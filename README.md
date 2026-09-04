@@ -34,7 +34,7 @@ Four layers. Every milestone keeps the whole loop running; a layer starts as a s
    1. WORLD + BODY          2. EYE                 3. BRAIN                 4. MOTOR
    three.js scene      ->   offscreen render   ->  connectome graph    ->   DN rates -> wing
    rigid-body fly           750–885 samples/eye    lamina in, DNs out       amplitude L/R
-   thrust, roll, yaw        log lum + high-pass    Worker / WebGPU          thrust, roll, yaw
+   thrust, roll, yaw        log lum + high-pass    WebGPU (worker fallback) thrust, roll, yaw
          ^                                                                       |
          +---------------------------- pose update <-----------------------------+
 
@@ -57,7 +57,7 @@ Hosted MaleCNS scene (Chrome):
 | [`a-connectomics-milestone-mapping-the-complete-male-fruit-fly-brain.md`](a-connectomics-milestone-mapping-the-complete-male-fruit-fly-brain.md) | Saved [Google Research blog](https://research.google/blog/a-connectomics-milestone-mapping-the-complete-male-fruit-fly-brain/) (2026-09-03) |
 | [`research-notes.md`](research-notes.md) | Paper, numbers, companion papers, download URLs |
 | [`sources/neuroglancer.md`](sources/neuroglancer.md) | How to use Neuroglancer on this data |
-| [`app/`](app/) | TypeScript web app: 3D scene, eye sampling, graph runtime in a Web Worker, HUD (milestones 1–3 done) |
+| [`app/`](app/) | TypeScript web app: 3D scene, eye sampling, graph runtime on WebGPU with a Web Worker fallback, HUD (milestones 1–3 done) |
 | [`data/`](data/) | Python extraction from the public MaleCNS tables → graph files, with reports of static checks |
 | [`train/`](train/) | PyTorch side: flyvis parameter transfer, reference simulations, the DS trainer for the GPU box |
 
@@ -99,9 +99,9 @@ The scripts in [`data/`](data/) pull the annotation, transmitter, and 1.1 GB wei
 - extract a subset of columnar types (L1, L2, Mi1, Tm3, Mi4, Mi9, T4a–d, T5a–d, Tm9, …) for every column: ~800 columns × ~20 types ≈ 16k units, ~1M edges
 - write the same graph as a PyTorch model, initialize from [flyvis](https://github.com/TuragaLab/flyvis) parameters ([Lappalainen et al., 2024](https://www.nature.com/articles/s41586-024-07939-3)), train briefly on optic flow on the 5090
 - trainable set stays small: per-type time constants and rest, one scale per synapse type; individual edges keep their connectome weight
-- export params, swap into the browser runtime (Worker at ~100 Hz substeps, or WebGPU)
+- export params, swap into the browser runtime (WebGPU compute at 250 Hz substeps, Worker fallback)
 - done when: T4/T5 units are direction selective and milestone 2 still passes
-- **status: done (via the lobula plate).** 65.8k units / 1.97M edges / 1,771 columns run in a Web Worker at 120 fps; retinotopy is calibrated from the wiring (T4 Mi9→Mi4 offsets). flyvis parameters transfer (synapse counts agree within ~30%) but give **zero** direction selectivity on the real per-cell wiring; 1,500 steps of fitting per-type tau/bias and per-pair strength on the 5090 (11 min) give mean DSI 0.47 and tuning correlation 0.96 across all 16 T4/T5 subtype × eye groups, with the correct preferred directions. In the browser the fly follows the drum in both directions with the turn read at the HS cells. Open: the HS → posterior slope → DNg02 hop is not yet calibrated in the big graph. Details in [`train/README.md`](train/README.md) and [`app/README.md`](app/README.md).
+- **status: done (via the lobula plate).** 65.8k units / 1.97M edges / 1,771 columns integrate on WebGPU at 0.86 ms per 4 ms substep (CPU worker fallback, 3 ms); retinotopy is calibrated from the wiring (T4 Mi9→Mi4 offsets). flyvis parameters transfer (synapse counts agree within ~30%) but give **zero** direction selectivity on the real per-cell wiring; 1,500 steps of fitting per-type tau/bias and per-pair strength on the 5090 (11 min) give mean DSI 0.47 and tuning correlation 0.96 across all 16 T4/T5 subtype × eye groups, with the correct preferred directions. In the browser the fly follows the drum in both directions with the turn read at the HS cells. Open: the HS → posterior slope → DNg02 hop is not yet calibrated in the big graph. Details in [`train/README.md`](train/README.md) and [`app/README.md`](app/README.md).
 
 **4. Deciding where to go** — the known visual reflex pathways, chained.
 
@@ -117,7 +117,7 @@ The scripts in [`data/`](data/) pull the annotation, transmitter, and 1.1 GB wei
 
 | Job | Where |
 | --- | --- |
-| three.js scene, eye sampling, graph inference, viewer | Mac, browser |
+| three.js scene, eye sampling, graph inference (WebGPU compute), viewer | Mac, browser |
 | neuPrint exploration, small feather files | Mac |
 | filtering the 1.1 GB weight table, per-column adjacency | GPU box (RAM/disk), CPU work |
 | flyvis-style parameter fitting, gain tuning | GPU box, RTX 5090 (32 GB) |

@@ -5,7 +5,7 @@
  *
  *   stub        milestone 1, hand-written correlator + P controller
  *   connectome  milestone 2, correlator -> MaleCNS flight graph (1k units)
- *   optic       milestone 3, per-column MaleCNS optic lobe + flight graph (40k units, Web Worker)
+ *   optic       milestone 3, per-column MaleCNS optic lobe + flight graph (66k units, WebGPU or Web Worker)
  */
 import * as THREE from "three";
 import { buildWorld, FLY_LAYER } from "./world/scene";
@@ -16,8 +16,10 @@ import { Photoreceptors } from "./eye/photoreceptor";
 import { StubBrain } from "./brain/stub";
 import { ConnectomeBrain } from "./brain/connectome";
 import { OpticBrain } from "./brain/optic";
-import { loadGraph, unitsWhere } from "./brain/graph";
-import { loadFlyvis } from "./brain/flyvis";
+import { gpuAvailable } from "./brain/net-backend";
+import type { NetBackendKind } from "./brain/net-backend";
+import { loadGraph, unitsWhere, type Graph } from "./brain/graph";
+import { loadFlyvis, type FlyvisParams } from "./brain/flyvis";
 import type { Brain, Lattice, MotorCommand } from "./brain/types";
 import { wingsToForces, defaultWingParams } from "./motor/wings";
 import { SimLoop } from "./sim/loop";
@@ -108,13 +110,24 @@ loadGraph(`${BASE}graphs/flight-v1.json`)
 // Fitted parameters (train/train_optic.py) win over the raw flyvis transfer when present.
 const loadParams = (): ReturnType<typeof loadFlyvis> =>
   loadFlyvis(`${BASE}graphs/fitted-params.json`).catch(() => loadFlyvis(`${BASE}graphs/flyvis-params.json`));
+const netSel = $<HTMLSelectElement>("netSel");
+netSel.value = gpuAvailable() ? "gpu" : "worker";
+if (!gpuAvailable()) netSel.querySelector<HTMLOptionElement>('option[value="gpu"]')!.disabled = true;
+let opticGraph: [Graph, FlyvisParams] | undefined;
+const buildOptic = (): void => {
+  if (!opticGraph || !eyes.columns) return;
+  const [g, fv] = opticGraph;
+  optic?.net.dispose();
+  optic = new OpticBrain(g, fv, eyes.columns.ommL, eyes.columns.ommR, netSel.value as NetBackendKind);
+  brains.optic = optic;
+  syncBrainControls();
+};
+netSel.addEventListener("change", buildOptic);
 Promise.all([loadGraph(`${BASE}graphs/optic-v2`), loadParams()])
   .then(([g, fv]) => {
-    const cols = makeEyeSet(ommatidiaFromColumns("left", g.columns), ommatidiaFromColumns("right", g.columns));
-    eyes.columns = cols;
-    optic = new OpticBrain(g, fv, cols.ommL, cols.ommR);
-    brains.optic = optic;
-    syncBrainControls();
+    eyes.columns = makeEyeSet(ommatidiaFromColumns("left", g.columns), ommatidiaFromColumns("right", g.columns));
+    opticGraph = [g, fv];
+    buildOptic();
   })
   .catch((err) => {
     loadStatus["optic"] = String(err);

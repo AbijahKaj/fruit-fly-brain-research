@@ -18,13 +18,14 @@
  * from flyvis (see flyvis.ts); units flyvis does not cover (lobula plate,
  * central brain) get a homeostatic resting bias.
  *
- * The network runs in a Web Worker (remote-net.ts); rates seen here lag by
+ * The network runs on WebGPU (gpu-net.ts) or in a Web Worker (remote-net.ts); rates seen here lag by
  * one worker round trip.
  */
 import type { Ommatidia } from "../eye/ommatidia";
 import { unitsWhere, typeName, sideName, type Graph } from "./graph";
 import { applyFlyvis, flyvisRestV, isPooling, type FlyvisParams } from "./flyvis";
-import { RemoteNet } from "./remote-net";
+import { createNet, gpuAvailable } from "./net-backend";
+import type { NetBackend, NetBackendKind } from "./net-backend";
 import type { Brain, EyeInput, MotorCommand } from "./types";
 
 const LAMINA = /^L[123]$/;
@@ -85,7 +86,7 @@ export class OpticBrain implements Brain {
     netDt: 0.004,
     rMax: 5,
   };
-  readonly net: RemoteNet;
+  readonly net: NetBackend;
   calibrated = false;
   private homeostatDone = false;
 
@@ -124,13 +125,14 @@ export class OpticBrain implements Brain {
     readonly fv: FlyvisParams,
     ommL: Ommatidia,
     ommR: Ommatidia,
+    backend: NetBackendKind = gpuAvailable() ? "gpu" : "worker",
   ) {
     if (!ommL.col || !ommR.col) throw new Error("OpticBrain needs column-based ommatidia");
     const applied = applyFlyvis(graph, fv, this.params.defaultScale, this.params.lptcScale);
     let nCov = 0;
     for (let i = 0; i < graph.n; i++) nCov += applied.covered[i]!;
     this.coverage = { types: applied.nCoveredTypes, edges: applied.nCoveredEdges, units: nCov };
-    this.net = new RemoteNet(graph, applied.w, applied.tau, applied.bias, this.params.wScale, this.params.netDt, this.params.rMax);
+    this.net = createNet(backend, graph, applied.w, applied.tau, applied.bias, this.params.wScale, this.params.netDt, this.params.rMax);
     this.vR_L = new Float32Array(ommL.count);
     this.vR_R = new Float32Array(ommR.count);
     this.meanL = new Float32Array(ommL.count);
@@ -215,7 +217,7 @@ export class OpticBrain implements Brain {
     }
     let lamCount = 0;
     lam.forEach((a) => (lamCount += a.length));
-    this.name = `optic-v2: ${graph.n} units, ${graph.m} edges, ${graph.columns.count} columns; ${fitted ? "fitted" : "flyvis"} params on ${this.coverage.types} types / ${this.coverage.edges} edges (${lamCount} lamina inputs)`;
+    this.name = `optic-v2 [${backend}]: ${graph.n} units, ${graph.m} edges, ${graph.columns.count} columns; ${fitted ? "fitted" : "flyvis"} params on ${this.coverage.types} types / ${this.coverage.edges} edges (${lamCount} lamina inputs)`;
     void this.reset();
   }
 

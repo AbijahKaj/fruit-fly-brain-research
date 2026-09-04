@@ -8,8 +8,10 @@
  */
 import type { Graph } from "./graph";
 import type { FromWorker, ToWorker } from "./net.worker";
+import type { NetBackend } from "./net-backend";
 
-export class RemoteNet {
+export class RemoteNet implements NetBackend {
+  readonly kind = "worker" as const;
   readonly n: number;
   readonly ext: Float32Array;
   r: Float32Array;
@@ -168,6 +170,11 @@ export class RemoteNet {
     let s = 0;
     for (let k = 0; k < idx.length; k++) s += this.r[idx[k]!]!;
     return s / idx.length;
+  }
+
+  dispose(): void {
+    this.ready = false;
+    this.worker.terminate();
   }
 
   private takeBuffer(): Float32Array {
