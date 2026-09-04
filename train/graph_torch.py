@@ -93,7 +93,8 @@ class FlyvisModel(torch.nn.Module):
         fixed = torch.tensor(g.count * g.unit_sign[g.pre] * default_scale, dtype=torch.float32)
         fixed[torch.tensor(eidx >= 0)] = 0.0
         self.register_buffer("edge_fixed", fixed)
-        self.register_buffer("indices", torch.tensor(np.stack([g.post, g.pre]).astype(np.int64)))
+        self.register_buffer("e_pre", torch.tensor(g.pre.astype(np.int64)))
+        self.register_buffer("e_post", torch.tensor(g.post.astype(np.int64)))
         self.register_buffer("unit_type_t", torch.tensor(g.unit_type.astype(np.int64)))
         self.n = n
         self.to(device)
@@ -110,7 +111,6 @@ class FlyvisModel(torch.nn.Module):
         """ext: (T, B, n). Returns rates (T, B, n) or only for `record` unit indices."""
         T, B, n = ext.shape
         w = self.weights()
-        W = torch.sparse_coo_tensor(self.indices, w, (n, n)).coalesce()
         tau = torch.exp(self.log_tau)[self.unit_type_t].clamp_min(dt)
         bias = self.bias[self.unit_type_t]
         x = x0 if x0 is not None else bias.expand(B, n).clone()
@@ -118,7 +118,10 @@ class FlyvisModel(torch.nn.Module):
         rec = torch.tensor(record, device=ext.device) if record is not None else None
         for t in range(T):
             r = self.r_max * torch.tanh(torch.relu(x) / self.r_max)
-            drive = torch.sparse.mm(W, r.T).T  # (B, n)
+            # gather/scatter instead of sparse.mm: its backward w.r.t. the values would
+            # materialise a dense n x n gradient (16 GB at 64k units)
+            contrib = r[:, self.e_pre] * w[None, :]                     # (B, m)
+            drive = torch.zeros(B, n, device=x.device, dtype=x.dtype).index_add_(1, self.e_post, contrib)
             x = x + (dt / tau) * (-x + bias + drive + ext[t])
             out.append(r[:, rec] if rec is not None else r)
         return torch.stack(out)
