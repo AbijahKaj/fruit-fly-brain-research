@@ -9,7 +9,7 @@ The map is not a mind. It is a wiring diagram. The bet of this project is that a
 1. **Understand the research** — what was mapped, why the male CNS (brain + nerve cord) is a milestone, where male and female flies actually differ.
 2. **Play with the data** — a web app that loads real MaleCNS cells and synapses, not screenshots.
 3. **Model the network in TypeScript** — leaky neurons + weighted edges from the connectome, running in the browser.
-4. **Close the loop on flight** — visual motion in, descending neurons, wing motor out, a fly that banks and holds altitude.
+4. **Close the loop in a 3D scene** — a simulated fly renders what it sees, the connectome graph turns that image into wing commands, and the fly steers: stabilize, avoid looming objects, approach a bar.
 
 We will not try to run all ~166,000 neurons as biophysically detailed cells. We extract the flight circuit, give it simple dynamics, and grow from there.
 
@@ -28,19 +28,21 @@ The connectome is static. Dynamics, neurotransmitters, and biomechanics are not 
 
 ## How the pieces fit
 
-```
-  eyes / optic flow          TypeScript graph              wings / body
-  ----------------     ----------------------------     -----------------
-  synthetic visual  →  optic-lobe cells (subset)    →   DNg02 / other DNs
-  or webcam motion     leaky-integrator units            wing motor neurons
-                       edges = synapse weights           beat amplitude, roll
+Four layers. Every milestone keeps the whole loop running; a layer starts as a stub and is later replaced by real wiring.
 
-                       ↑
-                       MaleCNS v1.0 via neuPrint / feather tables
-
-  Neuroglancer  =  look at the real cells in EM
-  This webapp   =  run and poke the graph
 ```
+   1. WORLD + BODY          2. EYE                 3. BRAIN                 4. MOTOR
+   three.js scene      ->   offscreen render   ->  connectome graph    ->   DN rates -> wing
+   rigid-body fly           ~750 ommatidia/eye     lamina in, DNs out       amplitude L/R
+   thrust, roll, yaw        log lum + high-pass    Worker / WebGPU          thrust, roll, yaw
+         ^                                                                       |
+         +---------------------------- pose update <-----------------------------+
+
+   MaleCNS v1.0 (neuPrint / feather)  ->  shared graph JSON  ->  PyTorch (train, 5090)
+                                                              ->  TypeScript (run, browser)
+```
+
+The brain layer is the only one that carries the scientific claim. The body has no aerodynamics, the eye is a sampled cube map, and the motor map is the DNg02 population code. What we test is whether the published wiring, with borrowed signs and fitted time constants, turns an image stream into a sensible wing command.
 
 [Neuroglancer](https://github.com/google/neuroglancer) is Google’s TypeScript/WebGL viewer for the EM volume, meshes, and skeletons. Use it to *see* neurons. Notes and controls: [`sources/neuroglancer.md`](sources/neuroglancer.md). Official tutorial: [connectomics.readthedocs.io — Neuroglancer](https://connectomics.readthedocs.io/en/latest/external/neuroglancer.html).
 
@@ -55,8 +57,9 @@ Hosted MaleCNS scene (Chrome):
 | [`a-connectomics-milestone-mapping-the-complete-male-fruit-fly-brain.md`](a-connectomics-milestone-mapping-the-complete-male-fruit-fly-brain.md) | Saved [Google Research blog](https://research.google/blog/a-connectomics-milestone-mapping-the-complete-male-fruit-fly-brain/) (2026-09-03) |
 | [`research-notes.md`](research-notes.md) | Paper, numbers, companion papers, download URLs |
 | [`sources/neuroglancer.md`](sources/neuroglancer.md) | How to use Neuroglancer on this data |
-| `app/` | Planned TypeScript web app (viewer + simulator) |
-| `data/` | Planned local subsets (annotations, flight subgraph — not the EM volume) |
+| `app/` | Planned TypeScript web app: 3D scene, eye sampling, graph runtime, viewer |
+| `train/` | Planned PyTorch side: same graph, parameter fitting on the GPU box |
+| `data/` | Planned local subsets (annotations, extracted subgraphs, exported params — not the EM volume) |
 
 MaleCNS is **CC-BY**. Cite Berg et al., *Cell* 2026, and the [FlyEM project](https://www.janelia.org/project-team/flyem/male-cns-connectome).
 
@@ -73,21 +76,57 @@ Lightest file worth downloading later: `body-annotations-male-cns-v1.0-minconf-0
 
 **0. Research base** — this folder. Papers, Neuroglancer, what “flight circuit” means.
 
-**1. Flight subgraph** — from neuPrint / feather files, extract:
+**1. Loop with a stub brain** — world, eye, and motor layers with a hand-written controller in place of the connectome.
 
-- a thin visual-motion path (lobula / lobula plate → visual projection neurons)
-- **DNg02** (and a few neighbor DN types if they dominate the same wing neuropil)
-- wing motor neurons and a handful of VNC interneurons
+- three.js scene, fly as a rigid body, stripe drum and a few obstacles
+- two wide-field offscreen cameras (or a cube map) sampled at ommatidia directions into ~750 values per eye
+- photoreceptor stage: log luminance + temporal high-pass
+- wing amplitude L/R → thrust, roll, yaw → pose update
+- done when: the stub controller holds heading against drum rotation at a stable frame budget
 
-Target size: hundreds to a few thousand units, not 166k. Export JSON the browser can load.
+**2. Half-real brain** — hand-coded motion detection feeds real wiring.
 
-**2. Web app** — TypeScript. Browse the subgraph, color by type / side / transmitter, click a cell to see partners, deep-link that cell into Neuroglancer.
+- Hassenstein–Reichardt detectors on neighbouring columns stand in for T4/T5
+- their output is injected into the real HS, VS, and LPLC2 cells pulled from MaleCNS
+- from there the actual graph: lobula plate → **DNg02** and neighbours → wing motor neurons + VNC interneurons
+- static check first: DNg02 must receive lobula-plate input and project to wing/haltere motor neurons ([Namiki et al., 2022](https://pubmed.ncbi.nlm.nih.gov/35090590/)); if not, the extraction is wrong
+- done when: visual rotation direction predicts the DNg02 left/right rate difference, and the closed loop stabilizes
 
-**3. Dynamics** — each neuron is a leaky integrator (or rate unit). Synapse count × sign (from transmitter predictions) is the weight. Step the graph at ~1 kHz in a Web Worker. Visualize activity on the same graph.
+**3. Real optic lobe** — replace the detectors with the male per-column graph.
 
-**4. Fly** — map DNg02 / motor output onto left/right wingbeat amplitude (the population-code result). Drive a simple 3D fly: thrust, roll, yaw. First demo is optomotor: a moving stripe world, the model turns with it.
+- extract a subset of columnar types (L1, L2, Mi1, Tm3, Mi4, Mi9, T4a–d, T5a–d, Tm9, …) for every column: ~800 columns × ~20 types ≈ 16k units, ~1M edges
+- write the same graph as a PyTorch model, initialize from [flyvis](https://github.com/TuragaLab/flyvis) parameters ([Lappalainen et al., 2024](https://www.nature.com/articles/s41586-024-07939-3)), train briefly on optic flow on the 5090
+- trainable set stays small: per-type time constants and rest, one scale per synapse type; individual edges keep their connectome weight
+- export params, swap into the browser runtime (Worker at ~100 Hz substeps, or WebGPU)
+- done when: T4/T5 units are direction selective and milestone 2 still passes
 
-**5. Later** — richer biomechanics ([NeuroMechFly](https://github.com/NeLy-EPFL/NeuroMechFly), DeepMind [flybody](https://github.com/TuragaLab/flybody)), walking, or the dimorphic courtship switches the *Cell* paper is actually about. Whole-brain graph controllers already exist in research ([FlyGM](https://arxiv.org/html/2602.17997v3)); this project stays small, inspectable, and in-browser.
+**4. Deciding where to go** — the known visual reflex pathways, chained.
+
+- looming avoidance: LPLC2 / LC4 → escape descending neurons
+- bar fixation / approach: LC10 and related types
+- altitude and speed: ventral optic flow
+- tune the few free gains on the GPU with the body simulated in PyTorch, against a behavioral objective; export, run in browser
+- done when: the fly flies through the scene, avoids obstacles, and approaches a target using only rendered images
+
+**5. Later** — richer biomechanics ([NeuroMechFly](https://github.com/NeLy-EPFL/NeuroMechFly), DeepMind [flybody](https://github.com/TuragaLab/flybody)), haltere feedback, walking, or the dimorphic courtship switches the *Cell* paper is actually about. Whole-brain graph controllers already exist in research ([FlyGM](https://arxiv.org/html/2602.17997v3)); this project stays small, inspectable, and in-browser.
+
+## Compute
+
+| Job | Where |
+| --- | --- |
+| three.js scene, eye sampling, graph inference, viewer | Mac, browser |
+| neuPrint exploration, small feather files | Mac |
+| filtering the 1.1 GB weight table, per-column adjacency | GPU box (RAM/disk), CPU work |
+| flyvis-style parameter fitting, gain tuning | GPU box, RTX 5090 (32 GB) |
+
+One graph schema (JSON: units, types, edges, weights, per-type params) is shared by the PyTorch trainer and the TypeScript runtime so both provably run the same network. The browser never trains.
+
+## Known risks
+
+- **Raw weights do not give sane dynamics.** Every published whole-graph model rescales globally and saturates. Expect to fit two or three global gains before anything works.
+- **Motion detection needs temporal structure.** Uniform time constants give no direction selectivity; that is why milestone 3 trains per-type parameters instead of hoping.
+- **Flight is not in the graph.** The wingbeat CPG, power-muscle mechanics, and haltere feedback are not in the EM volume. The body is a cartoon and stays one until milestone 5.
+- **No emergent navigation.** Real goal-seeking needs the central complex, state, and odor. Expect reflexes (stabilize, avoid, approach); chained in a 3D world they already look like a fly deciding where to go.
 
 ## Neuron model (intended)
 
@@ -100,11 +139,13 @@ TypeScript, no Python in the hot loop.
 // f     = ReLU or logistic
 ```
 
-That is a cartoon of a neuron. It is enough to ask: does the published wiring turn optic flow into a left/right wing command? If yes, we made the insect fly in the only sense this repo claims. If no, the graph, the signs, or the missing CPG is the next experiment.
+That is a cartoon of a neuron. It is enough to ask: does the published wiring turn a rendered image stream into a left/right wing command that keeps the fly in the air and away from walls? If yes, we made the insect fly in the only sense this repo claims. If no, the graph, the signs, the time constants, or the missing CPG is the next experiment.
 
 ## Related reading
 
 - Berg et al., [*Sexual dimorphism in the complete connectome of the Drosophila male central nervous system*](https://doi.org/10.1016/j.cell.2026.08.015), *Cell* 2026
 - Hoeller et al., visual pathways companion, *Cell* 2026 — [DOI](https://doi.org/10.1016/j.cell.2026.08.014)
 - Namiki et al., [DNg02 flight descending neurons](https://pubmed.ncbi.nlm.nih.gov/35090590/), 2022
+- Lappalainen et al., [Connectome-constrained networks predict neural activity across the fly visual system](https://www.nature.com/articles/s41586-024-07939-3), *Nature* 2024 — code: [flyvis](https://github.com/TuragaLab/flyvis)
+- Shiu et al., [A Drosophila computational brain model reveals sensorimotor processing](https://www.nature.com/articles/s41586-024-07763-9), *Nature* 2024 — whole-connectome LIF simulation
 - [Male CNS project](https://male-cns.janelia.org/) · [neuPrint](https://neuprint.janelia.org) · [Neuroglancer](https://github.com/google/neuroglancer)
