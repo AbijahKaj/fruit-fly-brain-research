@@ -45,6 +45,109 @@ def angular_distance(az1, el1, az2, el2):
     return torch.acos(cosd.clamp(-1, 1))
 
 
+
+class Stimuli:
+    """Lamina drive for the trainer's stimulus kinds on the real column lattice."""
+
+    def __init__(self, g: Graph, fv: dict, dev: str, T: int, dt: float, lv=(LV_MIN, LV_MAX)):
+        self.g, self.dev, self.T, self.dt, self.lv = g, dev, T, dt, lv
+        tn = np.array([g.types[t] for t in g.unit_type])
+        self.tn = tn
+        lam_w = fv["photoreceptor"]["laminaInput"]
+        lam_units = np.where(np.isin(tn, list(lam_w.keys())) & (g.unit_col >= 0))[0]
+        self.lam_cols = torch.tensor(g.unit_col[lam_units], device=dev)
+        self.lam_wt = torch.tensor([lam_w[tn[i]] for i in lam_units], device=dev, dtype=torch.float32)
+        self.lam_units_t = torch.tensor(lam_units, device=dev)
+        self.n_lam = len(lam_units)
+        self.col_az = torch.tensor(g.col_az, device=dev)
+        self.col_el = torch.tensor(g.col_el, device=dev)
+        self.pr = fv["photoreceptor"]
+        self.t_axis = torch.arange(T, device=dev, dtype=torch.float32) * dt
+        self.dur = T * dt
+
+    def disc_centre(self, side: int):
+        """Random RF-ish centre within one eye: az 25-110 deg on that side, el -30..30."""
+        dev = self.dev
+        az = (25 + 85 * torch.rand((), device=dev)) * DEG * (1 if side == 1 else -1)
+        el = (torch.rand((), device=dev) - 0.5) * 60 * DEG
+        return az, el
+
+    def to_ext(self, lum: torch.Tensor) -> torch.Tensor:
+        """Column luminance (T, B, C) -> lamina ext (T, B, n)."""
+        rR = self.pr["restOffset"] + self.pr["stimGain"] * lum
+        ext = torch.zeros(lum.shape[0], lum.shape[1], self.g.n, device=self.dev)
+        ext[:, :, self.lam_units_t] = rR[:, :, self.lam_cols] * self.lam_wt[None, None, :]
+        return ext
+
+    def kinds(self, kinds: list[str]) -> torch.Tensor:
+        """One stimulus per entry of `kinds` (loomL/R, recedeL/R, transL/R, grating)."""
+        T, dev, t_axis, dur = self.T, self.dev, self.t_axis, self.dur
+        col_az, col_el = self.col_az, self.col_el
+        lum = torch.full((T, len(kinds), len(self.g.col_az)), 0.5, device=dev)
+        for b, kind in enumerate(kinds):
+            if kind == "grating":
+                theta = torch.rand((), device=dev) * 2 * math.pi
+                lam = (15 + 25 * torch.rand((), device=dev)) * DEG
+                tf = 0.5 + 2.5 * torch.rand((), device=dev)
+                proj = col_az * torch.cos(theta) + col_el * torch.sin(theta)
+                phase = 2 * math.pi * (proj[None] / lam - tf * t_axis[:, None])
+                lum[:, b] = 0.5 + 0.5 * torch.sin(phase)
+                continue
+            side = 1 if kind.endswith("R") else 0
+            az0, el0 = self.disc_centre(side)
+            if kind.startswith("trans"):
+                # fixed 12 deg disc sweeping 60 deg in azimuth over the trial
+                direction = 1.0 if torch.rand(()) < 0.5 else -1.0
+                az_t = az0 + direction * (t_axis / dur - 0.5) * 60 * DEG
+                radius = torch.full((T,), 12 * DEG, device=dev)
+                d = angular_distance(az_t[:, None], el0, col_az[None, :], col_el[None, :])
+            else:
+                # l/v looming: half-angle theta(t) = atan(l / (v (t_c - t)))
+                lv = self.lv[0] + (self.lv[1] - self.lv[0]) * torch.rand((), device=dev)
+                tc = dur * 1.02
+                radius = torch.atan(lv / (tc - t_axis).clamp_min(1e-3))
+                if kind.startswith("recede"):
+                    radius = radius.flip(0)
+                radius = radius.clamp(2 * DEG, 70 * DEG)
+                d = angular_distance(az0, el0, col_az[None, :], col_el[None, :]).expand(T, -1)
+            inside = (d < radius[:, None]).float()
+            lum[:, b] = 0.5 * (1 - inside) + 0.05 * inside
+        return self.to_ext(lum)
+
+    def gratings(self, Bg: int):
+        """Random drifting gratings as in train_optic.py. Returns ext, theta."""
+        dev, T, t_axis = self.dev, self.T, self.t_axis
+        theta = torch.rand(Bg, device=dev) * 2 * math.pi
+        lam = (15 + 25 * torch.rand(Bg, device=dev)) * DEG
+        tf = 0.5 + 2.5 * torch.rand(Bg, device=dev)
+        c = 0.5 + 0.5 * torch.rand(Bg, device=dev)
+        proj = self.col_az[None, :] * torch.cos(theta)[:, None] + self.col_el[None, :] * torch.sin(theta)[:, None]
+        phase = 2 * math.pi * (proj[None] / lam[None, :, None] - tf[None, :, None] * t_axis[:, None, None])
+        lum = 0.5 + 0.5 * c[None, :, None] * torch.sin(phase)
+        return self.to_ext(lum), theta
+
+    def grey(self, B: int = 1) -> torch.Tensor:
+        return self.to_ext(torch.full((self.T, B, len(self.g.col_az)), 0.5, device=self.dev))
+
+
+def load_model(graph: str, params: str, dev: str, max_el: float = 90):
+    g0 = Graph(Path(graph))
+    fv = json.load(open(params))
+    tn0 = np.array([g0.types[t] for t in g0.unit_type])
+    keep = (g0.unit_role == g0.roles.index("optic")) | np.isin(tn0, LC_TYPES)
+    if max_el < 90:
+        col_ok = np.abs(g0.col_el) <= max_el * DEG
+        keep &= ((g0.unit_col >= 0) & col_ok[np.clip(g0.unit_col, 0, None)]) | np.isin(tn0, LC_TYPES)
+    g = g0.subgraph(keep)
+    model = FlyvisModel(g, fv, device=dev, extra_post_types=LC_TYPES, extra_scale=0.005)
+    return g, fv, model
+
+
+def topk_rate(resp: torch.Tensor, pos: torch.Tensor, k: int) -> torch.Tensor:
+    """(B, nrec) -> (B,): mean of the k most active recorded units in `pos`."""
+    return resp[:, pos].topk(min(k, len(pos)), dim=1).values.mean(1)
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
@@ -80,17 +183,8 @@ def main() -> None:
     n_extra = len(model.pairs) - model.n_fv_pairs
     print(f"trainable: {n_extra} input pairs onto {LC_TYPES}, plus their tau/bias")
 
-    tn = np.array([g.types[t] for t in g.unit_type])
-    lam_w = fv["photoreceptor"]["laminaInput"]
-    lam_units = np.where(np.isin(tn, list(lam_w.keys())) & (g.unit_col >= 0))[0]
-    lam_cols = torch.tensor(g.unit_col[lam_units], device=dev)
-    lam_wt = torch.tensor([lam_w[tn[i]] for i in lam_units], device=dev, dtype=torch.float32)
-    lam_units_t = torch.tensor(lam_units, device=dev)
-    col_az = torch.tensor(g.col_az, device=dev)
-    col_el = torch.tensor(g.col_el, device=dev)
-    col_side = torch.tensor(g.col_side, device=dev)
-    pr = fv["photoreceptor"]
-
+    stim = Stimuli(g, fv, dev, args.T, args.dt)
+    tn = stim.tn
     groups = {}
     for st in LC_TYPES:
         for side, sidx in [("L", 0), ("R", 1)]:
@@ -102,55 +196,10 @@ def main() -> None:
     for k, v in groups.items():
         rec_pos[k] = torch.arange(off, off + len(v), device=dev)
         off += len(v)
-    print(f"readout: {[(k, len(v)) for k, v in groups.items()]}; lamina inputs {len(lam_units)}")
+    print(f"readout: {[(k, len(v)) for k, v in groups.items()]}; lamina inputs {stim.n_lam}")
 
     opt = torch.optim.Adam([p for p in model.parameters()], lr=args.lr)
     T, dt = args.T, args.dt
-    B = len(KINDS)
-    t_axis = torch.arange(T, device=dev, dtype=torch.float32) * dt
-    dur = T * dt
-
-    def disc_centre(side: int):
-        """Random RF-ish centre within one eye: az 25-110 deg on that side, el -30..30."""
-        az = (25 + 85 * torch.rand((), device=dev)) * DEG * (1 if side == 1 else -1)
-        el = (torch.rand((), device=dev) - 0.5) * 60 * DEG
-        return az, el
-
-    def make_ext():
-        lum = torch.full((T, B, len(g.col_az)), 0.5, device=dev)
-        for b, kind in enumerate(KINDS):
-            if kind == "grating":
-                theta = torch.rand((), device=dev) * 2 * math.pi
-                lam = (15 + 25 * torch.rand((), device=dev)) * DEG
-                tf = 0.5 + 2.5 * torch.rand((), device=dev)
-                proj = col_az * torch.cos(theta) + col_el * torch.sin(theta)
-                phase = 2 * math.pi * (proj[None] / lam - tf * t_axis[:, None])
-                lum[:, b] = 0.5 + 0.5 * torch.sin(phase)
-                continue
-            side = 1 if kind.endswith("R") else 0
-            az0, el0 = disc_centre(side)
-            if kind.startswith("trans"):
-                # fixed 12 deg disc sweeping 60 deg in azimuth over the trial
-                direction = 1.0 if torch.rand(()) < 0.5 else -1.0
-                az_t = az0 + direction * (t_axis / dur - 0.5) * 60 * DEG
-                radius = torch.full((T,), 12 * DEG, device=dev)
-                d = angular_distance(az_t[:, None], el0, col_az[None, :], col_el[None, :])
-            else:
-                # l/v looming: half-angle theta(t) = atan(l / (v (t_c - t))); l/v in 20-80 ms
-                lv = LV_MIN + (LV_MAX - LV_MIN) * torch.rand((), device=dev)
-                tc = dur * 1.02
-                if kind.startswith("loom"):
-                    radius = torch.atan(lv / (tc - t_axis).clamp_min(1e-3))
-                else:
-                    radius = torch.atan(lv / (tc - t_axis).clamp_min(1e-3)).flip(0)
-                radius = radius.clamp(2 * DEG, 70 * DEG)
-                d = angular_distance(az0, el0, col_az[None, :], col_el[None, :]).expand(T, -1)
-            inside = (d < radius[:, None]).float()
-            lum[:, b] = 0.5 * (1 - inside) + 0.05 * inside
-        rR = pr["restOffset"] + pr["stimGain"] * lum
-        ext = torch.zeros(T, B, g.n, device=dev)
-        ext[:, :, lam_units_t] = rR[:, :, lam_cols] * lam_wt[None, None, :]
-        return ext
 
     # stage 1 readout (T4/T5 subtypes) for the joint mode
     ds_groups = {}
@@ -164,19 +213,6 @@ def main() -> None:
     for k, v in ds_groups.items():
         ds_pos[k] = torch.arange(off, off + len(v), device=dev)
         off += len(v)
-
-    def grating_batch(Bg: int):
-        theta = torch.rand(Bg, device=dev) * 2 * math.pi
-        lam = (15 + 25 * torch.rand(Bg, device=dev)) * DEG
-        tf = 0.5 + 2.5 * torch.rand(Bg, device=dev)
-        c = 0.5 + 0.5 * torch.rand(Bg, device=dev)
-        proj = col_az[None, :] * torch.cos(theta)[:, None] + col_el[None, :] * torch.sin(theta)[:, None]
-        phase = 2 * math.pi * (proj[None] / lam[None, :, None] - tf[None, :, None] * t_axis[:, None, None])
-        lum = 0.5 + 0.5 * c[None, :, None] * torch.sin(phase)
-        rR = pr["restOffset"] + pr["stimGain"] * lum
-        ext = torch.zeros(T, Bg, g.n, device=dev)
-        ext[:, :, lam_units_t] = rR[:, :, lam_cols] * lam_wt[None, None, :]
-        return ext, theta
 
     def ds_loss(resp, theta):
         total = 0.0
@@ -192,13 +228,13 @@ def main() -> None:
     kind_idx = {k: [b for b, kk in enumerate(KINDS) if kk == k] for k in set(KINDS)}
     t0 = time.time()
     for step in range(args.steps):
-        ext = make_ext()
+        ext = stim.kinds(KINDS)
         rates = model(ext, dt, record=rec.tolist())            # (T, B, nrec)
         resp = rates[-int(T * WIN):].mean(0)                    # (B, nrec)
         loss_sel = 0.0
         report = {}
         for (st, side), pos in rec_pos.items():
-            r = resp[:, pos].topk(min(args.topk, len(pos)), dim=1).values.mean(1)   # (B,)
+            r = topk_rate(resp, pos, args.topk)                 # (B,)
             ipsi = r[kind_idx[f"loom{side}"]].mean()
             others = torch.cat([r[kind_idx[k]] for k in KINDS if k != f"loom{side}"])
             worst = others.max()
@@ -209,7 +245,7 @@ def main() -> None:
         loss_reg = sum(((p - init[k]) ** 2 * masks[k]).mean() for k, p in model.named_parameters()) * args.reg
         loss_ds = torch.zeros((), device=dev)
         if args.joint and ds_rec is not None:
-            gext, theta = grating_batch(8)
+            gext, theta = stim.gratings(8)
             grates = model(gext, dt, record=ds_rec.tolist())
             loss_ds = ds_loss(grates[T // 3:].mean(0), theta) * args.ds_weight
         loss = loss_sel + loss_rate + loss_reg + loss_ds
@@ -226,8 +262,7 @@ def main() -> None:
 
     # resting membrane under grey for the browser's homeostat target
     with torch.no_grad():
-        ext = torch.zeros(T, 1, g.n, device=dev)
-        ext[:, :, lam_units_t] = (pr["restOffset"] + pr["stimGain"] * 0.5) * lam_wt[None, None, :]
+        ext = stim.grey()
         w = model.weights()
         tau = torch.exp(model.log_tau)[model.unit_type_t].clamp_min(dt)
         bias = model.bias[model.unit_type_t]

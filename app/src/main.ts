@@ -148,6 +148,7 @@ const brainSel = $<HTMLSelectElement>("brainSel");
 const followToggle = $<HTMLInputElement>("follow");
 const wScaleSlider = $<HTMLInputElement>("wScale");
 const outGainSlider = $<HTMLInputElement>("outGain");
+const loomGainSlider = $<HTMLInputElement>("loomGain");
 const flipReadout = $<HTMLInputElement>("flipReadout");
 const readoutSel = $<HTMLSelectElement>("readout");
 
@@ -156,6 +157,8 @@ readoutSel.addEventListener("input", () => (readoutTouched = true));
 const syncBrainControls = (): void => {
   const gain = parseFloat(wScaleSlider.value);
   const outputGain = parseFloat(outGainSlider.value);
+  const loomGain = parseFloat(loomGainSlider.value);
+  $("loomGainVal").textContent = loomGain.toFixed(1);
   const readoutSign = flipReadout.checked ? 1 : -1;
   $("wScaleVal").textContent = gain.toFixed(2);
   $("outGainVal").textContent = outputGain.toFixed(2);
@@ -168,7 +171,7 @@ const syncBrainControls = (): void => {
     }
   }
   if (optic) {
-    Object.assign(optic.params, { wScale: gain, outputGain, readoutSign });
+    Object.assign(optic.params, { wScale: gain, outputGain, readoutSign, loomGain });
     const ro = readoutSel.value === "mn" ? "hs" : "dng02";
     if (readoutTouched && ro !== optic.params.readout) {
       optic.params.readout = ro;
@@ -176,7 +179,7 @@ const syncBrainControls = (): void => {
     }
   }
 };
-for (const el of [wScaleSlider, outGainSlider, flipReadout, readoutSel]) el.addEventListener("input", syncBrainControls);
+for (const el of [wScaleSlider, outGainSlider, loomGainSlider, flipReadout, readoutSel]) el.addEventListener("input", syncBrainControls);
 brainSel.addEventListener("change", () => {
   brainKey = brainSel.value as BrainKey;
   reset();
