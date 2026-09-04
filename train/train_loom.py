@@ -165,6 +165,7 @@ def main() -> None:
     ap.add_argument("--joint", action="store_true",
                     help="unfreeze everything and keep the stage 1 grating DS loss alongside (lets the OFF pathway adapt)")
     ap.add_argument("--ds-weight", type=float, default=1.0)
+    ap.add_argument("--ds-batch", type=int, default=4)
     args = ap.parse_args()
     dev = args.device
 
@@ -245,7 +246,7 @@ def main() -> None:
         loss_reg = sum(((p - init[k]) ** 2 * masks[k]).mean() for k, p in model.named_parameters()) * args.reg
         loss_ds = torch.zeros((), device=dev)
         if args.joint and ds_rec is not None:
-            gext, theta = stim.gratings(8)
+            gext, theta = stim.gratings(args.ds_batch)
             grates = model(gext, dt, record=ds_rec.tolist())
             loss_ds = ds_loss(grates[T // 3:].mean(0), theta) * args.ds_weight
         loss = loss_sel + loss_rate + loss_reg + loss_ds
