@@ -33,7 +33,7 @@ Four layers. Every milestone keeps the whole loop running; a layer starts as a s
 ```
    1. WORLD + BODY          2. EYE                 3. BRAIN                 4. MOTOR
    three.js scene      ->   offscreen render   ->  connectome graph    ->   DN rates -> wing
-   rigid-body fly           ~750 ommatidia/eye     lamina in, DNs out       amplitude L/R
+   rigid-body fly           750–885 samples/eye    lamina in, DNs out       amplitude L/R
    thrust, roll, yaw        log lum + high-pass    Worker / WebGPU          thrust, roll, yaw
          ^                                                                       |
          +---------------------------- pose update <-----------------------------+
@@ -57,20 +57,20 @@ Hosted MaleCNS scene (Chrome):
 | [`a-connectomics-milestone-mapping-the-complete-male-fruit-fly-brain.md`](a-connectomics-milestone-mapping-the-complete-male-fruit-fly-brain.md) | Saved [Google Research blog](https://research.google/blog/a-connectomics-milestone-mapping-the-complete-male-fruit-fly-brain/) (2026-09-03) |
 | [`research-notes.md`](research-notes.md) | Paper, numbers, companion papers, download URLs |
 | [`sources/neuroglancer.md`](sources/neuroglancer.md) | How to use Neuroglancer on this data |
-| [`app/`](app/) | TypeScript web app: 3D scene, eye sampling, graph runtime, HUD (milestones 1–2 done) |
+| [`app/`](app/) | TypeScript web app: 3D scene, eye sampling, graph runtime in a Web Worker, HUD (milestones 1–3 done) |
 | [`data/`](data/) | Python extraction from the public MaleCNS tables → graph files, with reports of static checks |
 | [`train/`](train/) | PyTorch side: flyvis parameter transfer, reference simulations, the DS trainer for the GPU box |
 
 MaleCNS is **CC-BY**. Cite Berg et al., *Cell* 2026, and the [FlyEM project](https://www.janelia.org/project-team/flyem/male-cns-connectome).
 
-## Explore now (no app yet)
+## Explore the data
 
 1. Read the saved blog, then the headline results in [`research-notes.md`](research-notes.md).
 2. Open the [Cell Type Explorer](https://reiserlab.github.io/celltype-explorer-drosophila-male-cns/) and look up **AOTU008** (dimorphic example from the blog) and **DNg02** (flight descending neurons).
 3. Open the [Neuroglancer scene](https://neuroglancer-demo.appspot.com/#!gs://flyem-male-cns/v1.0/male-cns-v1.0.jso). Double-click a neuron, press `H` for controls.
 4. [neuPrint](https://neuprint.janelia.org) dataset `male-cns:v1.0` — query upstream/downstream of a cell type (free account + API token).
 
-Lightest file worth downloading later: `body-annotations-male-cns-v1.0-minconf-0.5.feather` (~13 MB) from the [download page](https://male-cns.janelia.org/download/). The 1.1 GB weight table is the first graph we would actually simulate. Do not pull the EM volume into this repo.
+The scripts in [`data/`](data/) pull the annotation, transmitter, and 1.1 GB weight tables from the [download page](https://male-cns.janelia.org/download/) and cut the graphs the app runs. Do not pull the EM volume into this repo.
 
 ## Roadmap
 
@@ -131,16 +131,18 @@ One graph schema (JSON: units, types, edges, weights, per-type params) is shared
 - **Flight is not in the graph.** The wingbeat CPG, power-muscle mechanics, and haltere feedback are not in the EM volume. The body is a cartoon and stays one until milestone 5.
 - **No emergent navigation.** Real goal-seeking needs the central complex, state, and odor. Expect reflexes (stabilize, avoid, approach); chained in a 3D world they already look like a fly deciding where to go.
 
-## Neuron model (intended)
+## Neuron model
 
-TypeScript, no Python in the hot loop.
+TypeScript, no Python in the hot loop. Implemented in [`app/src/brain/rate-net.ts`](app/src/brain/rate-net.ts) and the worker; the PyTorch trainer runs the same equation.
 
 ```ts
-// dx/dt = (-x + I_syn + I_ext) / tau
-// I_syn = sum_j w_ji * f(x_j)
-// w_ji  = synapse_count(j→i) * sign(transmitter_j)
-// f     = ReLU or logistic
+// tau dx/dt = -x + wScale * sum_j w_ji * r_j + I_ext + bias
+// r      = clamp(x, 0, rMax)          browser
+// r      = rMax * tanh(relu(x)/rMax)  trainer (smooth ceiling for gradients)
+// w_ji   = synapse_count(j->i) * sign(transmitter_j) * strength(type_j, type_i)
 ```
+
+Per-type tau and bias, and per-type-pair strength, come from flyvis and then from the fit; edges keep their connectome counts. Units without fitted parameters get a homeostatic bias that holds them at the flyvis resting level.
 
 That is a cartoon of a neuron. It is enough to ask: does the published wiring turn a rendered image stream into a left/right wing command that keeps the fly in the air and away from walls? If yes, we made the insect fly in the only sense this repo claims. If no, the graph, the signs, the time constants, or the missing CPG is the next experiment.
 
