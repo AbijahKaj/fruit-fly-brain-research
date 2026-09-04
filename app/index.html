@@ -3,14 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Fruit fly brain — milestone 1</title>
+    <title>Fruit fly brain — milestone 2</title>
     <style>
       html, body { margin: 0; height: 100%; background: #0b0d10; color: #d6dbe0; font: 13px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; overflow: hidden; }
       #view { position: fixed; inset: 0; }
       #hud { position: fixed; top: 12px; left: 12px; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
       #hud canvas { background: rgba(0,0,0,0.45); border: 1px solid #2a3038; border-radius: 4px; }
       #stats { background: rgba(0,0,0,0.45); border: 1px solid #2a3038; border-radius: 4px; padding: 8px 10px; white-space: pre; }
-      #controls { position: fixed; bottom: 12px; left: 12px; background: rgba(0,0,0,0.45); border: 1px solid #2a3038; border-radius: 4px; padding: 8px 10px; display: flex; flex-direction: column; gap: 6px; }
+      #controls { position: fixed; top: 12px; right: 12px; background: rgba(0,0,0,0.45); border: 1px solid #2a3038; border-radius: 4px; padding: 8px 10px; display: flex; flex-direction: column; gap: 6px; }
       #controls label { display: flex; align-items: center; gap: 8px; }
       #controls input[type=range] { width: 180px; }
       #help { position: fixed; bottom: 12px; right: 12px; background: rgba(0,0,0,0.45); border: 1px solid #2a3038; border-radius: 4px; padding: 8px 10px; white-space: pre; opacity: 0.8; }
@@ -20,14 +20,23 @@
     <canvas id="view"></canvas>
     <div id="hud">
       <canvas id="eyes" width="420" height="150"></canvas>
+      <canvas id="net" width="420" height="56"></canvas>
       <div id="stats"></div>
     </div>
     <div id="controls">
       <label>drum ω <input id="drum" type="range" min="-3" max="3" step="0.05" value="0" /> <span id="drumVal">0.00</span> rad/s</label>
-      <label><input id="brainOn" type="checkbox" checked /> stub brain on</label>
+      <label>brain <select id="brainSel">
+        <option value="off">off (hover)</option>
+        <option value="stub">stub: HR + P controller</option>
+        <option value="connectome" selected>connectome: flight-v1</option>
+      </select></label>
+      <label>wScale <input id="wScale" type="range" min="0.005" max="0.08" step="0.005" value="0.03" /> <span id="wScaleVal">0.0300</span></label>
+      <label>out gain <input id="outGain" type="range" min="0" max="20" step="0.25" value="4" /> <span id="outGainVal">4.00</span></label>
+      <label>readout <select id="readout"><option value="dng02" selected>DNg02 L/R</option><option value="mn">steering MNs L/R</option></select></label>
+      <label><input id="flipReadout" type="checkbox" /> ipsilateral side mapping</label>
       <label><input id="follow" type="checkbox" checked /> chase camera</label>
     </div>
-    <div id="help">keys: [ ] drum speed   space: stop drum   b: brain on/off   r: reset fly</div>
+    <div id="help">keys: [ ] drum speed   space: stop drum   b: cycle brain   r: reset fly   v: eye view</div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

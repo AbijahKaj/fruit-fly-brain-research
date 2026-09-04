@@ -57,9 +57,9 @@ Hosted MaleCNS scene (Chrome):
 | [`a-connectomics-milestone-mapping-the-complete-male-fruit-fly-brain.md`](a-connectomics-milestone-mapping-the-complete-male-fruit-fly-brain.md) | Saved [Google Research blog](https://research.google/blog/a-connectomics-milestone-mapping-the-complete-male-fruit-fly-brain/) (2026-09-03) |
 | [`research-notes.md`](research-notes.md) | Paper, numbers, companion papers, download URLs |
 | [`sources/neuroglancer.md`](sources/neuroglancer.md) | How to use Neuroglancer on this data |
-| `app/` | Planned TypeScript web app: 3D scene, eye sampling, graph runtime, viewer |
+| [`app/`](app/) | TypeScript web app: 3D scene, eye sampling, graph runtime, HUD (milestones 1–2 done) |
+| [`data/`](data/) | Python extraction from the public MaleCNS tables → graph JSON, with a report of static checks |
 | `train/` | Planned PyTorch side: same graph, parameter fitting on the GPU box |
-| `data/` | Planned local subsets (annotations, extracted subgraphs, exported params — not the EM volume) |
 
 MaleCNS is **CC-BY**. Cite Berg et al., *Cell* 2026, and the [FlyEM project](https://www.janelia.org/project-team/flyem/male-cns-connectome).
 
@@ -83,6 +83,7 @@ Lightest file worth downloading later: `body-annotations-male-cns-v1.0-minconf-0
 - photoreceptor stage: log luminance + temporal high-pass
 - wing amplitude L/R → thrust, roll, yaw → pose update
 - done when: the stub controller holds heading against drum rotation at a stable frame budget
+- **status: done.** Yaw rate follows the drum at ~70% of its speed, 115–120 fps.
 
 **2. Half-real brain** — hand-coded motion detection feeds real wiring.
 
@@ -91,6 +92,7 @@ Lightest file worth downloading later: `body-annotations-male-cns-v1.0-minconf-0
 - from there the actual graph: lobula plate → **DNg02** and neighbours → wing motor neurons + VNC interneurons
 - static check first: DNg02 must receive lobula-plate input and project to wing/haltere motor neurons ([Namiki et al., 2022](https://pubmed.ncbi.nlm.nih.gov/35090590/)); if not, the extraction is wrong
 - done when: visual rotation direction predicts the DNg02 left/right rate difference, and the closed loop stabilizes
+- **status: done.** 1072 units, 26.5k edges. Findings: no direct LPTC → DNg02 synapses; the relay (PS080) is GABAergic so DNg02 needs a tonic flight-state drive; DNg02 → wing MN output is bilateral so the readout sits at DNg02. Details in [`data/README.md`](data/README.md) and [`app/README.md`](app/README.md).
 
 **3. Real optic lobe** — replace the detectors with the male per-column graph.
 

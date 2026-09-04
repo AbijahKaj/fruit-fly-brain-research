@@ -53,6 +53,34 @@ export class Hud {
     }
   }
 
+  /** Heat strip of unit rates, grouped; `groups` are [label, indices] in display order. */
+  drawNet(canvas: HTMLCanvasElement, rates: Float32Array, groups: Array<[string, Int32Array]>): void {
+    const ctx = canvas.getContext("2d")!;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const total = groups.reduce((a, [, idx]) => a + idx.length, 0);
+    if (!total) return;
+    const top = 14;
+    const h = canvas.height - top - 2;
+    let x = 2;
+    const w = canvas.width - 4;
+    ctx.font = "10px ui-monospace, monospace";
+    for (const [label, idx] of groups) {
+      const gw = (idx.length / total) * w;
+      const cell = gw / idx.length;
+      for (let k = 0; k < idx.length; k++) {
+        const v = Math.max(0, Math.min(1, rates[idx[k]!]!));
+        const g = Math.round(v * 255);
+        ctx.fillStyle = `rgb(${g},${Math.round(g * 0.55)},${Math.round(40 + (1 - v) * 40)})`;
+        ctx.fillRect(x + k * cell, top, Math.max(1, cell), h);
+      }
+      ctx.fillStyle = "#9aa3ad";
+      ctx.fillText(label, x + 1, 10);
+      ctx.strokeStyle = "#2a3038";
+      ctx.strokeRect(x, top, gw, h);
+      x += gw;
+    }
+  }
+
   setStats(lines: Array<[string, string | number]>): void {
     this.stats.textContent = lines
       .map(([k, v]) => `${k.padEnd(12)} ${typeof v === "number" ? fmt(v) : v}`)

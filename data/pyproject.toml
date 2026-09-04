@@ -1,0 +1,6 @@
+[project]
+name = "fruit-fly-brain-data"
+version = "0.1.0"
+description = "Extract MaleCNS subgraphs into the shared graph JSON the TypeScript runtime loads"
+requires-python = ">=3.11"
+dependencies = ["pyarrow>=17", "pandas>=2.2", "numpy>=2"]

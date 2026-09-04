@@ -1,10 +1,10 @@
 /**
- * Milestone 1: the closed loop with a stub brain.
+ * Milestone 2: the closed loop with a choice of brains.
  *
- *   world/body  ->  eye  ->  brain (stub)  ->  motor  ->  world/body
+ *   world/body  ->  eye  ->  brain (stub | connectome)  ->  motor  ->  world/body
  *
- * Success criterion from the README: the stub controller holds heading
- * against drum rotation at a stable frame budget.
+ * The connectome brain is real MaleCNS wiring (data/extract_flight.py)
+ * behind the same Brain interface the stub uses.
  */
 import * as THREE from "three";
 import { buildWorld, FLY_LAYER } from "./world/scene";
@@ -13,6 +13,8 @@ import { buildOmmatidia } from "./eye/ommatidia";
 import { CompoundEye } from "./eye/eye";
 import { Photoreceptors } from "./eye/photoreceptor";
 import { StubBrain } from "./brain/stub";
+import { ConnectomeBrain } from "./brain/connectome";
+import { loadGraph, unitsWhere } from "./brain/graph";
 import type { Brain, MotorCommand } from "./brain/types";
 import { wingsToForces, defaultWingParams } from "./motor/wings";
 import { SimLoop } from "./sim/loop";
@@ -54,16 +56,63 @@ const lumR = new Float32Array(ommR.count);
 const prL = new Photoreceptors(ommL.count);
 const prR = new Photoreceptors(ommR.count);
 
-// ---------- brain ----------
-const brain: Brain = new StubBrain(ommL, ommR);
+// ---------- brains ----------
+type BrainKey = "off" | "stub" | "connectome";
+const brains: Partial<Record<BrainKey, Brain>> = { stub: new StubBrain(ommL, ommR) };
+let brainKey: BrainKey = "connectome";
+let connectome: ConnectomeBrain | undefined;
+let netGroups: Array<[string, Int32Array]> = [];
 const hover: MotorCommand = { left: defaultWingParams.hoverAmp, right: defaultWingParams.hoverAmp };
+
+loadGraph(`${import.meta.env.BASE_URL}graphs/flight-v1.json`)
+  .then((g) => {
+    connectome = new ConnectomeBrain(g, ommL, ommR);
+    brains.connectome = connectome;
+    netGroups = [
+      ["LPTC", unitsWhere(g, (t) => /^(HS[ENST]|VS|VST1|VST2|VSm|H2|DCH|VCH)$/.test(t))],
+      ["LC", unitsWhere(g, (t) => /^(LPLC2|LC4)$/.test(t))],
+      ["brain", unitsWhere(g, (_t, _s, r) => r === "brain")],
+      ["DNg02", unitsWhere(g, (t) => /^DNg02_/.test(t))],
+      ["DNp", unitsWhere(g, (t) => /^DNp0/.test(t))],
+      ["vnc", unitsWhere(g, (_t, _s, r) => r === "vnc")],
+      ["MN", unitsWhere(g, (_t, _s, r) => r === "output")],
+    ];
+    syncBrainControls();
+  })
+  .catch((err) => console.error(err));
+
+const currentBrain = (): Brain | undefined => (brainKey === "off" ? undefined : brains[brainKey]);
 
 // ---------- ui ----------
 const hud = new Hud($<HTMLCanvasElement>("eyes"), $("stats"), ommL, ommR);
+const netCanvas = $<HTMLCanvasElement>("net");
 const drumSlider = $<HTMLInputElement>("drum");
 const drumVal = $("drumVal");
-const brainToggle = $<HTMLInputElement>("brainOn");
+const brainSel = $<HTMLSelectElement>("brainSel");
 const followToggle = $<HTMLInputElement>("follow");
+const wScaleSlider = $<HTMLInputElement>("wScale");
+const outGainSlider = $<HTMLInputElement>("outGain");
+const flipReadout = $<HTMLInputElement>("flipReadout");
+const readoutSel = $<HTMLSelectElement>("readout");
+
+const syncBrainControls = (): void => {
+  if (!connectome) return;
+  connectome.params.wScale = parseFloat(wScaleSlider.value);
+  connectome.params.outputGain = parseFloat(outGainSlider.value);
+  connectome.params.readoutSign = flipReadout.checked ? 1 : -1;
+  const ro = readoutSel.value as "dng02" | "mn";
+  if (ro !== connectome.params.readout) {
+    connectome.params.readout = ro;
+    connectome.reset();
+  }
+  $("wScaleVal").textContent = connectome.params.wScale.toFixed(4);
+  $("outGainVal").textContent = connectome.params.outputGain.toFixed(2);
+};
+for (const el of [wScaleSlider, outGainSlider, flipReadout, readoutSel]) el.addEventListener("input", syncBrainControls);
+brainSel.addEventListener("change", () => {
+  brainKey = brainSel.value as BrainKey;
+  reset();
+});
 
 let drumOmega = 0; // rad/s about +Y; positive = counterclockwise seen from above
 const setDrum = (v: number): void => {
@@ -76,7 +125,7 @@ drumSlider.addEventListener("input", () => setDrum(parseFloat(drumSlider.value))
 const reset = (): void => {
   body.reset();
   body.applyTo(world.flyRoot);
-  brain.reset();
+  for (const b of Object.values(brains)) b.reset();
   prL.reset();
   prR.reset();
 };
@@ -93,9 +142,13 @@ window.addEventListener("keydown", (e) => {
       setDrum(0);
       e.preventDefault();
       break;
-    case "b":
-      brainToggle.checked = !brainToggle.checked;
+    case "b": {
+      const order: BrainKey[] = ["off", "stub", "connectome"];
+      brainKey = order[(order.indexOf(brainKey) + 1) % order.length]!;
+      brainSel.value = brainKey;
+      reset();
       break;
+    }
     case "r":
       reset();
       break;
@@ -129,7 +182,8 @@ const loop = new SimLoop({
     const hpR = prR.update(lumR, dt);
 
     // 3. brain
-    cmd = brainToggle.checked ? brain.step({ left: hpL, right: hpR }, dt) : hover;
+    const brain = currentBrain();
+    cmd = brain ? brain.step({ left: hpL, right: hpR }, dt) : hover;
 
     // 4. motor + body, fixed 1 ms substeps
     const forces = wingsToForces(cmd);
@@ -163,11 +217,16 @@ const loop = new SimLoop({
 
     // hud
     hud.drawEyes(prL.logLum, hpL, prR.logLum, hpR);
-    const t = brain.telemetry();
+    if (brain === connectome && connectome) hud.drawNet(netCanvas, connectome.net.r, netGroups);
+    else netCanvas.getContext("2d")!.clearRect(0, 0, netCanvas.width, netCanvas.height);
+    const t = brain?.telemetry() ?? {};
+    const extra: Array<[string, string | number]> = Object.entries(t)
+      .filter(([k]) => !["flowL", "flowR", "turn"].includes(k))
+      .map(([k, v]) => [k, v]);
     hud.setStats([
       ["fps", loop.fps],
       ["t", time],
-      ["brain", brainToggle.checked ? brain.name : "off (hover)"],
+      ["brain", brain ? brain.name : brainKey === "connectome" ? "loading graph…" : "off (hover)"],
       ["drum ω", drumOmega],
       ["yaw rate", body.state.yawRate],
       ["slip", body.state.yawRate - drumOmega],
@@ -177,6 +236,7 @@ const loop = new SimLoop({
       ["flow R", t["flowR"] ?? 0],
       ["turn", t["turn"] ?? 0],
       ["wing L/R", `${cmd.left.toFixed(2)} / ${cmd.right.toFixed(2)}`],
+      ...extra,
     ]);
   },
 });
@@ -184,4 +244,23 @@ const loop = new SimLoop({
 loop.start();
 
 // Expose for poking from the console / tests.
-Object.assign(window, { fly: { body, brain, eye, ommL, ommR, setDrum, reset, loop } });
+Object.assign(window, {
+  fly: {
+    body,
+    brains,
+    get brain() {
+      return currentBrain();
+    },
+    setBrain(k: BrainKey) {
+      brainKey = k;
+      brainSel.value = k;
+      reset();
+    },
+    eye,
+    ommL,
+    ommR,
+    setDrum,
+    reset,
+    loop,
+  },
+});
