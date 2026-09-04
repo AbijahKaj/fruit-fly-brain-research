@@ -45,6 +45,9 @@ def main() -> None:
     ap.add_argument("--graph", default=str(HERE.parent / "data" / "out" / "optic-v2"))
     ap.add_argument("--params", default=str(HERE / "out" / "flyvis-params.json"))
     ap.add_argument("--out", default=str(HERE / "out" / "fitted-params.json"))
+    ap.add_argument("--loss", choices=["mse", "corr"], default="corr",
+                    help="mse: normalised response vs 1+cos; corr: correlation with cos (scale-free) plus modulation depth")
+    ap.add_argument("--reg", type=float, default=1.0, help="L2 pull toward the flyvis init")
     args = ap.parse_args()
     dev = args.device
 
@@ -114,12 +117,20 @@ def main() -> None:
         loss_ds = 0.0
         for (st, side), pos in rec_pos.items():
             r = resp[:, pos].mean(1)                           # (B,)
-            target = 1 + torch.cos(theta - PD[st][side])       # (B,)
-            rn = r / (r.mean() + 1e-3)
-            loss_ds = loss_ds + ((rn - target) ** 2).mean() - 0.5 * torch.log(r.mean() + 1e-3).clamp(max=0)
+            cosv = torch.cos(theta - PD[st][side])             # (B,)
+            if args.loss == "mse":
+                rn = r / (r.mean() + 1e-3)
+                loss_ds = loss_ds + ((rn - (1 + cosv)) ** 2).mean() - 0.5 * torch.log(r.mean() + 1e-3).clamp(max=0)
+            else:
+                # Pearson correlation between response and cos(theta - PD): 1 = perfect tuning.
+                rc = r - r.mean()
+                cc = cosv - cosv.mean()
+                corr = (rc * cc).sum() / (rc.norm() * cc.norm() + 1e-6)
+                depth = r.std() / (r.mean() + 1e-3)            # modulation depth, want ~1
+                loss_ds = loss_ds + (1 - corr) + 0.5 * torch.relu(0.5 - depth) - 0.2 * torch.log(r.mean() + 1e-3).clamp(max=0)
         rate_all = rates.mean()
         loss_rate = torch.relu(rates - 3.0).pow(2).mean() * 10 + torch.relu(0.02 - rate_all) * 10
-        loss_reg = sum(((p - init[k]) ** 2).mean() for k, p in model.named_parameters()) * 1.0
+        loss_reg = sum(((p - init[k]) ** 2).mean() for k, p in model.named_parameters()) * args.reg
         loss = loss_ds + loss_rate + loss_reg
         opt.zero_grad()
         loss.backward()
