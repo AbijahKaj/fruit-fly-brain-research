@@ -15,9 +15,11 @@ pooling scale. Stimuli on the real column lattice, one per batch slot:
   translate a fixed-size disc sweeping across one eye
   grating   wide-field drifting grating (what the optomotor loop sees)
 
-Loss per (type, side): population rate during the last third of an ipsilateral
-loom should exceed every other stimulus by a margin, with a selectivity index
-toward 1. Output: out/fitted-params.json with LC4/LPLC2 types (tau, bias,
+Loss per (type, side): the top-k cells' rate during the scored window of an
+ipsilateral loom should exceed every other stimulus by a margin, with a
+selectivity index toward 1. Top-k, not the population mean: only the cells whose
+receptive field sits at the loom centre see all four expanding edges, and that
+is what the giant fiber reads. Output: out/fitted-params.json with LC4/LPLC2 types (tau, bias,
 restV) and their input pairs appended; the browser picks them up as fitted.
 """
 from __future__ import annotations
@@ -26,11 +28,15 @@ from pathlib import Path
 import numpy as np
 import torch
 from graph_torch import Graph, FlyvisModel
+from train_optic import PD
 
 HERE = Path(__file__).parent
 DEG = math.pi / 180
 LC_TYPES = ["LC4", "LPLC2"]
 KINDS = ["loomL", "loomR", "recedeL", "recedeR", "transL", "transR", "grating", "grating"]
+# l/v of the looming object, seconds (Drosophila escapes are tested at 10-80 ms; slower here so
+# the edge speed stays inside what the stage 1 fit tuned T4/T5 for), and the scored window (last fraction).
+LV_MIN, LV_MAX, WIN = 0.1, 0.4, 0.4
 
 
 def angular_distance(az1, el1, az2, el2):
@@ -43,7 +49,7 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--device", default="cuda" if torch.cuda.is_available() else "cpu")
     ap.add_argument("--steps", type=int, default=800)
-    ap.add_argument("--T", type=int, default=100, help="time steps per stimulus")
+    ap.add_argument("--T", type=int, default=200, help="time steps per stimulus")
     ap.add_argument("--dt", type=float, default=0.005)
     ap.add_argument("--lr", type=float, default=1e-2)
     ap.add_argument("--max-el", type=float, default=90)
@@ -52,6 +58,10 @@ def main() -> None:
     ap.add_argument("--out", default=str(HERE / "out" / "fitted-params.json"))
     ap.add_argument("--margin", type=float, default=1.0, help="loom minus control rate margin")
     ap.add_argument("--reg", type=float, default=0.1)
+    ap.add_argument("--topk", type=int, default=5, help="cells per group that carry the readout")
+    ap.add_argument("--joint", action="store_true",
+                    help="unfreeze everything and keep the stage 1 grating DS loss alongside (lets the OFF pathway adapt)")
+    ap.add_argument("--ds-weight", type=float, default=1.0)
     args = ap.parse_args()
     dev = args.device
 
@@ -65,7 +75,7 @@ def main() -> None:
     g = g0.subgraph(keep)
     print(f"model: {g.n} units, {len(g.pre)} edges on {dev}")
     model = FlyvisModel(g, fv, device=dev, extra_post_types=LC_TYPES, extra_scale=0.001)
-    masks = model.grad_masks(LC_TYPES, train_extra_pairs_only=True)
+    masks = model.grad_masks(None if args.joint else LC_TYPES, train_extra_pairs_only=not args.joint)
     init = {k: v.detach().clone() for k, v in model.named_parameters()}
     n_extra = len(model.pairs) - model.n_fv_pairs
     print(f"trainable: {n_extra} input pairs onto {LC_TYPES}, plus their tau/bias")
@@ -127,7 +137,7 @@ def main() -> None:
                 d = angular_distance(az_t[:, None], el0, col_az[None, :], col_el[None, :])
             else:
                 # l/v looming: half-angle theta(t) = atan(l / (v (t_c - t))); l/v in 20-80 ms
-                lv = 0.02 + 0.06 * torch.rand((), device=dev)
+                lv = LV_MIN + (LV_MAX - LV_MIN) * torch.rand((), device=dev)
                 tc = dur * 1.02
                 if kind.startswith("loom"):
                     radius = torch.atan(lv / (tc - t_axis).clamp_min(1e-3))
@@ -142,16 +152,53 @@ def main() -> None:
         ext[:, :, lam_units_t] = rR[:, :, lam_cols] * lam_wt[None, None, :]
         return ext
 
+    # stage 1 readout (T4/T5 subtypes) for the joint mode
+    ds_groups = {}
+    for st in PD:
+        for side, sidx in [("L", 0), ("R", 1)]:
+            u = np.where((tn == st) & (g.unit_side == sidx))[0]
+            if len(u):
+                ds_groups[(st, side)] = torch.tensor(u, device=dev)
+    ds_rec = torch.tensor(np.concatenate([v.cpu().numpy() for v in ds_groups.values()]), device=dev) if ds_groups else None
+    ds_pos, off = {}, 0
+    for k, v in ds_groups.items():
+        ds_pos[k] = torch.arange(off, off + len(v), device=dev)
+        off += len(v)
+
+    def grating_batch(Bg: int):
+        theta = torch.rand(Bg, device=dev) * 2 * math.pi
+        lam = (15 + 25 * torch.rand(Bg, device=dev)) * DEG
+        tf = 0.5 + 2.5 * torch.rand(Bg, device=dev)
+        c = 0.5 + 0.5 * torch.rand(Bg, device=dev)
+        proj = col_az[None, :] * torch.cos(theta)[:, None] + col_el[None, :] * torch.sin(theta)[:, None]
+        phase = 2 * math.pi * (proj[None] / lam[None, :, None] - tf[None, :, None] * t_axis[:, None, None])
+        lum = 0.5 + 0.5 * c[None, :, None] * torch.sin(phase)
+        rR = pr["restOffset"] + pr["stimGain"] * lum
+        ext = torch.zeros(T, Bg, g.n, device=dev)
+        ext[:, :, lam_units_t] = rR[:, :, lam_cols] * lam_wt[None, None, :]
+        return ext, theta
+
+    def ds_loss(resp, theta):
+        total = 0.0
+        for (st, side), pos in ds_pos.items():
+            r = resp[:, pos].mean(1)
+            cosv = torch.cos(theta - PD[st][side])
+            rc, cc = r - r.mean(), cosv - cosv.mean()
+            corr = (rc * cc).sum() / (rc.norm() * cc.norm() + 1e-6)
+            depth = r.std() / (r.mean() + 1e-3)
+            total = total + (1 - corr) + 0.5 * torch.relu(0.5 - depth) - 0.2 * torch.log(r.mean() + 1e-3).clamp(max=0)
+        return total
+
     kind_idx = {k: [b for b, kk in enumerate(KINDS) if kk == k] for k in set(KINDS)}
     t0 = time.time()
     for step in range(args.steps):
         ext = make_ext()
         rates = model(ext, dt, record=rec.tolist())            # (T, B, nrec)
-        resp = rates[-T // 3:].mean(0)                          # (B, nrec)
+        resp = rates[-int(T * WIN):].mean(0)                    # (B, nrec)
         loss_sel = 0.0
         report = {}
         for (st, side), pos in rec_pos.items():
-            r = resp[:, pos].mean(1)                            # (B,)
+            r = resp[:, pos].topk(min(args.topk, len(pos)), dim=1).values.mean(1)   # (B,)
             ipsi = r[kind_idx[f"loom{side}"]].mean()
             others = torch.cat([r[kind_idx[k]] for k in KINDS if k != f"loom{side}"])
             worst = others.max()
@@ -160,7 +207,12 @@ def main() -> None:
             report[f"{st}{side}"] = (ipsi.item(), worst.item())
         loss_rate = torch.relu(rates - 5.0).pow(2).mean() * 10
         loss_reg = sum(((p - init[k]) ** 2 * masks[k]).mean() for k, p in model.named_parameters()) * args.reg
-        loss = loss_sel + loss_rate + loss_reg
+        loss_ds = torch.zeros((), device=dev)
+        if args.joint and ds_rec is not None:
+            gext, theta = grating_batch(8)
+            grates = model(gext, dt, record=ds_rec.tolist())
+            loss_ds = ds_loss(grates[T // 3:].mean(0), theta) * args.ds_weight
+        loss = loss_sel + loss_rate + loss_reg + loss_ds
         opt.zero_grad()
         loss.backward()
         for k, p in model.named_parameters():
@@ -170,7 +222,7 @@ def main() -> None:
         opt.step()
         if step % 10 == 0 or step == args.steps - 1:
             rep = " ".join(f"{k} {a:.2f}/{b:.2f}" for k, (a, b) in report.items())
-            print(f"step {step:5d} loss {loss.item():.4f} sel {float(loss_sel):.4f} | loom/worst: {rep}  {time.time() - t0:.0f}s", flush=True)
+            print(f"step {step:5d} loss {loss.item():.4f} sel {float(loss_sel):.4f} ds {loss_ds.item():.3f} | loom/worst: {rep}  {time.time() - t0:.0f}s", flush=True)
 
     # resting membrane under grey for the browser's homeostat target
     with torch.no_grad():

@@ -65,6 +65,7 @@ export interface OpticParams {
   rMax: number;
   loomGain: number;
   loomThreshold: number;
+  loomTopK: number;
 }
 
 export class OpticBrain implements Brain {
@@ -92,6 +93,8 @@ export class OpticBrain implements Brain {
     loomGain: 0,
     /** Rate above the calibrated rest that counts as looming (dead zone). */
     loomThreshold: 0.02,
+    /** Cells per eye that carry the looming readout (the best-placed ones; matches train_loom.py). */
+    loomTopK: 5,
   };
   readonly net: NetBackend;
   calibrated = false;
@@ -119,6 +122,7 @@ export class OpticBrain implements Brain {
   /** Looming detectors per eye (LC4 + LPLC2), with receptive-field centres from their presynaptic columns. */
   readonly lc: { L: Int32Array; R: Int32Array; az: Float32Array; el: Float32Array };
   private loomRest = { L: 0, R: 0 };
+  private topBuf = new Float64Array(0);
   loom = { L: 0, R: 0 };
   readonly groups: Record<string, Int32Array>;
   /** Per-ommatidium T4a and T4b unit lists for the HUD direction map. */
@@ -285,7 +289,7 @@ export class OpticBrain implements Brain {
         await this.net.settle(0.5);
       }
       this.offset = this.readoutDiff();
-      this.loomRest = { L: this.net.meanRate(this.lc.L), R: this.net.meanRate(this.lc.R) };
+      this.loomRest = { L: this.topkRate(this.lc.L), R: this.topkRate(this.lc.R) };
       this.calibrated = true;
     });
   }
@@ -342,8 +346,8 @@ export class OpticBrain implements Brain {
     if (this.calibrated) this.net.step(dt);
 
     const diff = this.readoutDiff() - this.offset;
-    this.loom.L = Math.max(0, this.net.meanRate(this.lc.L) - this.loomRest.L - p.loomThreshold);
-    this.loom.R = Math.max(0, this.net.meanRate(this.lc.R) - this.loomRest.R - p.loomThreshold);
+    this.loom.L = Math.max(0, this.topkRate(this.lc.L) - this.loomRest.L - p.loomThreshold);
+    this.loom.R = Math.max(0, this.topkRate(this.lc.R) - this.loomRest.R - p.loomThreshold);
     // Looming on the left eye -> turn right (turn > 0 = yaw right).
     const avoid = p.loomGain * (this.loom.L - this.loom.R);
     const raw = this.calibrated ? p.readoutSign * p.outputGain * diff + avoid : 0;
@@ -352,6 +356,28 @@ export class OpticBrain implements Brain {
       left: clamp01(p.baseAmp + this.turn / 2),
       right: clamp01(p.baseAmp - this.turn / 2),
     };
+  }
+
+  /** Mean rate of the loomTopK most active units in the list. */
+  private topkRate(idx: Int32Array): number {
+    const k = Math.min(this.params.loomTopK, idx.length);
+    if (k === 0) return 0;
+    const top = this.topBuf.length === k ? this.topBuf : (this.topBuf = new Float64Array(k));
+    top.fill(-Infinity);
+    const r = this.net.r;
+    for (let j = 0; j < idx.length; j++) {
+      const v = r[idx[j]!]!;
+      if (v <= top[k - 1]!) continue;
+      let p = k - 1;
+      while (p > 0 && top[p - 1]! < v) {
+        top[p] = top[p - 1]!;
+        p--;
+      }
+      top[p] = v;
+    }
+    let s = 0;
+    for (let j = 0; j < k; j++) s += top[j]!;
+    return s / k;
   }
 
   /** Left minus right at the chosen readout level. */
