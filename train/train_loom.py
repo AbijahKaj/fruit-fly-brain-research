@@ -14,6 +14,9 @@ pooling scale. Stimuli on the real column lattice, one per batch slot:
   recede    the same disc shrinking
   translate a fixed-size disc sweeping across one eye
   grating   wide-field drifting grating (what the optomotor loop sees)
+  static    a static grating: motion detectors and looming detectors must stay quiet
+            (the rendered scene is full of static contrast; without this term the
+            fitted T4/T5 sit at the rate ceiling at rest)
 
 Loss per (type, side): the top-k cells' rate during the scored window of an
 ipsilateral loom should exceed every other stimulus by a margin, with a
@@ -33,7 +36,9 @@ from train_optic import PD
 HERE = Path(__file__).parent
 DEG = math.pi / 180
 LC_TYPES = ["LC4", "LPLC2"]
-KINDS = ["loomL", "loomR", "recedeL", "recedeR", "transL", "transR", "grating", "grating"]
+KINDS = ["loomL", "loomR", "recedeL", "recedeR", "transL", "transR", "grating", "grating", "static"]
+# Half of the object trials play over a static high-contrast grating instead of grey, as in the scene.
+P_STRUCTURED_BG = 0.5
 # l/v of the looming object, seconds (Drosophila escapes are tested at 10-80 ms; slower here so
 # the edge speed stays inside what the stage 1 fit tuned T4/T5 for), and the scored window (last fraction).
 LV_MIN, LV_MAX, WIN = 0.1, 0.4, 0.4
@@ -84,15 +89,23 @@ class Stimuli:
         T, dev, t_axis, dur = self.T, self.dev, self.t_axis, self.dur
         col_az, col_el = self.col_az, self.col_el
         lum = torch.full((T, len(kinds), len(self.g.col_az)), 0.5, device=dev)
+
+        def grating(tf, contrast):
+            theta = torch.rand((), device=dev) * 2 * math.pi
+            lam = (15 + 25 * torch.rand((), device=dev)) * DEG
+            proj = col_az * torch.cos(theta) + col_el * torch.sin(theta)
+            phase = 2 * math.pi * (proj[None] / lam - tf * t_axis[:, None])
+            return 0.5 + 0.5 * contrast * torch.sin(phase)
+
         for b, kind in enumerate(kinds):
             if kind == "grating":
-                theta = torch.rand((), device=dev) * 2 * math.pi
-                lam = (15 + 25 * torch.rand((), device=dev)) * DEG
-                tf = 0.5 + 2.5 * torch.rand((), device=dev)
-                proj = col_az * torch.cos(theta) + col_el * torch.sin(theta)
-                phase = 2 * math.pi * (proj[None] / lam - tf * t_axis[:, None])
-                lum[:, b] = 0.5 + 0.5 * torch.sin(phase)
+                lum[:, b] = grating(0.5 + 2.5 * torch.rand((), device=dev), 0.5 + 0.5 * torch.rand((), device=dev))
                 continue
+            if kind == "static":
+                lum[:, b] = grating(0.0, 0.5 + 0.5 * torch.rand((), device=dev))
+                continue
+            if torch.rand(()) < P_STRUCTURED_BG:
+                lum[:, b] = grating(0.0, 0.5 + 0.5 * torch.rand((), device=dev))
             side = 1 if kind.endswith("R") else 0
             az0, el0 = self.disc_centre(side)
             if kind.startswith("trans"):
@@ -111,7 +124,7 @@ class Stimuli:
                 radius = radius.clamp(2 * DEG, 70 * DEG)
                 d = angular_distance(az0, el0, col_az[None, :], col_el[None, :]).expand(T, -1)
             inside = (d < radius[:, None]).float()
-            lum[:, b] = 0.5 * (1 - inside) + 0.05 * inside
+            lum[:, b] = lum[:, b] * (1 - inside) + 0.05 * inside
         return self.to_ext(lum)
 
     def gratings(self, Bg: int):
@@ -166,6 +179,7 @@ def main() -> None:
                     help="unfreeze everything and keep the stage 1 grating DS loss alongside (lets the OFF pathway adapt)")
     ap.add_argument("--ds-weight", type=float, default=1.0)
     ap.add_argument("--ds-batch", type=int, default=4)
+    ap.add_argument("--static-weight", type=float, default=2.0, help="penalty on T4/T5 rate under a static grating")
     args = ap.parse_args()
     dev = args.device
 
@@ -226,12 +240,21 @@ def main() -> None:
             total = total + (1 - corr) + 0.5 * torch.relu(0.5 - depth) - 0.2 * torch.log(r.mean() + 1e-3).clamp(max=0)
         return total
 
+    # record T4/T5 too, so the static control can penalise motion detectors that respond to static contrast
+    all_rec = torch.cat([rec, ds_rec]) if ds_rec is not None else rec
+    ds_off = len(rec)
     kind_idx = {k: [b for b, kk in enumerate(KINDS) if kk == k] for k in set(KINDS)}
     t0 = time.time()
     for step in range(args.steps):
         ext = stim.kinds(KINDS)
-        rates = model(ext, dt, record=rec.tolist())            # (T, B, nrec)
-        resp = rates[-int(T * WIN):].mean(0)                    # (B, nrec)
+        rates = model(ext, dt, record=all_rec.tolist())        # (T, B, nrec + nds)
+        resp = rates[-int(T * WIN):].mean(0)                    # (B, nrec + nds)
+        loss_static = torch.zeros((), device=dev)
+        if ds_rec is not None:
+            # T4/T5 population under the static grating: mean rate above 0.15 is penalised
+            for (st, side), pos in ds_pos.items():
+                rs = resp[kind_idx["static"]][:, ds_off + pos].mean()
+                loss_static = loss_static + torch.relu(rs - 0.15) * args.static_weight
         loss_sel = 0.0
         report = {}
         for (st, side), pos in rec_pos.items():
@@ -249,7 +272,7 @@ def main() -> None:
             gext, theta = stim.gratings(args.ds_batch)
             grates = model(gext, dt, record=ds_rec.tolist())
             loss_ds = ds_loss(grates[T // 3:].mean(0), theta) * args.ds_weight
-        loss = loss_sel + loss_rate + loss_reg + loss_ds
+        loss = loss_sel + loss_rate + loss_reg + loss_ds + loss_static
         opt.zero_grad()
         loss.backward()
         for k, p in model.named_parameters():
@@ -259,7 +282,7 @@ def main() -> None:
         opt.step()
         if step % 10 == 0 or step == args.steps - 1:
             rep = " ".join(f"{k} {a:.2f}/{b:.2f}" for k, (a, b) in report.items())
-            print(f"step {step:5d} loss {loss.item():.4f} sel {float(loss_sel):.4f} ds {loss_ds.item():.3f} | loom/worst: {rep}  {time.time() - t0:.0f}s", flush=True)
+            print(f"step {step:5d} loss {loss.item():.4f} sel {float(loss_sel):.4f} ds {loss_ds.item():.3f} static {loss_static.item():.3f} | loom/worst: {rep}  {time.time() - t0:.0f}s", flush=True)
 
     # resting membrane under grey for the browser's homeostat target
     with torch.no_grad():
