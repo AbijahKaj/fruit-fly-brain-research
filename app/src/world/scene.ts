@@ -3,7 +3,7 @@
  *
  * A striped drum (the classic optomotor stimulus) that re-centres on the
  * fly every frame so translation never reaches the wall, a checkerboard
- * ground for translational flow, and a few boxes for later milestones.
+ * ground for translational flow, pillars to avoid, and an approaching object.
  */
 import * as THREE from "three";
 

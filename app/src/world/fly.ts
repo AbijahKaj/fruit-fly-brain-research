@@ -2,7 +2,7 @@
  * Layer 1 (body): rigid-body state of the fly and its integration.
  *
  * Yaw is a rotation about +Y (positive = left). Altitude is held constant
- * for milestone 1; pitch is unused. Roll is cosmetic (bank into turns).
+ * for now; pitch is unused. Roll is cosmetic (bank into turns).
  */
 import * as THREE from "three";
 import type { BodyForces } from "../motor/wings";

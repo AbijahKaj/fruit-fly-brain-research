@@ -1,6 +1,6 @@
-# app — milestones 1 to 4
+# app — the closed loop
 
-Closed loop with a choice of brains. See the root README roadmap.
+The 3D scene, the fly's eye, the per-column MaleCNS optic lobe (optic-v2) and the wing model, closed into one loop in the browser. See the root README for the roadmap.
 
 ```
 npm install
@@ -10,24 +10,20 @@ npm run build    # typecheck + bundle
 
 | Layer | Path | What |
 | --- | --- | --- |
-| 1 world + body | `src/world/scene.ts`, `src/world/fly.ts` | Striped drum, ground, obstacles, fly rigid body |
-| 2 eye | `src/eye/ommatidia.ts`, `src/eye/eye.ts`, `src/eye/photoreceptor.ts` | ~750 ommatidia per eye, six-camera render + gather, log luminance + high-pass |
-| 3 brain | `src/brain/types.ts` | `Brain` interface: photoreceptor arrays in, wing amplitudes out |
-| | `src/brain/hr.ts` | Hassenstein–Reichardt correlator (stands in for T4/T5 until milestone 3) |
-| | `src/brain/stub.ts` | Milestone 1: correlator + P controller, no connectome |
-| | `src/brain/graph.ts`, `src/brain/rate-net.ts` | Shared graph JSON loader, CSR build, rate-model runtime on flat typed arrays |
-| | `src/brain/connectome.ts` | Milestone 2: correlator → HS/H2 drive → MaleCNS graph → DNg02 L/R readout |
-| | `src/brain/optic.ts` | Milestones 3–4: per-column optic lobe. Virtual photoreceptor per column → lamina → real graph → T4/T5 → lobula plate (HS readout) and → LC4/LPLC2 (looming readout) |
-| 1 world | `src/world/loom.ts` | An approaching or stationary object (the looming stimulus), retinal or world-fixed; the pillar course lives in `scene.ts` |
-| | `src/brain/flyvis.ts` | Applies flyvis (Lappalainen 2024) per-type tau/bias and per-pair strengths to the graph |
+| 1 world + body | `src/world/scene.ts`, `src/world/fly.ts`, `src/world/loom.ts` | Striped drum, ground, pillars and a 40-pillar course, fly rigid body, an approaching or stationary object (the looming stimulus) |
+| 2 eye | `src/eye/ommatidia.ts`, `src/eye/eye.ts` | One ommatidium per optic-lobe column at the connectome's own directions (~885 per eye), six-camera render + gather |
+| 3 brain | `src/brain/types.ts` | `Brain` interface: luminance per column in, wing amplitudes out |
+| | `src/brain/optic.ts` | The optic-v2 brain: virtual photoreceptor per column → lamina → real graph → T4/T5 → lobula plate (HS readout) and → LC4/LPLC2 (looming readout) |
+| | `src/brain/graph.ts`, `src/brain/rate-net.ts` | Binary graph loader, CSR build, rate-model runtime on flat typed arrays |
+| | `src/brain/flyvis.ts` | Applies the fitted per-type tau/bias and per-pair strengths (flyvis format) to the graph |
 | | `src/brain/net-backend.ts`, `src/brain/gpu-net.ts` | Network runtime interface; WebGPU backend (two WGSL compute passes per Euler step, state stays on the GPU) |
 | | `src/brain/net.worker.ts`, `src/brain/remote-net.ts` | CPU fallback: the same RateNet in a Web Worker |
 | 4 motor | `src/motor/wings.ts` | Wing amplitudes → thrust, yaw torque, bank |
 | glue | `src/sim/loop.ts`, `src/ui/hud.ts`, `src/main.ts` | Frame loop, eye + network HUD, wiring |
 
-Graph data in `public/graphs/`: `flight-v1.json` (milestone 2), `optic-v2.json` + `.bin` (milestone 3, from `data/extract_v2.py`), `flyvis-params.json` (from `train/dump_flyvis_params.py`); `fitted-params.json` is picked up automatically when present.
+Graph data in `public/graphs/`: `optic-v2.json` + `.bin` (from `data/extract_v2.py`), `fitted-params.json` (from `train/`), `flyvis-params.json` (the raw flyvis transfer, used only if no fitted file is present).
 
-Controls: `[` `]` drum speed, space stops the drum, `b` cycles off / stub / connectome / optic, `r` resets, `v` cycles the eye HUD: luminance, photoreceptor high-pass, T4a − T4b per column, `l` launches or stops a looming object. Console: `fly.loom(azDeg, opts)`, `fly.cruise(0.8)` (forward flight through the pillar field, `fly.collisions` counts contacts), `fly.calibrateSides()`. Sliders: net gain (global weight multiplier), out gain, readout level (DNg02 or steering MNs), side mapping. `net on` picks WebGPU or the CPU worker for the optic brain.
+Controls: `[` `]` drum speed, space stops the drum, `b` brain on/off (off = hover), `r` resets, `v` switches the eye HUD between luminance and T4a − T4b per column, `l` launches or stops a looming object. Sliders: net gain (global weight multiplier), loom gain, out gain (steering readout). `net on` picks WebGPU or the CPU worker. Console: `fly.loom(azDeg, opts)`, `fly.cruise(0.8)` (forward flight through the pillar field, `fly.collisions` counts contacts), `fly.calibrateSides()`, `fly.brain.params`.
 
 ## Runtime shape
 
@@ -37,7 +33,6 @@ Controls: `[` `]` drum speed, space stops the drum, `b` cycles off / stub / conn
 | --- | --- | --- |
 | `gpu` (default) | WebGPU compute, `gpu-net.ts` | 0.86 ms on an Apple M-series GPU while the scene renders; identical to the CPU result to float32 rounding (max rate difference 3e-5 after 100 steps) |
 | `worker` | Web Worker, `net.worker.ts` | 2.9–3.5 ms in V8, i.e. 1.4x headroom at 4 ms substeps, none once the browser is busy |
-| main thread | `rate-net.ts` | milestone 2 only (1k units, well under a millisecond) |
 
 The GPU backend keeps `x`, `r`, `ext`, `bias`, CSR and weights on the device. Each frame's substeps are one command buffer with two dispatches per step: `drive` sums in-edges in chunks of 64 (so pooling cells with tens of thousands of inputs do not stall a workgroup), `integrate` updates one unit per thread. Submits never wait; three staging buffers rotate for readback of `r`, so the main thread sees rates one to two frames old while the network itself stays in real time. `settle` and the homeostat take the device exclusively and wait. GPU time comes from timestamp queries when the adapter has them.
 
@@ -45,9 +40,9 @@ Why it matters for the closed loop: the worker, when it cannot keep up, integrat
 
 TensorFlow.js was considered and skipped: the model is a sparse graph, not dense tensors. A dense weight matrix would be 65.8k² floats (17 GB); the gather/segment-sum route through tfjs costs several dispatches plus a sync per step. A 60-line WGSL kernel is faster and keeps the graph format.
 
-## Milestone 3 result
+## Optomotor response
 
-The 65.8k-unit optic lobe runs on WebGPU (or in a worker) at 4 ms substeps in real time. The eye samples the scene at the real 1,771 column directions, one virtual photoreceptor per column drives L1/L2/L3, and the network runs with parameters fitted on the GPU box (`public/graphs/fitted-params.json`, from `train/train_optic.py`).
+The 65.8k-unit optic lobe runs on WebGPU (or in a worker) at 4 ms substeps in real time. The eye samples the scene at the real 1,771 column directions, one virtual photoreceptor per column drives L1/L2/L3, and the network runs with parameters fitted on the GPU box (`public/graphs/fitted-params.json`, from `train/`).
 
 Closed loop, HS readout, out gain 4 (fly reset before each speed, mean yaw over 2 s after 3 s):
 
@@ -61,15 +56,15 @@ Closed loop, HS readout, out gain 4 (fly reset before each speed, mean yaw over 
 
 Open loop the HS cells lateralise (left 1.5 / right 0 for one rotation, 1.9 / 3.4 for the other), and the T4 view (`v` twice) shows per-column T4a − T4b responses flipping with drum direction on both eyes.
 
-What is hand-written here: the virtual photoreceptor, Weber adaptation, the pooling-cell input scale (`lptcScale`, cells that receive thousands of T4/T5 or LC synapses), the homeostatic rest for those pooling cells, and the HS → wing mapping. Everything from the lamina to the lobula plate is synapse counts, fitted per-type and per-pair parameters, and the connectome's own retinotopy.
+What is hand-written here: the virtual photoreceptor, Weber adaptation, the pooling-cell input scale (`lptcScale`, cells that receive thousands of T4/T5 or LC synapses), the homeostatic rest for those pooling cells, the tonic drive on DNg02, and the HS → wing mapping with its drum-calibrated per-side gains. Everything from the lamina to the lobula plate is synapse counts, fitted per-type and per-pair parameters, and the connectome's own retinotopy.
 
-**Open:** with the DNg02 readout the fly does not turn. In this graph DNg02 sits at a constant rate: the central-brain bridge units run at the default synapse scale and its posterior-slope relay (PS080) is nearly silent under strong inhibition from PLP034. Calibrating that hop (the milestone-2 recipe, at this graph's operating point) is the next piece of work.
+**Open:** the steering readout sits at HS rather than at the descending neurons. In this graph DNg02 sits at a constant rate: the central-brain bridge units run at the default synapse scale and its posterior-slope relay (PS080, GABAergic) is nearly silent under strong inhibition from PLP034. `params.readout = "dng02"` selects that readout for the calibration work.
 
-## Milestone 4, first part: looming avoidance
+## Looming avoidance
 
 The looming pathway of the connectome, LC4 and LPLC2 converging on the giant fiber (DNp01) and DNp02–06, is in `optic-v2`. Each cell's receptive-field centre is derived from its presynaptic columns (synapse-weighted mean direction): 165 left / 146 right cells, azimuth 17–150° per side.
 
-With the milestone 3 parameters the LC cells did nothing on approach: their inputs sat at the pooling scale, and worse, the fitted T4/T5 answered *static* contrast (hundreds of cells at the rate ceiling in the rendered scene at rest). Two more fitting stages on the 5090 fixed both (`train/train_loom.py`, see `train/README.md`): looming / receding / translating discs and static gratings over structured backgrounds, jointly with the milestone 3 grating objective. Result on the trainer's stimuli: looming selectivity 0.97–1.0 for all four LC groups, zero response to gratings, receding and translating objects, T4/T5 quiet under static patterns, direction selectivity kept (mean DSI 0.66, tuning correlation 0.96).
+With only the grating fit the LC cells did nothing on approach: their inputs sat at the pooling scale, and worse, the fitted T4/T5 answered *static* contrast (hundreds of cells at the rate ceiling in the rendered scene at rest). Two more fitting stages on the 5090 fixed both (`train/train_loom.py`, see `train/README.md`): looming / receding / translating discs and static gratings over structured backgrounds, jointly with the grating objective. Result on the trainer's stimuli: looming selectivity 0.97–1.0 for all four LC groups, zero response to gratings, receding and translating objects, T4/T5 quiet under static patterns, direction selectivity kept (mean DSI 0.66, tuning correlation 0.96).
 
 In the scene (WebGPU, `fitted-params.json` = stage `loom6`), open loop, retinal looming sphere at 5 units/s, top-5 LC readout above rest:
 
@@ -94,17 +89,3 @@ Head-on approaches are the open case: the LC receptive fields start 17° off the
 Hand-written here: the top-k population readout per eye (the trainer scores the same top-5), the loom gain / tie-break / brake, the collision counter. LC4/LPLC2 tau, bias and every input synapse type are fitted; their receptive fields are the wiring's.
 
 **Open, and what was tried.** During forward flight both HS populations rise, more on the side with nearer objects, and the optomotor loop reads that as a rotation: the fly turns toward the pillars (about 110° over 7 s of cruise). Real flies separate rotation from translation. Three attempts did not transfer to the scene and are recorded in `train/README.md`: a hand-written common-mode arbitration in the motor layer (the unfitted HS respond to both directions, so the common-mode test fires on rotation too), an HS fit for rotation selectivity (impossible with this graph's purely ipsilateral HS inputs), and an HS fit for the classic bidirectional response with fast membranes (converged on the trainer's ray-cast flow fields, but in the scene every drum direction produced a left turn). The shipped state keeps the unfitted HS, a fixed per-side offset, and drum-calibrated per-side gains; the drum is followed at ω = +1 / +2 (0.7 / 1.6) and weakly at −1 / −2.
-
-## Milestone 2 result
-
-With the connectome brain, drum rotation direction predicts the DNg02 left/right rate difference and the closed loop stabilizes:
-
-| drum ω (rad/s) | DNg02 L − R | fly yaw rate |
-| --- | --- | --- |
-| 0.5 | +0.005 | 0.15 |
-| 1.0 | +0.026 | 0.49 |
-| 2.0 | +0.066 | 1.12 |
-| −1.0 | −0.034 | −0.49 |
-| −2.0 | −0.079 | −1.19 |
-
-Hand-written pieces: correlator, LPTC injection, tonic DNg02 drive, readout gain and side mapping. Everything between HS and DNg02 is synapse counts and predicted signs. See `src/brain/connectome.ts` header for the side-mapping assumption.

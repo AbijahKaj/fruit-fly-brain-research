@@ -1,25 +1,25 @@
 /**
- * Layer 3 (brain), milestone 3: the real per-column optic lobe.
+ * Layer 3 (brain): the per-column MaleCNS optic lobe (optic-v2).
  *
  *   luminance per column -> one virtual photoreceptor (flyvis R1-R6 params)
  *     -> histaminergic drive on the lamina (L1, L2, L3) of that column
  *     -> the extracted graph: lamina -> medulla -> T4/T5 -> lobula plate
- *        -> posterior slope -> DNg02 -> VNC -> wing MNs
- *     -> readout: HS left vs right (default), or DNg02 left vs right
+ *        -> posterior slope -> DNg02 -> VNC -> wing MNs, and -> LC4/LPLC2 -> DNp
+ *     -> readouts: HS left vs right (optomotor), LC4/LPLC2 per eye (looming)
  *
- * Status: with fitted parameters the loop closes through the lobula plate
- * (HS readout). The HS -> posterior slope -> DNg02 hop that worked in the
- * small milestone-2 graph is not yet calibrated in this graph: the central
- * brain runs at the default synapse scale and DNg02 sits at a constant rate.
+ * Nothing in the motion pathway is hand-written: direction selectivity comes
+ * from the wiring (Mi9 leading, Mi4 trailing) plus per-type time constants,
+ * biases and per-pair synapse strengths fitted on the GPU box (train/). Units
+ * without fitted parameters (most lobula-plate pooling cells) get a
+ * homeostatic resting bias.
  *
- * Compared with milestone 2 the hand-written correlator is gone. Direction
- * selectivity has to come from the wiring (Mi9 leading, Mi4 trailing) plus
- * per-type time constants, biases and per-pair synapse strengths. Those come
- * from flyvis (see flyvis.ts); units flyvis does not cover (lobula plate,
- * central brain) get a homeostatic resting bias.
+ * Open: the HS -> posterior slope -> DNg02 hop is not calibrated in this graph
+ * (the central brain runs at the default synapse scale and DNg02 sits at a
+ * constant rate), so the steering readout sits at HS. `readout: "dng02"` is
+ * kept for that work.
  *
- * The network runs on WebGPU (gpu-net.ts) or in a Web Worker (remote-net.ts); rates seen here lag by
- * one worker round trip.
+ * The network runs on WebGPU (gpu-net.ts) or in a Web Worker (remote-net.ts);
+ * rates seen here lag by one round trip.
  */
 import type { Ommatidia } from "../eye/ommatidia";
 import { unitsWhere, typeName, sideName, type Graph } from "./graph";
@@ -50,7 +50,7 @@ export interface OpticParams {
   readout: "dng02" | "hs";
   /** Tonic drive on lobula plate tangential cells. */
   lptcBias: number;
-  /** Flight-state drive on DNg02 (see connectome.ts). */
+  /** Tonic flight-state drive on DNg02: its posterior-slope input (PS080) is GABAergic, so without a tonic drive inhibition has nothing to act on. */
   dnBias: number;
   /** Homeostatic resting membrane target for units flyvis does not cover. */
   restTarget: number;
@@ -73,7 +73,6 @@ export interface OpticParams {
 
 export class OpticBrain implements Brain {
   readonly name: string;
-  readonly lattice = "columns" as const;
   readonly params: OpticParams = {
     stimGain: 1,
     adaptTau: 1.0,
@@ -277,7 +276,7 @@ export class OpticBrain implements Brain {
     // resting membrane value under grey). Fitted types (including LC4/LPLC2 after train_loom.py)
     // carry their own bias and are left alone; a homeostat would re-centre them on the scene's
     // static contrast and cancel the fitted operating point.
-    // The central brain and VNC run as in milestone 2: no bias, DNg02 tonic drive only.
+    // The central brain and VNC run unbiased: DNg02 tonic drive only.
     const fitted = fv.source.startsWith("fitted");
     const homeo: number[] = [];
     for (let i = 0; i < graph.n; i++) {
@@ -369,7 +368,6 @@ export class OpticBrain implements Brain {
     const p = this.params;
     this.net.setParams({ wScale: p.wScale, netDt: p.netDt });
     this.injectTonic();
-    if (!input.lumLeft || !input.lumRight) throw new Error("OpticBrain needs raw luminance input");
     this.injectEye(input.lumLeft, this.meanL, this.vR_L, this.lamPtrL, this.lamIdxL, this.lamWL, dt);
     this.injectEye(input.lumRight, this.meanR, this.vR_R, this.lamPtrR, this.lamIdxR, this.lamWR, dt);
     this.adapted = true;

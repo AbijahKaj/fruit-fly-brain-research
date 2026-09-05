@@ -81,14 +81,6 @@ export function buildCSRWeighted(n: number, m: number, epre: Int32Array, epost: 
   return { n, indptr, pre, w };
 }
 
-interface V1JSON {
-  version: 1;
-  source: string;
-  units: { count: number; bodyId: number[]; type: number[]; side: string[]; role: string[]; sign: number[] };
-  types: GraphType[];
-  edges: { count: number; pre: number[]; post: number[]; weight: number[] };
-}
-
 interface ArrayDesc {
   dtype: "int8" | "int16" | "int32" | "float32" | "float64";
   offset: number;
@@ -118,41 +110,6 @@ const CTOR = {
 function view<K extends keyof typeof CTOR>(buf: ArrayBuffer, d: ArrayDesc, dtype: K): InstanceType<(typeof CTOR)[K]> {
   if (d.dtype !== dtype) throw new Error(`array dtype ${d.dtype}, expected ${dtype}`);
   return new CTOR[dtype](buf, d.offset, d.length) as InstanceType<(typeof CTOR)[K]>;
-}
-
-const emptyColumns = (): Columns => ({
-  count: 0,
-  side: new Int8Array(0),
-  h1: new Int16Array(0),
-  h2: new Int16Array(0),
-  az: new Float32Array(0),
-  el: new Float32Array(0),
-});
-
-export function fromV1(j: V1JSON): Graph {
-  const n = j.units.count;
-  const roleIdx = (r: string): number => {
-    const i = (ROLES as readonly string[]).indexOf(r);
-    if (i < 0) throw new Error(`unknown role ${r}`);
-    return i;
-  };
-  return {
-    version: 1,
-    source: j.source,
-    n,
-    m: j.edges.count,
-    types: j.types,
-    type: Int32Array.from(j.units.type),
-    side: Int8Array.from(j.units.side, (s) => Math.max(0, (SIDES as readonly string[]).indexOf(s))),
-    role: Int8Array.from(j.units.role, roleIdx),
-    sign: Int8Array.from(j.units.sign),
-    col: new Int32Array(n).fill(-1),
-    bodyId: Float64Array.from(j.units.bodyId),
-    pre: Int32Array.from(j.edges.pre),
-    post: Int32Array.from(j.edges.post),
-    weight: Float32Array.from(j.edges.weight),
-    columns: emptyColumns(),
-  };
 }
 
 export function fromV2(h: V2Header, buf: ArrayBuffer): Graph {
@@ -191,13 +148,13 @@ export function fromV2(h: V2Header, buf: ArrayBuffer): Graph {
   };
 }
 
-/** Load either form by URL stem or .json path. */
+/** Load a graph by URL stem or .json path (the .bin sits next to the header). */
 export async function loadGraph(url: string): Promise<Graph> {
   const jsonUrl = url.endsWith(".json") ? url : `${url}.json`;
   const res = await fetch(jsonUrl);
   if (!res.ok) throw new Error(`failed to load graph ${jsonUrl}: ${res.status}`);
-  const j = (await res.json()) as V1JSON | V2Header;
-  if (j.version === 1) return fromV1(j);
+  const j = (await res.json()) as V2Header;
+  if (j.version !== 2) throw new Error(`unsupported graph version ${String(j.version)}`);
   const binUrl = jsonUrl.replace(/\.json$/, ".bin");
   const bin = await fetch(binUrl);
   if (!bin.ok) throw new Error(`failed to load graph ${binUrl}: ${bin.status}`);

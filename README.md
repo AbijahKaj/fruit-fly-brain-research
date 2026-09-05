@@ -28,12 +28,12 @@ The connectome is static. Dynamics, neurotransmitters, and biomechanics are not 
 
 ## How the pieces fit
 
-Four layers. Every milestone keeps the whole loop running; a layer starts as a stub and is later replaced by real wiring.
+Four layers, one loop. Only the brain layer carries connectome wiring; the others are deliberately simple.
 
 ```
    1. WORLD + BODY          2. EYE                 3. BRAIN                 4. MOTOR
    three.js scene      ->   offscreen render   ->  connectome graph    ->   DN rates -> wing
-   rigid-body fly           750–885 samples/eye    lamina in, DNs out       amplitude L/R
+   rigid-body fly           ~885 columns/eye       lamina in, DNs out       amplitude L/R
    thrust, roll, yaw        log lum + high-pass    WebGPU (worker fallback) thrust, roll, yaw
          ^                                                                       |
          +---------------------------- pose update <-----------------------------+
@@ -57,7 +57,7 @@ Hosted MaleCNS scene (Chrome):
 | [`a-connectomics-milestone-mapping-the-complete-male-fruit-fly-brain.md`](a-connectomics-milestone-mapping-the-complete-male-fruit-fly-brain.md) | Saved [Google Research blog](https://research.google/blog/a-connectomics-milestone-mapping-the-complete-male-fruit-fly-brain/) (2026-09-03) |
 | [`research-notes.md`](research-notes.md) | Paper, numbers, companion papers, download URLs |
 | [`sources/neuroglancer.md`](sources/neuroglancer.md) | How to use Neuroglancer on this data |
-| [`app/`](app/) | TypeScript web app: 3D scene, eye sampling, graph runtime on WebGPU with a Web Worker fallback, HUD (milestones 1–3 done) |
+| [`app/`](app/) | TypeScript web app: 3D scene, eye sampling, graph runtime on WebGPU with a Web Worker fallback, HUD |
 | [`data/`](data/) | Python extraction from the public MaleCNS tables → graph files, with reports of static checks |
 | [`train/`](train/) | PyTorch side: flyvis parameter transfer, reference simulations, the DS trainer for the GPU box |
 
@@ -74,45 +74,30 @@ The scripts in [`data/`](data/) pull the annotation, transmitter, and 1.1 GB wei
 
 ## Roadmap
 
-**0. Research base** — this folder. Papers, Neuroglancer, what “flight circuit” means.
+One system, optic-v2: the per-column MaleCNS optic lobe with its path to the wings, fitted on the GPU box, running in the browser. What follows is what it does, what it is missing, and what comes after.
 
-**1. Loop with a stub brain** — world, eye, and motor layers with a hand-written controller in place of the connectome.
+**Done**
 
-- three.js scene, fly as a rigid body, stripe drum and a few obstacles
-- two wide-field offscreen cameras (or a cube map) sampled at ommatidia directions into ~750 values per eye
-- photoreceptor stage: log luminance + temporal high-pass
-- wing amplitude L/R → thrust, roll, yaw → pose update
-- done when: the stub controller holds heading against drum rotation at a stable frame budget
-- **status: done.** Yaw rate follows the drum at ~70% of its speed, 115–120 fps.
+- **World, eye, body.** three.js scene with a striped drum, pillars and an approaching object; the eye samples a six-face render at the connectome's own 1,771 column directions; a rigid-body fly with wing amplitude L/R → thrust, yaw, bank. Runs at 100–120 fps.
+- **The graph.** 65.8k units, 1.97M edges: every flyvis cell type that exists in MaleCNS for every column of both eyes, the lobula plate, the looming LCs, the posterior-slope relays, DNg02 and DNp, VNC relays, wing and haltere motor neurons. Retinotopy is calibrated from the wiring (T4 Mi9→Mi4 offsets). Extraction in [`data/`](data/).
+- **The runtime.** The rate model on WebGPU, 0.86 ms per 4 ms substep with the scene rendering (CPU worker fallback, 3 ms). One graph format for the browser and the PyTorch trainer.
+- **Direction selectivity.** flyvis parameters transfer (synapse counts agree within ~30%) but give zero direction selectivity on the real per-cell wiring. Fitting per-type tau/bias and per-pair strength on the 5090 gives DSI 0.66 and tuning correlation 0.96 across all 16 T4/T5 subtype × eye groups, with the correct preferred directions, and motion detectors that stay quiet under static contrast. The fly follows the drum with the turn read at the HS cells.
+- **Looming avoidance.** LC4/LPLC2 fitted in the same way: selectivity ~1.0 for approaching objects, nothing for gratings, receding or translating ones. In the scene the cruising fly turns 45–78° away from objects 4–8° off its heading. Details in [`train/README.md`](train/README.md) and [`app/README.md`](app/README.md).
 
-**2. Half-real brain** — hand-coded motion detection feeds real wiring.
+**Open**
 
-- Hassenstein–Reichardt detectors on neighbouring columns stand in for T4/T5
-- their output is injected into the real HS, VS, and LPLC2 cells pulled from MaleCNS
-- from there the actual graph: lobula plate → **DNg02** and neighbours → wing motor neurons + VNC interneurons
-- static check first: DNg02 must receive lobula-plate input and project to wing/haltere motor neurons ([Namiki et al., 2022](https://pubmed.ncbi.nlm.nih.gov/35090590/)); if not, the extraction is wrong
-- done when: visual rotation direction predicts the DNg02 left/right rate difference, and the closed loop stabilizes
-- **status: done.** 1072 units, 26.5k edges. Findings: no direct LPTC → DNg02 synapses; the relay (PS080) is GABAergic so DNg02 needs a tonic flight-state drive; DNg02 → wing MN output is bilateral so the readout sits at DNg02. Details in [`data/README.md`](data/README.md) and [`app/README.md`](app/README.md).
+- **Head-on objects still hit.** The LC receptive fields start 17° off the midline, so a centred object enters them about 1.5 s before impact and both eyes fire equally.
+- **Rotation vs translation.** The optomotor loop reads the translation flow of forward flight as rotation and turns toward nearby pillars. In this graph the HS cells receive only ipsilateral input, so a rotation-selective HS cell is not expressible; the classic bidirectional HS is, but two fits of it did not transfer from the trainer's ray-cast world to the scene. Next try: train on eye input recorded from the scene itself.
+- **The DNg02 hop.** The steering readout sits at HS. HS → posterior slope (PS080, GABAergic) → DNg02 is not calibrated: the relay is nearly silent under PLP034 inhibition and DNg02 sits at a constant rate. Findings from the wiring are in [`data/README.md`](data/README.md).
 
-**3. Real optic lobe** — replace the detectors with the male per-column graph.
+**Next**
 
-- extract a subset of columnar types (L1, L2, Mi1, Tm3, Mi4, Mi9, T4a–d, T5a–d, Tm9, …) for every column: ~800 columns × ~20 types ≈ 16k units, ~1M edges
-- write the same graph as a PyTorch model, initialize from [flyvis](https://github.com/TuragaLab/flyvis) parameters ([Lappalainen et al., 2024](https://www.nature.com/articles/s41586-024-07939-3)), train briefly on optic flow on the 5090
-- trainable set stays small: per-type time constants and rest, one scale per synapse type; individual edges keep their connectome weight
-- export params, swap into the browser runtime (WebGPU compute at 250 Hz substeps, Worker fallback)
-- done when: T4/T5 units are direction selective and milestone 2 still passes
-- **status: done (via the lobula plate).** 65.8k units / 1.97M edges / 1,771 columns integrate on WebGPU at 0.86 ms per 4 ms substep (CPU worker fallback, 3 ms); retinotopy is calibrated from the wiring (T4 Mi9→Mi4 offsets). flyvis parameters transfer (synapse counts agree within ~30%) but give **zero** direction selectivity on the real per-cell wiring; 1,500 steps of fitting per-type tau/bias and per-pair strength on the 5090 (11 min) give mean DSI 0.47 and tuning correlation 0.96 across all 16 T4/T5 subtype × eye groups, with the correct preferred directions. In the browser the fly follows the drum in both directions with the turn read at the HS cells. Open: the HS → posterior slope → DNg02 hop is not yet calibrated in the big graph. Details in [`train/README.md`](train/README.md) and [`app/README.md`](app/README.md).
-
-**4. Deciding where to go** — the known visual reflex pathways, chained.
-
-- looming avoidance: LPLC2 / LC4 → escape descending neurons
-- bar fixation / approach: LC10 and related types
+- bar fixation / approach: LC10 and related types (not yet extracted)
 - altitude and speed: ventral optic flow
 - tune the few free gains on the GPU with the body simulated in PyTorch, against a behavioral objective; export, run in browser
 - done when: the fly flies through the scene, avoids obstacles, and approaches a target using only rendered images
-- **status: in progress.** Looming avoidance works: LC4/LPLC2 fitted on the 5090 (selectivity ~1.0 for approaching objects, nothing for gratings, receding or translating ones, T4/T5 quiet under static contrast), receptive fields from the wiring, and in the scene the cruising fly turns 45–78° away from objects 4–8° off its heading; head-on objects still hit (the LC fields start 17° off the midline). Open: the optomotor loop reads the translation flow of forward flight as rotation and turns toward nearby pillars; three attempts to separate the two, including fitting the HS cells, did not transfer to the scene. Details in [`app/README.md`](app/README.md) and [`train/README.md`](train/README.md).
 
-**5. Later** — richer biomechanics ([NeuroMechFly](https://github.com/NeLy-EPFL/NeuroMechFly), DeepMind [flybody](https://github.com/TuragaLab/flybody)), haltere feedback, walking, or the dimorphic courtship switches the *Cell* paper is actually about. Whole-brain graph controllers already exist in research ([FlyGM](https://arxiv.org/html/2602.17997v3)); this project stays small, inspectable, and in-browser.
+**Later** — richer biomechanics ([NeuroMechFly](https://github.com/NeLy-EPFL/NeuroMechFly), DeepMind [flybody](https://github.com/TuragaLab/flybody)), haltere feedback, walking, or the dimorphic courtship switches the *Cell* paper is actually about. Whole-brain graph controllers already exist in research ([FlyGM](https://arxiv.org/html/2602.17997v3)); this project stays small, inspectable, and in-browser.
 
 ## Compute
 
@@ -128,8 +113,8 @@ One graph schema (JSON: units, types, edges, weights, per-type params) is shared
 ## Known risks
 
 - **Raw weights do not give sane dynamics.** Every published whole-graph model rescales globally and saturates. Expect to fit two or three global gains before anything works.
-- **Motion detection needs temporal structure.** Uniform time constants give no direction selectivity; that is why milestone 3 trains per-type parameters instead of hoping.
-- **Flight is not in the graph.** The wingbeat CPG, power-muscle mechanics, and haltere feedback are not in the EM volume. The body is a cartoon and stays one until milestone 5.
+- **Motion detection needs temporal structure.** Uniform time constants give no direction selectivity; that is why per-type parameters are fitted instead of hoped for.
+- **Flight is not in the graph.** The wingbeat CPG, power-muscle mechanics, and haltere feedback are not in the EM volume. The body is a cartoon and stays one until a real body model is worth it.
 - **No emergent navigation.** Real goal-seeking needs the central complex, state, and odor. Expect reflexes (stabilize, avoid, approach); chained in a 3D world they already look like a fly deciding where to go.
 
 ## Neuron model

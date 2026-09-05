@@ -1,27 +1,24 @@
 /**
- * Milestone 3: the closed loop with a choice of brains.
+ * The closed loop:
  *
- *   world/body  ->  eye  ->  brain (stub | connectome | optic)  ->  motor  ->  world/body
+ *   world/body  ->  eye  ->  brain (optic-v2)  ->  motor  ->  world/body
  *
- *   stub        milestone 1, hand-written correlator + P controller
- *   connectome  milestone 2, correlator -> MaleCNS flight graph (1k units)
- *   optic       milestone 3, per-column MaleCNS optic lobe + flight graph (66k units, WebGPU or Web Worker)
+ * The eye samples the scene at the connectome's own column directions, the
+ * brain is the per-column MaleCNS optic lobe with fitted parameters, the
+ * motor layer turns its HS and LC4/LPLC2 readouts into wing amplitudes.
  */
 import * as THREE from "three";
 import { buildWorld, FLY_LAYER } from "./world/scene";
 import { FlyBody } from "./world/fly";
 import { Loomer } from "./world/loom";
-import { buildOmmatidia, ommatidiaFromColumns, type Ommatidia } from "./eye/ommatidia";
+import { ommatidiaFromColumns, type Ommatidia } from "./eye/ommatidia";
 import { CompoundEye } from "./eye/eye";
-import { Photoreceptors } from "./eye/photoreceptor";
-import { StubBrain } from "./brain/stub";
-import { ConnectomeBrain } from "./brain/connectome";
 import { OpticBrain } from "./brain/optic";
 import { gpuAvailable } from "./brain/net-backend";
 import type { NetBackendKind } from "./brain/net-backend";
-import { loadGraph, unitsWhere, type Graph } from "./brain/graph";
+import { loadGraph, type Graph } from "./brain/graph";
 import { loadFlyvis, type FlyvisParams } from "./brain/flyvis";
-import type { Brain, Lattice, MotorCommand } from "./brain/types";
+import type { MotorCommand } from "./brain/types";
 import { wingsToForces, defaultWingParams } from "./motor/wings";
 import { SimLoop } from "./sim/loop";
 import { Hud } from "./ui/hud";
@@ -51,64 +48,23 @@ window.addEventListener("resize", () => {
   camera.updateProjectionMatrix();
 });
 
-// ---------- eye: one lattice per brain family ----------
+// ---------- eye ----------
 interface EyeSet {
   ommL: Ommatidia;
   ommR: Ommatidia;
   lumL: Float32Array;
   lumR: Float32Array;
-  prL: Photoreceptors;
-  prR: Photoreceptors;
 }
 const eye = new CompoundEye(renderer, world.scene, world.flyRoot, 48);
-const makeEyeSet = (ommL: Ommatidia, ommR: Ommatidia): EyeSet => {
-  eye.register(ommL);
-  eye.register(ommR);
-  return {
-    ommL,
-    ommR,
-    lumL: new Float32Array(ommL.count),
-    lumR: new Float32Array(ommR.count),
-    prL: new Photoreceptors(ommL.count),
-    prR: new Photoreceptors(ommR.count),
-  };
-};
-const eyes: Partial<Record<Lattice, EyeSet>> = {
-  fibonacci: makeEyeSet(buildOmmatidia("left"), buildOmmatidia("right")),
-};
+let eyes: EyeSet | undefined;
 
-// ---------- brains ----------
-type BrainKey = "off" | "stub" | "connectome" | "optic";
-const fib = eyes.fibonacci!;
-const brains: Partial<Record<BrainKey, Brain>> = { stub: new StubBrain(fib.ommL, fib.ommR) };
-let brainKey: BrainKey = "optic";
-let connectome: ConnectomeBrain | undefined;
+// ---------- brain ----------
 let optic: OpticBrain | undefined;
-let flightGroups: Array<[string, Int32Array]> = [];
+let brainOn = true;
 const hover: MotorCommand = { left: defaultWingParams.hoverAmp, right: defaultWingParams.hoverAmp };
-const loadStatus: Record<string, string> = {};
+let loadStatus = "loading graph…";
 
-loadGraph(`${BASE}graphs/flight-v1.json`)
-  .then((g) => {
-    connectome = new ConnectomeBrain(g, fib.ommL, fib.ommR);
-    brains.connectome = connectome;
-    flightGroups = [
-      ["LPTC", unitsWhere(g, (t) => /^(HS[ENST]|VS|VST1|VST2|VSm|H2|DCH|VCH)$/.test(t))],
-      ["LC", unitsWhere(g, (t) => /^(LPLC2|LC4)$/.test(t))],
-      ["brain", unitsWhere(g, (_t, _s, r) => r === "brain")],
-      ["DNg02", unitsWhere(g, (t) => /^DNg02_/.test(t))],
-      ["DNp", unitsWhere(g, (t) => /^DNp0/.test(t))],
-      ["vnc", unitsWhere(g, (_t, _s, r) => r === "vnc")],
-      ["MN", unitsWhere(g, (_t, _s, r) => r === "output")],
-    ];
-    syncBrainControls();
-  })
-  .catch((err) => {
-    loadStatus["connectome"] = String(err);
-    console.error(err);
-  });
-
-// Fitted parameters (train/train_optic.py) win over the raw flyvis transfer when present.
+// Fitted parameters (train/) win over the raw flyvis transfer when present.
 const loadParams = (): ReturnType<typeof loadFlyvis> =>
   loadFlyvis(`${BASE}graphs/fitted-params.json`).catch(() => loadFlyvis(`${BASE}graphs/flyvis-params.json`));
 const netSel = $<HTMLSelectElement>("netSel");
@@ -116,11 +72,10 @@ netSel.value = gpuAvailable() ? "gpu" : "worker";
 if (!gpuAvailable()) netSel.querySelector<HTMLOptionElement>('option[value="gpu"]')!.disabled = true;
 let opticGraph: [Graph, FlyvisParams] | undefined;
 const buildOptic = (): void => {
-  if (!opticGraph || !eyes.columns) return;
+  if (!opticGraph || !eyes) return;
   const [g, fv] = opticGraph;
   optic?.net.dispose();
-  optic = new OpticBrain(g, fv, eyes.columns.ommL, eyes.columns.ommR, netSel.value as NetBackendKind);
-  brains.optic = optic;
+  optic = new OpticBrain(g, fv, eyes.ommL, eyes.ommR, netSel.value as NetBackendKind);
   syncBrainControls();
   sidesCalibrated = false;
   void calibrateSides();
@@ -128,16 +83,18 @@ const buildOptic = (): void => {
 netSel.addEventListener("change", buildOptic);
 Promise.all([loadGraph(`${BASE}graphs/optic-v2`), loadParams()])
   .then(([g, fv]) => {
-    eyes.columns = makeEyeSet(ommatidiaFromColumns("left", g.columns), ommatidiaFromColumns("right", g.columns));
+    const ommL = ommatidiaFromColumns("left", g.columns);
+    const ommR = ommatidiaFromColumns("right", g.columns);
+    eye.register(ommL);
+    eye.register(ommR);
+    eyes = { ommL, ommR, lumL: new Float32Array(ommL.count), lumR: new Float32Array(ommR.count) };
     opticGraph = [g, fv];
     buildOptic();
   })
   .catch((err) => {
-    loadStatus["optic"] = String(err);
+    loadStatus = String(err);
     console.error(err);
   });
-
-const currentBrain = (): Brain | undefined => (brainKey === "off" ? undefined : brains[brainKey]);
 
 const loomer = new Loomer(world.scene);
 /** Collisions with pillars (box half-width 0.75 plus the fly's 0.3), counted once per contact. */
@@ -159,47 +116,27 @@ const hud = new Hud($<HTMLCanvasElement>("eyes"), $("stats"));
 const netCanvas = $<HTMLCanvasElement>("net");
 const drumSlider = $<HTMLInputElement>("drum");
 const drumVal = $("drumVal");
-const brainSel = $<HTMLSelectElement>("brainSel");
+const brainToggle = $<HTMLInputElement>("brainOn");
 const followToggle = $<HTMLInputElement>("follow");
 const wScaleSlider = $<HTMLInputElement>("wScale");
 const outGainSlider = $<HTMLInputElement>("outGain");
 const loomGainSlider = $<HTMLInputElement>("loomGain");
-const flipReadout = $<HTMLInputElement>("flipReadout");
-const readoutSel = $<HTMLSelectElement>("readout");
 
-let readoutTouched = false;
-readoutSel.addEventListener("input", () => (readoutTouched = true));
 const syncBrainControls = (): void => {
   const gain = parseFloat(wScaleSlider.value);
   const outputGain = parseFloat(outGainSlider.value);
   const loomGain = parseFloat(loomGainSlider.value);
-  $("loomGainVal").textContent = loomGain.toFixed(1);
-  const readoutSign = flipReadout.checked ? 1 : -1;
   $("wScaleVal").textContent = gain.toFixed(2);
   $("outGainVal").textContent = outputGain.toFixed(2);
-  if (connectome) {
-    Object.assign(connectome.params, { wScale: 0.03 * gain, outputGain, readoutSign });
-    const ro = readoutSel.value as "dng02" | "mn";
-    if (readoutTouched && ro !== connectome.params.readout) {
-      connectome.params.readout = ro;
-      connectome.reset();
-    }
-  }
-  if (optic) {
-    Object.assign(optic.params, { wScale: gain, outputGain, readoutSign, loomGain });
-    const ro = readoutSel.value === "mn" ? "hs" : "dng02";
-    if (readoutTouched && ro !== optic.params.readout) {
-      optic.params.readout = ro;
-      optic.reset();
-    }
-  }
+  $("loomGainVal").textContent = loomGain.toFixed(1);
+  if (optic) Object.assign(optic.params, { wScale: gain, outputGain, loomGain });
 };
-for (const el of [wScaleSlider, outGainSlider, loomGainSlider, flipReadout, readoutSel]) el.addEventListener("input", syncBrainControls);
-brainSel.addEventListener("change", () => {
-  brainKey = brainSel.value as BrainKey;
+for (const el of [wScaleSlider, outGainSlider, loomGainSlider]) el.addEventListener("input", syncBrainControls);
+brainToggle.addEventListener("change", () => {
+  brainOn = brainToggle.checked;
   reset();
 });
-brainSel.value = brainKey;
+brainToggle.checked = brainOn;
 
 let drumOmega = 0; // rad/s about +Y; positive = counterclockwise seen from above
 const setDrum = (v: number): void => {
@@ -212,11 +149,7 @@ drumSlider.addEventListener("input", () => setDrum(parseFloat(drumSlider.value))
 const reset = (): void => {
   body.reset();
   body.applyTo(world.flyRoot);
-  for (const b of Object.values(brains)) b.reset();
-  for (const e of Object.values(eyes)) {
-    e.prL.reset();
-    e.prR.reset();
-  }
+  optic?.reset();
 };
 
 window.addEventListener("keydown", (e) => {
@@ -231,18 +164,16 @@ window.addEventListener("keydown", (e) => {
       setDrum(0);
       e.preventDefault();
       break;
-    case "b": {
-      const order: BrainKey[] = ["off", "stub", "connectome", "optic"];
-      brainKey = order[(order.indexOf(brainKey) + 1) % order.length]!;
-      brainSel.value = brainKey;
+    case "b":
+      brainOn = !brainOn;
+      brainToggle.checked = brainOn;
       reset();
       break;
-    }
     case "r":
       reset();
       break;
     case "v":
-      hud.view = hud.view === "luminance" ? "highpass" : hud.view === "highpass" ? "brain" : "luminance";
+      hud.view = hud.view === "luminance" ? "brain" : "luminance";
       break;
     case "l":
       if (loomer.active) loomer.stop();
@@ -252,9 +183,9 @@ window.addEventListener("keydown", (e) => {
 });
 
 /**
- * Open-loop side calibration for the optic brain: spin the drum each way with the
- * output off, take each side's preferred-direction response, and hand the gains to the
- * brain. Runs once after the brain has settled; `fly.calibrateSides()` re-runs it.
+ * Open-loop side calibration: spin the drum each way with the output off, take
+ * each side's preferred-direction response, and hand the gains to the brain.
+ * Runs once after the brain has settled; `fly.calibrateSides()` re-runs it.
  */
 let sidesCalibrated = false;
 const calibrateSides = async (): Promise<{ L: number; R: number } | undefined> => {
@@ -303,9 +234,8 @@ const camPos = new THREE.Vector3();
 const PHYS_DT = 1 / 1000;
 let cmd: MotorCommand = hover;
 let wingPhase = 0;
-const dirMapL = new Float32Array(0);
-let dirL = dirMapL;
-let dirR = dirMapL;
+let dirL = new Float32Array(0);
+let dirR = new Float32Array(0);
 
 const loop = new SimLoop({
   frame(dt, time) {
@@ -316,23 +246,17 @@ const loop = new SimLoop({
     loomer.update(dt, body.state.position, body.state.yaw);
     countCollisions();
 
-    // 2. eye: render once, sample every registered lattice
+    // 2. eye: render once, sample both eyes
     world.flyRoot.updateMatrixWorld(true);
     eye.render();
-    for (const e of Object.values(eyes)) {
-      eye.sample(e.ommL, e.lumL);
-      eye.sample(e.ommR, e.lumR);
-      e.prL.update(e.lumL, dt);
-      e.prR.update(e.lumR, dt);
+    if (eyes) {
+      eye.sample(eyes.ommL, eyes.lumL);
+      eye.sample(eyes.ommR, eyes.lumR);
     }
 
     // 3. brain
-    const brain = currentBrain();
-    const es = brain ? eyes[brain.lattice] : undefined;
-    cmd =
-      brain && es
-        ? brain.step({ left: es.prL.out, right: es.prR.out, lumLeft: es.lumL, lumRight: es.lumR }, dt)
-        : hover;
+    const brain = brainOn ? optic : undefined;
+    cmd = brain && eyes ? brain.step({ lumLeft: eyes.lumL, lumRight: eyes.lumR }, dt) : hover;
 
     // 4. motor + body, fixed 1 ms substeps
     const forces = wingsToForces(cmd);
@@ -363,28 +287,23 @@ const loop = new SimLoop({
     renderer.render(world.scene, camera);
 
     // hud
-    const shown = es ?? fib;
-    if (brain === optic && optic) {
-      if (dirL.length !== shown.ommL.count) dirL = new Float32Array(shown.ommL.count);
-      if (dirR.length !== shown.ommR.count) dirR = new Float32Array(shown.ommR.count);
-      optic.directionMap("L", dirL);
-      optic.directionMap("R", dirR);
-      hud.drawEyes(shown.ommL, shown.prL.logLum, shown.prL.out, dirL, shown.ommR, shown.prR.logLum, shown.prR.out, dirR);
-      hud.drawNet(netCanvas, optic.net.r, Object.entries(optic.groups));
-    } else {
-      hud.drawEyes(shown.ommL, shown.prL.logLum, shown.prL.out, undefined, shown.ommR, shown.prR.logLum, shown.prR.out, undefined);
-      if (brain === connectome && connectome) hud.drawNet(netCanvas, connectome.net.r, flightGroups);
-      else netCanvas.getContext("2d")!.clearRect(0, 0, netCanvas.width, netCanvas.height);
+    if (eyes) {
+      if (optic) {
+        if (dirL.length !== eyes.ommL.count) dirL = new Float32Array(eyes.ommL.count);
+        if (dirR.length !== eyes.ommR.count) dirR = new Float32Array(eyes.ommR.count);
+        optic.directionMap("L", dirL);
+        optic.directionMap("R", dirR);
+        hud.drawEyes(eyes.ommL, eyes.lumL, dirL, eyes.ommR, eyes.lumR, dirR);
+        hud.drawNet(netCanvas, optic.net.r, Object.entries(optic.groups));
+      } else {
+        hud.drawEyes(eyes.ommL, eyes.lumL, undefined, eyes.ommR, eyes.lumR, undefined);
+      }
     }
     const t = brain?.telemetry() ?? {};
     const extra: Array<[string, string | number]> = Object.entries(t)
       .filter(([k]) => !["turn"].includes(k))
       .map(([k, v]) => [k, v]);
-    const status = brain
-      ? brain.name
-      : brainKey === "off"
-        ? "off (hover)"
-        : (loadStatus[brainKey] ?? "loading graph…");
+    const status = optic ? (brainOn ? optic.name : `off (hover); ${optic.name}`) : loadStatus;
     hud.setStats([
       ["fps", loop.fps],
       ["t", time],
@@ -407,15 +326,19 @@ loop.start();
 Object.assign(window, {
   fly: {
     body,
-    brains,
-    eyes,
     get brain() {
-      return currentBrain();
+      return optic;
     },
-    setBrain(k: BrainKey) {
-      brainKey = k;
-      brainSel.value = k;
+    get brainOn() {
+      return brainOn;
+    },
+    setBrain(on: boolean) {
+      brainOn = on;
+      brainToggle.checked = on;
       reset();
+    },
+    get eyes() {
+      return eyes;
     },
     eye,
     setDrum,
@@ -430,7 +353,7 @@ Object.assign(window, {
     get sidesCalibrated() {
       return sidesCalibrated;
     },
-    /** Cruise through the pillar field: mean wing amplitude above hover (optic brain only). 0 stops. */
+    /** Cruise through the pillar field: mean wing amplitude above hover. 0 stops. */
     cruise(baseAmp = 0.8) {
       if (optic) optic.params.baseAmp = baseAmp > 0 ? baseAmp : 0.5;
       world.course.visible = baseAmp > 0;

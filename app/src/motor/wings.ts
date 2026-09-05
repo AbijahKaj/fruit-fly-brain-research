@@ -3,7 +3,7 @@
  *
  * Deliberately a cartoon. Mean amplitude sets thrust, the left/right
  * difference sets yaw torque and a visual bank angle. No aerodynamics,
- * no wingbeat CPG, no haltere feedback; those are milestone 5.
+ * no wingbeat CPG, no haltere feedback; those come with a real body model.
  */
 import type { MotorCommand } from "../brain/types";
 

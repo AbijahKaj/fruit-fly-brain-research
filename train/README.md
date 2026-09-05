@@ -1,6 +1,6 @@
 # train — parameter fitting (GPU box)
 
-Python side of milestone 3. The browser runs the graph; this fits the numbers it runs with.
+The browser runs the graph; this fits the numbers it runs with.
 
 ```
 cd train
@@ -36,7 +36,7 @@ Smoke test on a laptop: `train_optic.py --device cpu --steps 3 --max-el 12 --bat
 
 Every T4/T5 subtype on both eyes peaks at its expected direction (T4a right eye at front-to-back, left eye mirrored; T4c up; T4d down). The first loss (normalised MSE to 1 + cos) sat at the trivial flat solution; the correlation loss with a modulation-depth term is what worked.
 
-## Looming fit (milestone 4), RTX 5090
+## Looming fit, RTX 5090
 
 Runs are in `runs/loom*.log`. Sequence, each starting from the previous stage's parameters:
 

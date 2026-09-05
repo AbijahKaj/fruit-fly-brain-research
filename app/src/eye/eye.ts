@@ -6,7 +6,7 @@
  * (face, pixel) pair, so per frame we only read back six tiny buffers
  * and gather. No cube-map conventions are involved: the cameras are ours.
  *
- * Later this can move to a single GPU gather pass; for milestone 1 the
+ * Later this can move to a single GPU gather pass; for now the
  * CPU path is simple and fast enough (6 x 48 x 48 pixels).
  */
 import * as THREE from "three";

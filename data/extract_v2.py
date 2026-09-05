@@ -1,8 +1,8 @@
 """
-Milestone 3 extraction: the real per-column optic lobe joined to the flight graph.
+optic-v2 extraction: the real per-column optic lobe joined to the flight graph.
 
   lamina (L1,L2,L3,L5) -> medulla (Mi1,Tm3,Mi4,Mi9,Tm1,Tm2,Tm4,Tm9,C2,C3)
-    -> T4a-d / T5a-d -> lobula plate (LPi*, HS, VS, H2, CH) -> [flight-v1 part]
+    -> T4a-d / T5a-d -> lobula plate (LPi*, HS, VS, H2, CH)
     -> posterior slope bridge -> DNg02 / DNp -> VNC bridge -> wing/haltere MNs
 
 Plus LPLC2 / LC4 looming inputs and their DNp targets.
@@ -94,7 +94,7 @@ def main() -> None:
     touch = pc.or_(pc.is_in(tbl["body_pre"], value_set=seed_arr), pc.is_in(tbl["body_post"], value_set=seed_arr))
     edges = tbl.filter(touch).to_pandas()
 
-    # ---- bridges (same recipe as flight-v1), on the central-brain threshold
+    # ---- bridges: one-hop relays between the seeds and the DNs, and between DNs and MNs
     cb_edges = edges[edges.weight >= MIN_EDGE_CB]
 
     def bridge(up: set[int], down: set[int], allowed: set[str]) -> list[int]:

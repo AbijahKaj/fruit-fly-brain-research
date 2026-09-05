@@ -3,8 +3,8 @@
  */
 import type { Ommatidia } from "../eye/ommatidia";
 
-/** luminance: what the eye sees. highpass: photoreceptor output. brain: T4a - T4b per column. */
-export type EyeView = "luminance" | "highpass" | "brain";
+/** luminance: what the eye sees. brain: T4a - T4b per column. */
+export type EyeView = "luminance" | "brain";
 
 export class Hud {
   view: EyeView = "luminance";
@@ -19,12 +19,10 @@ export class Hud {
 
   drawEyes(
     ommL: Ommatidia,
-    logL: Float32Array,
-    hpL: Float32Array,
+    lumL: Float32Array,
     brainL: Float32Array | undefined,
     ommR: Ommatidia,
-    logR: Float32Array,
-    hpR: Float32Array,
+    lumR: Float32Array,
     brainR: Float32Array | undefined,
   ): void {
     const { ctx, canvas } = this;
@@ -34,11 +32,11 @@ export class Hud {
     const view = this.view === "brain" && !brainL ? "luminance" : this.view;
     const label = view === "brain" ? "T4a − T4b" : view;
     ctx.fillText(`eyes (${label})  L ${ommL.count}  R ${ommR.count}`, 6, 12);
-    this.drawEye(ommL, logL, hpL, view === "brain" ? brainL : undefined, view);
-    this.drawEye(ommR, logR, hpR, view === "brain" ? brainR : undefined, view);
+    this.drawEye(ommL, lumL, view === "brain" ? brainL : undefined);
+    this.drawEye(ommR, lumR, view === "brain" ? brainR : undefined);
   }
 
-  private drawEye(omm: Ommatidia, log: Float32Array, hp: Float32Array, brain: Float32Array | undefined, view: EyeView): void {
+  private drawEye(omm: Ommatidia, lum: Float32Array, brain: Float32Array | undefined): void {
     const { ctx, canvas } = this;
     const top = 18;
     const h = canvas.height - top - 4;
@@ -50,14 +48,12 @@ export class Hud {
     for (let i = 0; i < omm.count; i++) {
       const x = 4 + ((omm.az[i]! + azSpan / 2) / azSpan) * w;
       const y = top + ((elTop - omm.el[i]!) / elSpan) * h;
-      if (view === "luminance") {
-        // log(0.02)..log(1.02) -> 0..1
-        const v = Math.max(0, Math.min(1, (log[i]! + 3.9) / 3.9));
+      if (!brain) {
+        const v = Math.sqrt(Math.max(0, Math.min(1, lum[i]!)));
         const g = Math.round(40 + v * 215);
         ctx.fillStyle = `rgb(${g},${g},${g})`;
       } else {
-        const raw = brain ? brain[i]! * 3 : hp[i]! * 4;
-        const v = Math.max(-1, Math.min(1, raw));
+        const v = Math.max(-1, Math.min(1, brain[i]! * 3));
         ctx.fillStyle = v >= 0 ? `rgba(255,90,70,${0.15 + v * 0.85})` : `rgba(70,140,255,${0.15 - v * 0.85})`;
       }
       ctx.fillRect(x - 1.5, y - 1.5, 3, 3);

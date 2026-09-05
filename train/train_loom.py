@@ -1,6 +1,6 @@
 """
 Stage 2 fit: make the looming detectors (LC4, LPLC2) respond to an approaching
-object and not to wide-field motion, on top of the milestone 3 fit.
+object and not to wide-field motion, on top of the grating (stage 1) fit.
 
   python train_loom.py --device cuda --steps 800                # on the 5090 box
   python train_loom.py --device cpu --steps 2 --max-el 20 --T 20 # smoke test
