@@ -21,7 +21,9 @@ Smoke test on a laptop: `train_optic.py --device cpu --steps 3 --max-el 12 --bat
 | `flyvis_grating.py` | flyvis central-column responses to a drifting grating, the DS magnitude to expect |
 | `simulate_ours.py` | Our graph + flyvis params in numpy: steady state per type next to the reference, L1 input decomposition |
 | `graph_torch.py` | Binary graph loader; `FlyvisModel`: sparse rate model with trainable per-type tau/bias and per-pair strength |
-| `train_optic.py` | Drifting gratings on the real column lattice → DS objective for T4/T5 a–d per eye → `fitted-params.json` |
+| `train_optic.py` | Stage 1: drifting gratings on the real column lattice → DS objective for T4/T5 a–d per eye → `fitted-params.json` |
+| `train_loom.py` | Stage 2 (`--joint`): looming / receding / translating discs, static gratings, and the stage 1 objective together → LC4/LPLC2 selectivity, quiet T4/T5 under static contrast. Stage 3 (`--hs`, experimental): HS cells on ray-cast self-motion flow fields. `Stimuli` class shared with the tools below |
+| `eval_loom.py`, `diag_loom.py`, `eval_ds.py` | Selectivity tables per stimulus kind; per-pair presynaptic drive onto the LC cells; DSI over 8 directions |
 
 ## Fit result (fit2, RTX 5090)
 
@@ -33,6 +35,29 @@ Smoke test on a laptop: `train_optic.py --device cpu --steps 3 --max-el 12 --bat
 | mean tuning correlation with cos(θ − PD) | 0.09 | 0.96 |
 
 Every T4/T5 subtype on both eyes peaks at its expected direction (T4a right eye at front-to-back, left eye mirrored; T4c up; T4d down). The first loss (normalised MSE to 1 + cos) sat at the trivial flat solution; the correlation loss with a modulation-depth term is what worked.
+
+## Looming fit (milestone 4), RTX 5090
+
+Runs are in `runs/loom*.log`. Sequence, each starting from the previous stage's parameters:
+
+| run | what | outcome |
+| --- | --- | --- |
+| loom1–3 | only LC input pairs + LC tau/bias trainable, population-mean readout, l/v 20–80 ms | no selectivity: the presynaptic drive onto LC4/LPLC2 is the same for every stimulus (see `diag_loom.py`); the dark disc even *lowers* the ON-pathway drive, and with fixed synapse signs nothing can go up |
+| loom4 | `--joint`: everything trainable, stage 1 grating loss kept, top-5 readout, slower l/v (0.1–0.4 s) | selectivity 0.98–1.0, DSI up to 0.74; but in the scene hundreds of T4/T5 sat at the ceiling at rest |
+| loom5 | + static-grating control (T4/T5 penalised above 0.15 under static contrast), object trials over structured backgrounds | T4/T5 quiet under static patterns; LC selectivity kept |
+| loom6 | + frontal loom positions (az 5–110°), L/R symmetry term on T4/T5 | shipped as `app/public/graphs/fitted-params.json`: selectivity 0.97–1.0, DSI 0.66, corr 0.96, eyes within ~30% |
+
+`train_loom.py --device cuda --steps 600 --T 160 --joint --ds-batch 4`, 6.5 minutes, 27 GB (two forward passes keep every per-edge product for the backward pass; `--T 200` with a batch of 8 gratings went out of memory).
+
+Lessons: score the best-placed cells (top-k), not the population mean, because only cells whose receptive field sits at the loom centre see all four expanding edges; train with static controls, otherwise motion detectors learn to answer contrast; put stimuli where the readout will need them (frontal looms).
+
+### HS stage (hs1–hs4), not shipped
+
+Goal: HS_L − HS_R should read yaw rotation and not the translation flow of forward flight, which in the scene turned the optomotor loop into a bias toward nearby pillars. Findings:
+
+- In `optic-v2` the HS cells receive only ipsilateral input (T4a, T5a, LPi21, TmY5a; no H2 or other contralateral partner), so a rotation-selective single HS cell is not expressible. The graph does support the classic bidirectional HS (up for progressive, below rest for regressive motion via LPi21), which is what `--hs` fits.
+- Sparse dot flow fields did not drive the fitted T4/T5 at all (0.11 vs 0.10 static); the ray-cast striped wall plus checkered ground does (T4a 1.35 for the preferred rotation vs 0.18 static).
+- hs3 and hs4 converge on the trainer (rotation separation 1.6–2.2, regressive side below rest, tau bounded at 50 ms in hs4), but do not transfer: in the scene every drum direction produced a left turn and the cruise drift got worse. The HS rest and the scene's static structure differ too much from the ray-cast world; a closed-loop calibration or recording the scene's own eye input for training is the next thing to try.
 
 ## What we learned transferring flyvis
 

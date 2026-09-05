@@ -64,6 +64,8 @@ export function buildWorld(): World {
   sun.position.set(5, 10, 3);
   scene.add(sun);
 
+  // Ground: coarse 50-unit checker. A fine texture gives strong ground flow that the (unfitted)
+  // HS cells answer on both sides regardless of direction, which swamps the optomotor readout.
   const ground = new THREE.Mesh(
     new THREE.PlaneGeometry(400, 400),
     new THREE.MeshStandardMaterial({ map: checkerTexture() }),

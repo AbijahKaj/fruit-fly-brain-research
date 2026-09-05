@@ -110,6 +110,7 @@ The scripts in [`data/`](data/) pull the annotation, transmitter, and 1.1 GB wei
 - altitude and speed: ventral optic flow
 - tune the few free gains on the GPU with the body simulated in PyTorch, against a behavioral objective; export, run in browser
 - done when: the fly flies through the scene, avoids obstacles, and approaches a target using only rendered images
+- **status: in progress.** Looming avoidance works: LC4/LPLC2 fitted on the 5090 (selectivity ~1.0 for approaching objects, nothing for gratings, receding or translating ones, T4/T5 quiet under static contrast), receptive fields from the wiring, and in the scene the cruising fly turns 45–78° away from objects 4–8° off its heading; head-on objects still hit (the LC fields start 17° off the midline). Open: the optomotor loop reads the translation flow of forward flight as rotation and turns toward nearby pillars; three attempts to separate the two, including fitting the HS cells, did not transfer to the scene. Details in [`app/README.md`](app/README.md) and [`train/README.md`](train/README.md).
 
 **5. Later** — richer biomechanics ([NeuroMechFly](https://github.com/NeLy-EPFL/NeuroMechFly), DeepMind [flybody](https://github.com/TuragaLab/flybody)), haltere feedback, walking, or the dimorphic courtship switches the *Cell* paper is actually about. Whole-brain graph controllers already exist in research ([FlyGM](https://arxiv.org/html/2602.17997v3)); this project stays small, inspectable, and in-browser.
 

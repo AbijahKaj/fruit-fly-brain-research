@@ -1,4 +1,4 @@
-# app — milestones 1 to 3
+# app — milestones 1 to 4
 
 Closed loop with a choice of brains. See the root README roadmap.
 
@@ -17,7 +17,8 @@ npm run build    # typecheck + bundle
 | | `src/brain/stub.ts` | Milestone 1: correlator + P controller, no connectome |
 | | `src/brain/graph.ts`, `src/brain/rate-net.ts` | Shared graph JSON loader, CSR build, rate-model runtime on flat typed arrays |
 | | `src/brain/connectome.ts` | Milestone 2: correlator → HS/H2 drive → MaleCNS graph → DNg02 L/R readout |
-| | `src/brain/optic.ts` | Milestone 3: per-column optic lobe. Virtual photoreceptor per column → lamina → real graph → T4/T5 → lobula plate → DNg02 |
+| | `src/brain/optic.ts` | Milestones 3–4: per-column optic lobe. Virtual photoreceptor per column → lamina → real graph → T4/T5 → lobula plate (HS readout) and → LC4/LPLC2 (looming readout) |
+| 1 world | `src/world/loom.ts` | An approaching or stationary object (the looming stimulus), retinal or world-fixed; the pillar course lives in `scene.ts` |
 | | `src/brain/flyvis.ts` | Applies flyvis (Lappalainen 2024) per-type tau/bias and per-pair strengths to the graph |
 | | `src/brain/net-backend.ts`, `src/brain/gpu-net.ts` | Network runtime interface; WebGPU backend (two WGSL compute passes per Euler step, state stays on the GPU) |
 | | `src/brain/net.worker.ts`, `src/brain/remote-net.ts` | CPU fallback: the same RateNet in a Web Worker |
@@ -26,7 +27,7 @@ npm run build    # typecheck + bundle
 
 Graph data in `public/graphs/`: `flight-v1.json` (milestone 2), `optic-v2.json` + `.bin` (milestone 3, from `data/extract_v2.py`), `flyvis-params.json` (from `train/dump_flyvis_params.py`); `fitted-params.json` is picked up automatically when present.
 
-Controls: `[` `]` drum speed, space stops the drum, `b` cycles off / stub / connectome / optic, `r` resets, `v` cycles the eye HUD: luminance, photoreceptor high-pass, T4a − T4b per column. Sliders: net gain (global weight multiplier), out gain, readout level (DNg02 or steering MNs), side mapping. `net on` picks WebGPU or the CPU worker for the optic brain.
+Controls: `[` `]` drum speed, space stops the drum, `b` cycles off / stub / connectome / optic, `r` resets, `v` cycles the eye HUD: luminance, photoreceptor high-pass, T4a − T4b per column, `l` launches or stops a looming object. Console: `fly.loom(azDeg, opts)`, `fly.cruise(0.8)` (forward flight through the pillar field, `fly.collisions` counts contacts), `fly.calibrateSides()`. Sliders: net gain (global weight multiplier), out gain, readout level (DNg02 or steering MNs), side mapping. `net on` picks WebGPU or the CPU worker for the optic brain.
 
 ## Runtime shape
 
@@ -63,6 +64,36 @@ Open loop the HS cells lateralise (left 1.5 / right 0 for one rotation, 1.9 / 3.
 What is hand-written here: the virtual photoreceptor, Weber adaptation, the pooling-cell input scale (`lptcScale`, cells that receive thousands of T4/T5 or LC synapses), the homeostatic rest for those pooling cells, and the HS → wing mapping. Everything from the lamina to the lobula plate is synapse counts, fitted per-type and per-pair parameters, and the connectome's own retinotopy.
 
 **Open:** with the DNg02 readout the fly does not turn. In this graph DNg02 sits at a constant rate: the central-brain bridge units run at the default synapse scale and its posterior-slope relay (PS080) is nearly silent under strong inhibition from PLP034. Calibrating that hop (the milestone-2 recipe, at this graph's operating point) is the next piece of work.
+
+## Milestone 4, first part: looming avoidance
+
+The looming pathway of the connectome, LC4 and LPLC2 converging on the giant fiber (DNp01) and DNp02–06, is in `optic-v2`. Each cell's receptive-field centre is derived from its presynaptic columns (synapse-weighted mean direction): 165 left / 146 right cells, azimuth 17–150° per side.
+
+With the milestone 3 parameters the LC cells did nothing on approach: their inputs sat at the pooling scale, and worse, the fitted T4/T5 answered *static* contrast (hundreds of cells at the rate ceiling in the rendered scene at rest). Two more fitting stages on the 5090 fixed both (`train/train_loom.py`, see `train/README.md`): looming / receding / translating discs and static gratings over structured backgrounds, jointly with the milestone 3 grating objective. Result on the trainer's stimuli: looming selectivity 0.97–1.0 for all four LC groups, zero response to gratings, receding and translating objects, T4/T5 quiet under static patterns, direction selectivity kept (mean DSI 0.66, tuning correlation 0.96).
+
+In the scene (WebGPU, `fitted-params.json` = stage `loom6`), open loop, retinal looming sphere at 5 units/s, top-5 LC readout above rest:
+
+| stimulus | left readout | right readout |
+| --- | --- | --- |
+| rest | 0 | 0 |
+| loom from −45° | 0.49 | 0 |
+| loom from +45° | 0 | 0.62 |
+| drum ±1 rad/s | 0 | 0 |
+
+Closed loop, fly cruising at 1.1 units/s toward a stationary sphere (radius 0.6) 8 units ahead, optomotor output off, loom gain 5–10:
+
+| object azimuth | closest approach, gain 0 | gain on | turn |
+| --- | --- | --- | --- |
+| ±4° | 0.72–0.78 (graze) | 0.75–0.78 | 70–78° away |
+| ±6° | 0.84 | 1.03–1.05 | 66° away |
+| ±8° | 1.3 | 1.3–1.36 | 45–58° away |
+| 0° | 0 (hit) | 0.02–0.2 (hit) | −5 to 16° |
+
+Head-on approaches are the open case: the LC receptive fields start 17° off the midline, so a centred object only enters them when it already subtends ~20° (1.5 s before impact at this speed), and both eyes then fire equally. The readout has a tie-break (a bilateral signal turns right and lowers the wing amplitude) but the signal comes too late. Pillar course (40 pillars over 70 × 70, 45 s at cruise): 0 collisions with or without the optomotor output.
+
+Hand-written here: the top-k population readout per eye (the trainer scores the same top-5), the loom gain / tie-break / brake, the collision counter. LC4/LPLC2 tau, bias and every input synapse type are fitted; their receptive fields are the wiring's.
+
+**Open, and what was tried.** During forward flight both HS populations rise, more on the side with nearer objects, and the optomotor loop reads that as a rotation: the fly turns toward the pillars (about 110° over 7 s of cruise). Real flies separate rotation from translation. Three attempts did not transfer to the scene and are recorded in `train/README.md`: a hand-written common-mode arbitration in the motor layer (the unfitted HS respond to both directions, so the common-mode test fires on rotation too), an HS fit for rotation selectivity (impossible with this graph's purely ipsilateral HS inputs), and an HS fit for the classic bidirectional response with fast membranes (converged on the trainer's ray-cast flow fields, but in the scene every drum direction produced a left turn). The shipped state keeps the unfitted HS, a fixed per-side offset, and drum-calibrated per-side gains; the drum is followed at ω = +1 / +2 (0.7 / 1.6) and weakly at −1 / −2.
 
 ## Milestone 2 result
 
