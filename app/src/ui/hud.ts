@@ -75,6 +75,7 @@ export class Hud {
     let x = 2;
     const w = canvas.width - 4;
     ctx.font = "10px ui-monospace, monospace";
+    let labelEnd = 0; // labels are drawn only where they do not overlap the previous one
     for (const [label, idx] of groups) {
       const gw = Math.max(2, (idx.length / total) * w);
       // one bar per pixel column: average the units that fall in it
@@ -90,18 +91,41 @@ export class Hud {
         ctx.fillStyle = `rgb(${g},${Math.round(g * 0.55)},${Math.round(40 + (1 - v) * 40)})`;
         ctx.fillRect(x + b * (gw / bins), top, gw / bins + 0.5, h);
       }
-      ctx.fillStyle = "#9aa3ad";
-      ctx.fillText(label, x + 1, 10);
+      if (x + 1 >= labelEnd) {
+        ctx.fillStyle = "#9aa3ad";
+        ctx.fillText(label, x + 1, 10);
+        labelEnd = x + 1 + ctx.measureText(label).width + 6;
+      }
       ctx.strokeStyle = "#2a3038";
       ctx.strokeRect(x, top, gw, h);
       x += gw;
     }
   }
 
+  private statCells: HTMLSpanElement[] = [];
+
+  /** Two-column key/value grid; rows are rebuilt only when their number changes. */
   setStats(lines: Array<[string, string | number]>): void {
-    this.stats.textContent = lines
-      .map(([k, v]) => `${k.padEnd(12)} ${typeof v === "number" ? fmt(v) : v}`)
-      .join("\n");
+    if (this.statCells.length !== lines.length * 2) {
+      this.stats.replaceChildren();
+      this.statCells = [];
+      for (let i = 0; i < lines.length; i++) {
+        const k = document.createElement("span");
+        k.className = "k";
+        const v = document.createElement("span");
+        v.className = "v";
+        this.stats.append(k, v);
+        this.statCells.push(k, v);
+      }
+    }
+    for (let i = 0; i < lines.length; i++) {
+      const [k, v] = lines[i]!;
+      const kc = this.statCells[i * 2]!;
+      const vc = this.statCells[i * 2 + 1]!;
+      if (kc.textContent !== k) kc.textContent = k;
+      const text = typeof v === "number" ? fmt(v) : v;
+      if (vc.textContent !== text) vc.textContent = text;
+    }
   }
 }
 

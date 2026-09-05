@@ -3,24 +3,27 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Fruit fly brain — milestone 3</title>
+    <title>Fruit fly brain</title>
     <style>
       html, body { margin: 0; height: 100%; background: #0b0d10; color: #d6dbe0; font: 13px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; overflow: hidden; }
       #view { position: fixed; inset: 0; }
-      #hud { position: fixed; top: 12px; left: 12px; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
-      #hud canvas { background: rgba(0,0,0,0.45); border: 1px solid #2a3038; border-radius: 4px; }
-      #stats { background: rgba(0,0,0,0.45); border: 1px solid #2a3038; border-radius: 4px; padding: 8px 10px; white-space: pre; }
+      /* Left column: eye view, network strip, telemetry. Never wider than 30% of the window. */
+      #hud { position: fixed; top: 12px; left: 12px; bottom: 12px; width: 30vw; max-width: 30vw; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+      #hud canvas { width: 100%; height: auto; display: block; background: rgba(0,0,0,0.45); border: 1px solid #2a3038; border-radius: 4px; box-sizing: border-box; }
+      #stats { flex: 1; min-height: 0; overflow-y: auto; pointer-events: auto; background: rgba(0,0,0,0.45); border: 1px solid #2a3038; border-radius: 4px; padding: 6px 10px; font-size: 12px; display: grid; grid-template-columns: max-content minmax(0, 1fr); column-gap: 10px; align-content: start; }
+      #stats .k { color: #9aa4ae; }
+      #stats .v { overflow-wrap: anywhere; }
       #controls { position: fixed; top: 12px; right: 12px; background: rgba(0,0,0,0.45); border: 1px solid #2a3038; border-radius: 4px; padding: 8px 10px; display: flex; flex-direction: column; gap: 6px; }
       #controls label { display: flex; align-items: center; gap: 8px; }
       #controls input[type=range] { width: 180px; }
-      #help { position: fixed; bottom: 12px; right: 12px; background: rgba(0,0,0,0.45); border: 1px solid #2a3038; border-radius: 4px; padding: 8px 10px; white-space: pre; opacity: 0.8; }
+      #help { position: fixed; bottom: 12px; left: calc(30vw + 24px); right: 12px; background: rgba(0,0,0,0.45); border: 1px solid #2a3038; border-radius: 4px; padding: 6px 10px; opacity: 0.8; text-align: center; }
     </style>
   </head>
   <body>
     <canvas id="view"></canvas>
     <div id="hud">
-      <canvas id="eyes" width="420" height="150"></canvas>
-      <canvas id="net" width="420" height="56"></canvas>
+      <canvas id="eyes" width="560" height="200"></canvas>
+      <canvas id="net" width="560" height="56"></canvas>
       <div id="stats"></div>
     </div>
     <div id="controls">
@@ -39,7 +42,7 @@
       <label><input id="flipReadout" type="checkbox" /> ipsilateral side mapping</label>
       <label><input id="follow" type="checkbox" checked /> chase camera</label>
     </div>
-    <div id="help">keys: [ ] drum speed   space: stop drum   b: cycle brain   r: reset fly   v: eye view (lum / hp / T4)   l: looming object on/off</div>
+    <div id="help">[ ] drum · space stop drum · b brain · r reset · v eye view (lum / hp / T4) · l looming object</div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
