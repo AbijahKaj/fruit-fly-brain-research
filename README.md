@@ -88,6 +88,7 @@ One system, optic-v2: the per-column MaleCNS optic lobe with its path to the win
 **Open**
 
 - **Head-on objects still hit.** The LC receptive fields start 17° off the midline, so a centred object enters them about 1.5 s before impact and both eyes fire equally.
+- **Looming detection depends on the background.** The stripe behind an approaching sphere sets when LC4/LPLC2 first answer: across drum phases the first response to a 45° approach at 2 units/s ranges from 1.25 to 2.2 units out, and at 1.25 units the fly is hit. The dodge at that speed is marginal.
 - **Optomotor loop stability.** With the loop closed the hovering fly wobbles (about 0.2 rad/s at the default gain) and a straight cruise still drifts 10–50° over 7 s. The readout is sensitive and the wing-to-yaw dynamics add delay; a gain schedule or a slower motor stage is the obvious next thing.
 - **The DNg02 hop.** The steering readout sits at HS. HS → posterior slope (PS080, GABAergic) → DNg02 is not calibrated: the relay is nearly silent under PLP034 inhibition and DNg02 sits at a constant rate. Findings from the wiring are in [`data/README.md`](data/README.md).
 

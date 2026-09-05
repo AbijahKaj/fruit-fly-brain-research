@@ -148,8 +148,31 @@ export function fromV2(h: V2Header, buf: ArrayBuffer): Graph {
   };
 }
 
+/** Read a response body in chunks, reporting bytes so far (total from Content-Length when known). */
+async function readWithProgress(res: Response, onProgress?: (loaded: number, total: number) => void): Promise<ArrayBuffer> {
+  const total = Number(res.headers.get("content-length") ?? 0);
+  if (!res.body || !onProgress) return res.arrayBuffer();
+  const reader = res.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let loaded = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    chunks.push(value);
+    loaded += value.byteLength;
+    onProgress(loaded, total);
+  }
+  const out = new Uint8Array(loaded);
+  let off = 0;
+  for (const c of chunks) {
+    out.set(c, off);
+    off += c.byteLength;
+  }
+  return out.buffer;
+}
+
 /** Load a graph by URL stem or .json path (the .bin sits next to the header). */
-export async function loadGraph(url: string): Promise<Graph> {
+export async function loadGraph(url: string, onProgress?: (loaded: number, total: number) => void): Promise<Graph> {
   const jsonUrl = url.endsWith(".json") ? url : `${url}.json`;
   const res = await fetch(jsonUrl);
   if (!res.ok) throw new Error(`failed to load graph ${jsonUrl}: ${res.status}`);
@@ -158,7 +181,7 @@ export async function loadGraph(url: string): Promise<Graph> {
   const binUrl = jsonUrl.replace(/\.json$/, ".bin");
   const bin = await fetch(binUrl);
   if (!bin.ok) throw new Error(`failed to load graph ${binUrl}: ${bin.status}`);
-  return fromV2(j, await bin.arrayBuffer());
+  return fromV2(j, await readWithProgress(bin, onProgress));
 }
 
 export function typeName(g: Graph, i: number): string {

@@ -16,6 +16,11 @@
       #controls { position: fixed; top: 12px; right: 12px; background: rgba(0,0,0,0.45); border: 1px solid #2a3038; border-radius: 4px; padding: 8px 10px; display: flex; flex-direction: column; gap: 6px; }
       #controls label { display: flex; align-items: center; gap: 8px; }
       #controls input[type=range] { width: 180px; }
+      /* Start-up banner over the scene: stage + progress, hidden once the loop is closed. */
+      #status { position: fixed; top: 12px; left: 50%; transform: translateX(-50%); min-width: 320px; max-width: 40vw; background: rgba(0,0,0,0.6); border: 1px solid #2a3038; border-radius: 4px; padding: 8px 12px; text-align: center; }
+      #status[hidden] { display: none; }
+      #statusBar { height: 4px; margin-top: 6px; background: #2a3038; border-radius: 2px; overflow: hidden; }
+      #statusFill { height: 100%; width: 0; background: #6fb3ff; transition: width 0.1s linear; }
       #help { position: fixed; bottom: 12px; left: calc(30vw + 24px); right: 12px; background: rgba(0,0,0,0.45); border: 1px solid #2a3038; border-radius: 4px; padding: 6px 10px; opacity: 0.8; text-align: center; }
     </style>
   </head>
@@ -35,7 +40,8 @@
       <label>out gain <input id="outGain" type="range" min="0" max="2" step="0.05" value="0.25" /> <span id="outGainVal">0.25</span></label>
       <label><input id="follow" type="checkbox" checked /> chase camera</label>
     </div>
-    <div id="help">[ ] drum · space stop drum · b brain on/off · r reset · v eye view (luminance / T4) · l looming object</div>
+    <div id="status"><div id="statusText">loading…</div><div id="statusBar"><div id="statusFill"></div></div></div>
+    <div id="help">[ ] drum · space stop drum · b brain on/off · r reset · c recalibrate gains · v eye view (luminance / T4) · l looming object</div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

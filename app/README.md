@@ -23,7 +23,22 @@ npm run build    # typecheck + bundle
 
 Graph data in `public/graphs/`: `optic-v2.json` + `.bin` (from `data/extract_v2.py`), `fitted-params.json` (from `train/`), `flyvis-params.json` (the raw flyvis transfer, used only if no fitted file is present).
 
-Controls: `[` `]` drum speed, space stops the drum, `b` brain on/off (off = hover), `r` resets, `v` switches the eye HUD between luminance and T4a − T4b per column, `l` launches (or stops) a world-fixed sphere approaching the fly at 2 units/s. Sliders: net gain (global weight multiplier), loom gain, out gain (steering readout). `net on` picks WebGPU or the CPU worker. Console: `fly.loom(azDeg, opts)`, `fly.cruise(0.8)` (forward flight through the pillar field, `fly.collisions` counts contacts), `fly.calibrateSides()`, `fly.brain.params`.
+Controls: `[` `]` drum speed, space stops the drum, `b` brain on/off (off = hover), `r` resets, `c` re-measures the per-side gains, `v` switches the eye HUD between luminance and T4a − T4b per column, `l` launches (or stops) a world-fixed sphere approaching the fly at 2 units/s. Sliders: net gain (global weight multiplier), loom gain, out gain (steering readout). `net on` picks WebGPU or the CPU worker. Console: `fly.loom(azDeg, opts)`, `fly.cruise(0.8)` (forward flight through the pillar field, `fly.collisions` counts contacts), `fly.calibrateSides()`, `fly.brain.params`.
+
+## Start-up
+
+The banner over the scene names the stage and shows progress; the loop is closed when it disappears. Measured on the Mac (WebGPU, local server):
+
+| stage | what happens | seconds |
+| --- | --- | --- |
+| loading graph | 25 MB `.bin`, with a byte counter | 0.3 (local; longer over the network) |
+| building network | CSR, chunk tables, group indices | 0.4 |
+| starting network | WebGPU adapter, buffers, pipelines | 0.1 |
+| settling network | 0.5 s of simulated grey | 0.1 |
+| warm-up in the scene | live, output off, 2.5 s of scene time; photoreceptor adaptation (tau 1 s) and the pooling cells settle, then the readout offsets are taken | 2.5 |
+| calibrating optomotor gains | output off, drum still / ↺ / ↻ for 2.2 s each, then wait until the readout is back at rest | 6.6 + ~1.5, first load only |
+
+The gains are cached in `localStorage` per graph, parameter file, backend and net gain, so a reload closes the loop in about 3.5 s; the first load in about 12 s. Before this the homeostat ran 40 rounds (5.3 s) although the fitted parameter file leaves it no units to adjust, the drum sweep took 7.7 s on every load with nothing on screen saying why, and the gains it produced varied by up to 2× between runs when the windows were shortened: the right HS response to the drum is only ~0.2 above its rest and oscillates with the passing stripes, so it needs 1.2 s of settling and 1 s of averaging per condition. A gain of 3.6 instead of 2.4 on that side raises the rest wobble from 0.1 to 0.4 rad/s, so the windows stay.
 
 ## Runtime shape
 
@@ -93,6 +108,8 @@ Hovering, with the sideslip (`l` launches a world-fixed sphere at 2 units/s; the
 | 45°, 3 units/s | | 0.27 / 0.92 (one of two) |
 | 45°, 6 units/s | | 0.26 (hit: too fast for the pipeline) |
 | head-on, 2 units/s | | 0.41 (hit, tie-break moves it 2 units but late) |
+
+These numbers depend on the background. The drum stops at whatever angle the last sweep left it, and the stripe behind the approaching sphere sets when the LC cells first answer: across stripe phases the left eye's first response to the 45° approach ranges from 1.25 to 2.2 units out, and at 1.25 units (0.6 s before impact) the fly is hit. So at 2 units/s the dodge is marginal, and the table above shows a favourable phase. The looming pathway's contrast dependence (a dark sphere in front of a dark stripe) is the next thing to look at there.
 
 Head-on approaches are the open case: the LC receptive fields start 17° off the midline, so a centred object only enters them when it already subtends ~20° (1.5 s before impact at this speed), and both eyes then fire equally. The readout has a tie-break (a bilateral signal turns right and lowers the wing amplitude) but the signal comes too late. Pillar course (40 pillars over 70 × 70, 45 s at cruise): 0 collisions with or without the optomotor output.
 

@@ -104,7 +104,7 @@ export class OpticBrain implements Brain {
      * and slow drifts of the pooled tonic drive are cancelled, optomotor transients pass.
      */
     offsetTau: 1e9,
-    /** Live warm-up in the scene, output off, before the readout offsets are taken (s). */
+    /** Live warm-up in the scene, output off, before the readout offsets are taken (s). Photoreceptor adaptation (tau 1 s) and the pooling cells need about 2 s. */
     warmSeconds: 2.5,
     /** Added to each side's rest in the relative readout (rate units), so a silent side is not infinitely sensitive. */
     readoutFloor: 0.2,
@@ -154,8 +154,9 @@ export class OpticBrain implements Brain {
   private brake = 0;
   sideGain = { L: 1, R: 1 };
   /** Slow per-side readout offsets (rest level of each side, adapting). */
-  private offsetL = 0;
-  private offsetR = 0;
+  /** Rest level of each side, the warm-up average; the readout is relative to it. */
+  offsetL = 0;
+  offsetR = 0;
   homeoErr = 0;
   homeoBias = 0;
 
@@ -316,7 +317,7 @@ export class OpticBrain implements Brain {
     this.injectTonic();
     void this.net.whenReady().then(async () => {
       const p = this.params;
-      if (!this.homeostatDone) {
+      if (!this.homeostatDone && this.homeoUnits.length > 0) {
         // Once per load: gentle steps so the recurrent network settles rather than oscillates.
         const info = await this.net.homeostat(this.homeoUnits, this.homeoTargets, p.restRounds, 0.25, 0.25);
         this.homeoErr = info.meanErr;
@@ -442,6 +443,14 @@ export class OpticBrain implements Brain {
   }
 
   /** Readout rates per side, for the side-gain calibration in main.ts. */
+  /** Where the start-up is: "starting" (backend), "settling", "warm-up" (progress 0..1), or "live". */
+  get stage(): { name: "starting" | "settling" | "warm-up" | "live"; progress: number } {
+    if (!this.net.ready) return { name: "starting", progress: 0 };
+    if (!this.armed) return { name: "settling", progress: 0 };
+    if (!this.calibrated) return { name: "warm-up", progress: Math.min(1, this.warm / this.params.warmSeconds) };
+    return { name: "live", progress: 1 };
+  }
+
   readoutSides(): { L: number; R: number } {
     const n = this.net;
     return this.params.readout === "hs"

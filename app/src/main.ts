@@ -63,6 +63,7 @@ let optic: OpticBrain | undefined;
 let brainOn = true;
 const hover: MotorCommand = { left: defaultWingParams.hoverAmp, right: defaultWingParams.hoverAmp };
 let loadStatus = "loading graph…";
+let loadProgress = 0;
 
 // Fitted parameters (train/) win over the raw flyvis transfer when present.
 const loadParams = (): ReturnType<typeof loadFlyvis> =>
@@ -81,8 +82,15 @@ const buildOptic = (): void => {
   void calibrateSides();
 };
 netSel.addEventListener("change", buildOptic);
-Promise.all([loadGraph(`${BASE}graphs/optic-v2`), loadParams()])
+const onGraphProgress = (loaded: number, total: number): void => {
+  const mb = (b: number): string => (b / 1e6).toFixed(1);
+  loadStatus = total > 0 ? `loading graph ${mb(loaded)} / ${mb(total)} MB` : `loading graph ${mb(loaded)} MB`;
+  loadProgress = total > 0 ? loaded / total : 0;
+};
+Promise.all([loadGraph(`${BASE}graphs/optic-v2`, onGraphProgress), loadParams()])
   .then(([g, fv]) => {
+    loadStatus = "building network";
+    loadProgress = 1;
     const ommL = ommatidiaFromColumns("left", g.columns);
     const ommR = ommatidiaFromColumns("right", g.columns);
     eye.register(ommL);
@@ -172,6 +180,9 @@ window.addEventListener("keydown", (e) => {
     case "r":
       reset();
       break;
+    case "c":
+      void calibrateSides(true);
+      break;
     case "v":
       hud.view = hud.view === "luminance" ? "brain" : "luminance";
       break;
@@ -184,48 +195,122 @@ window.addEventListener("keydown", (e) => {
 });
 
 /**
- * Open-loop side calibration: spin the drum each way with the output off, take
- * each side's preferred-direction response, and hand the gains to the brain.
- * Runs once after the brain has settled; `fly.calibrateSides()` re-runs it.
+ * Open-loop side calibration: with the output off, measure each side at rest and with the drum
+ * spinning each way, and take its preferred-direction response above rest. The gains are cached
+ * per graph + parameter file + backend, so a reload skips the sweep; `c` or
+ * `fly.calibrateSides(true)` measures again.
  */
 let sidesCalibrated = false;
-const calibrateSides = async (): Promise<{ L: number; R: number } | undefined> => {
+let sidesSource: "cached" | "measured" | "" = "";
+/** Bump when the readout or the drum changes, so stale cached gains are not reused. */
+const CALIB_VERSION = 3;
+/**
+ * Per condition: let the readout settle after the drum changes, then average. The right HS
+ * response is small (about 0.2 above rest) and oscillates with the passing stripes, so shorter
+ * windows give gains that vary by a factor of two between runs and a wobbly loop.
+ */
+const CALIB = { settleMs: 1200, measureMs: 1000, recoverMs: 3000 };
+const fnv = (str: string): string => {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < str.length; i++) h = Math.imul(h ^ str.charCodeAt(i), 0x01000193);
+  return (h >>> 0).toString(16);
+};
+const calibKey = (o: OpticBrain): string =>
+  `fly-calib:${CALIB_VERSION}:${o.graph.source}:${o.graph.n}:${o.graph.m}:${fnv(JSON.stringify(o.fv))}:${o.net.kind}:${o.params.wScale}`;
+const readCache = (key: string): { L: number; R: number } | undefined => {
+  try {
+    const v = localStorage.getItem(key);
+    if (!v) return undefined;
+    const g = JSON.parse(v) as { L: number; R: number };
+    return Number.isFinite(g.L) && Number.isFinite(g.R) && g.L > 0 && g.R > 0 ? g : undefined;
+  } catch {
+    return undefined;
+  }
+};
+const writeCache = (key: string, g: { L: number; R: number }): void => {
+  try {
+    localStorage.setItem(key, JSON.stringify(g));
+  } catch {
+    /* private mode etc.: just measure next time */
+  }
+};
+/** What the start-up banner shows for the calibration; empty when idle. */
+let calibStatus: { text: string; progress: number } | undefined;
+let calibrating = false;
+const calibrateSides = async (force = false): Promise<{ L: number; R: number } | undefined> => {
   const o = optic;
-  if (!o) return undefined;
+  if (!o || calibrating) return undefined;
+  calibrating = true;
   const sleep = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms));
-  while (!o.calibrated) await sleep(100);
-  const outGain = o.params.outputGain;
-  const loomGain = o.params.loomGain;
-  o.params.outputGain = 0;
-  o.params.loomGain = 0;
-  const drum0 = drumOmega;
-  const measure = async (omega: number): Promise<{ L: number; R: number }> => {
-    setDrum(omega);
-    await sleep(1200);
-    const acc = { L: 0, R: 0 };
-    let n = 0;
+  try {
+    // measure from the start pose, after a fresh warm-up, so the rest levels match the sweep
+    if (force) reset();
+    while (!o.calibrated) {
+      if (optic !== o) return undefined;
+      await sleep(50);
+    }
+    const key = calibKey(o);
+    // the cache holds the preferred-direction responses the gains are derived from
+    const cached = force ? undefined : readCache(key);
+    if (cached) {
+      o.setSideGain(cached.L, cached.R);
+      sidesCalibrated = true;
+      sidesSource = "cached";
+      return o.sideGain;
+    }
+    const outGain = o.params.outputGain;
+    const loomGain = o.params.loomGain;
+    o.params.outputGain = 0;
+    o.params.loomGain = 0;
+    const drum0 = drumOmega;
+    const total = 3 * (CALIB.settleMs + CALIB.measureMs) + CALIB.recoverMs;
+    let done = 0;
+    const measure = async (omega: number, label: string): Promise<{ L: number; R: number }> => {
+      setDrum(omega);
+      const t0 = performance.now();
+      const acc = { L: 0, R: 0 };
+      let n = 0;
+      while (performance.now() - t0 < CALIB.settleMs + CALIB.measureMs) {
+        const el = performance.now() - t0;
+        calibStatus = { text: `calibrating optomotor gains: drum ${label}`, progress: (done + el) / total };
+        if (el >= CALIB.settleMs) {
+          const s = o.readoutSides();
+          acc.L += s.L;
+          acc.R += s.R;
+          n++;
+        }
+        await sleep(25);
+      }
+      done += CALIB.settleMs + CALIB.measureMs;
+      return { L: acc.L / n, R: acc.R / n };
+    };
+    const rest = await measure(0, "still");
+    const ccw = await measure(1, "\u21ba");
+    const cw = await measure(-1, "\u21bb");
+    setDrum(drum0);
+    const pdL = Math.max(ccw.L - rest.L, cw.L - rest.L);
+    const pdR = Math.max(ccw.R - rest.R, cw.R - rest.R);
+    // let the readout return to rest before the output is switched on, so the sweep's after-effect is not a turn
     const t0 = performance.now();
-    while (performance.now() - t0 < 1000) {
+    for (;;) {
+      const el = performance.now() - t0;
+      calibStatus = { text: "calibrating optomotor gains: back to rest", progress: (done + el) / total };
       const s = o.readoutSides();
-      acc.L += s.L;
-      acc.R += s.R;
-      n++;
+      const back = Math.abs(s.L - o.offsetL) < 0.05 * (o.offsetL + 0.2) && Math.abs(s.R - o.offsetR) < 0.05 * (o.offsetR + 0.2);
+      if ((back && el > 300) || el >= CALIB.recoverMs) break;
       await sleep(25);
     }
-    return { L: acc.L / n, R: acc.R / n };
-  };
-  const rest = await measure(0);
-  const ccw = await measure(1);
-  const cw = await measure(-1);
-  setDrum(drum0);
-  const pdL = Math.max(ccw.L - rest.L, cw.L - rest.L);
-  const pdR = Math.max(ccw.R - rest.R, cw.R - rest.R);
-  await sleep(1000);
-  o.setSideGain(pdL, pdR);
-  o.params.outputGain = outGain;
-  o.params.loomGain = loomGain;
-  sidesCalibrated = true;
-  return o.sideGain;
+    o.setSideGain(pdL, pdR);
+    o.params.outputGain = outGain;
+    o.params.loomGain = loomGain;
+    sidesCalibrated = true;
+    sidesSource = "measured";
+    writeCache(key, { L: pdL, R: pdR });
+    return o.sideGain;
+  } finally {
+    calibrating = false;
+    calibStatus = undefined;
+  }
 };
 
 // ---------- recorder ----------
@@ -292,6 +377,41 @@ const record = async (episodes: Episode[]): Promise<Array<Record<string, unknown
   brainOn = wasOn;
   reset();
   return out;
+};
+
+// ---------- start-up banner ----------
+const statusEl = $("status");
+const statusText = $("statusText");
+const statusFill = $("statusFill");
+let lastBanner = "";
+/** What is keeping the loop open right now, or undefined once the fly is flying on its own. */
+const startupStatus = (): { text: string; progress: number } | undefined => {
+  if (!optic) return { text: loadStatus, progress: loadProgress };
+  if (!brainOn) return undefined;
+  const st = optic.stage;
+  switch (st.name) {
+    case "starting":
+      return { text: `starting network on ${optic.net.kind === "gpu" ? "WebGPU" : "CPU worker"}`, progress: 0 };
+    case "settling":
+      return { text: "settling network (grey)", progress: 0 };
+    case "warm-up":
+      return { text: `warm-up in the scene, output off (${(st.progress * optic.params.warmSeconds).toFixed(1)} / ${optic.params.warmSeconds} s)`, progress: st.progress };
+    default:
+      break;
+  }
+  if (calibStatus) return calibStatus;
+  if (!sidesCalibrated) return { text: "waiting for gain calibration", progress: 0 };
+  return undefined;
+};
+const updateStatusBanner = (): void => {
+  const st = startupStatus();
+  statusEl.hidden = !st;
+  if (!st) return;
+  if (st.text !== lastBanner) {
+    statusText.textContent = st.text;
+    lastBanner = st.text;
+  }
+  statusFill.style.width = `${(100 * Math.max(0, Math.min(1, st.progress))).toFixed(1)}%`;
 };
 
 // ---------- loop ----------
@@ -380,6 +500,7 @@ const loop = new SimLoop({
       ["drum ω", drumOmega],
       ["loom", loomer.active ? `${loomer.distance.toFixed(1)} away, hits ${loomer.hits}` : "off"],
       ["collisions", collisions],
+      ["gains", sidesCalibrated ? sidesSource : "uncalibrated"],
       ["yaw rate", body.state.yawRate],
       ["slip", body.state.yawRate - drumOmega],
       ["heading°", ((body.state.yaw * 180) / Math.PI) % 360],
@@ -387,6 +508,7 @@ const loop = new SimLoop({
       ["wing L/R", `${cmd.left.toFixed(2)} / ${cmd.right.toFixed(2)}`],
       ...extra,
     ]);
+    updateStatusBanner();
   },
 });
 
@@ -421,6 +543,9 @@ Object.assign(window, {
     calibrateSides,
     get sidesCalibrated() {
       return sidesCalibrated;
+    },
+    get sidesSource() {
+      return sidesSource;
     },
     /** Cruise through the pillar field: mean wing amplitude above hover. 0 stops. */
     cruise(baseAmp = 0.8) {
