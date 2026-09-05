@@ -82,8 +82,11 @@ class Stimuli:
 
     def to_ext(self, lum: torch.Tensor) -> torch.Tensor:
         """Column luminance (T, B, C) -> lamina ext (T, B, n)."""
-        rR = self.pr["restOffset"] + self.pr["stimGain"] * lum
-        ext = torch.zeros(lum.shape[0], lum.shape[1], self.g.n, device=self.dev)
+        return self.ext_from_photoreceptor(self.pr["restOffset"] + self.pr["stimGain"] * lum)
+
+    def ext_from_photoreceptor(self, rR: torch.Tensor) -> torch.Tensor:
+        """Photoreceptor rate per column (T, B, C) -> lamina ext (T, B, n)."""
+        ext = torch.zeros(rR.shape[0], rR.shape[1], self.g.n, device=self.dev)
         ext[:, :, self.lam_units_t] = rR[:, :, self.lam_cols] * self.lam_wt[None, None, :]
         return ext
 
@@ -237,6 +240,8 @@ def main() -> None:
                          "(up for progressive, below rest for regressive motion); L-R then reads rotation")
     ap.add_argument("--hs-weight", type=float, default=1.0)
     ap.add_argument("--hs-tau-max", type=float, default=0.05, help="upper bound on the HS membrane time constant (s)")
+    ap.add_argument("--scene", default=None,
+                    help="HS stage stimuli from eye input recorded in the browser (app: fly.record) instead of the ray-cast world")
     args = ap.parse_args()
     dev = args.device
 
@@ -311,6 +316,11 @@ def main() -> None:
             hs_groups[side] = torch.tensor(u, device=dev)
         print(f"HS readout: L {len(hs_groups['L'])} cells, R {len(hs_groups['R'])} cells")
     hs_rec = torch.tensor(np.concatenate([v.cpu().numpy() for v in hs_groups.values()]), device=dev) if hs_groups else None
+    scene = None
+    if args.hs and args.scene:
+        from scene_episodes import SceneEpisodes
+        scene = SceneEpisodes(args.scene, dev, dt, fv)
+        print(f"scene episodes: {len(scene.kinds)} ({ {k: len(v) for k, v in scene.by_kind.items()} })")
     # record T4/T5 too, so the static control can penalise motion detectors that respond to static contrast
     all_rec = torch.cat([rec, ds_rec]) if ds_rec is not None else rec
     ds_off = len(rec)
@@ -349,7 +359,7 @@ def main() -> None:
             loss_ds = ds_loss(grates[T // 3:].mean(0), theta) * args.ds_weight
         loss_hs = torch.zeros((), device=dev)
         if args.hs and hs_rec is not None:
-            fext = stim.flow(FLOW_KINDS)
+            fext = stim.ext_from_photoreceptor(scene.batch(FLOW_KINDS, T)) if scene else stim.flow(FLOW_KINDS)
             frates = model(fext, dt, record=hs_rec.tolist())              # (T, Bf, nhs)
             fresp = frates[-int(T * WIN):].mean(0)                          # (Bf, nhs)
             nl = len(hs_groups["L"])

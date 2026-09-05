@@ -227,6 +227,71 @@ const calibrateSides = async (): Promise<{ L: number; R: number } | undefined> =
   return o.sideGain;
 };
 
+// ---------- recorder ----------
+/**
+ * Records what the eyes see during scripted self-motion, for training on the scene's own
+ * statistics (train/train_loom.py --scene). Each episode drives the body directly with the
+ * brain off: a yaw rate, a forward speed, or nothing (static). Luminance per column, 8 bit.
+ */
+interface Episode {
+  kind: string;
+  seconds: number;
+  omega?: number;
+  speed?: number;
+  start?: { x: number; z: number; yaw: number };
+}
+const RECORD_HZ = 120;
+let recorderHook: ((dt: number) => void) | undefined;
+const record = async (episodes: Episode[]): Promise<Array<Record<string, unknown>>> => {
+  if (!eyes || !opticGraph) throw new Error("graph not loaded");
+  const C = opticGraph[0].columns.count;
+  const { ommL, ommR } = eyes;
+  const wasOn = brainOn;
+  brainOn = false;
+  setDrum(0);
+  loomer.stop();
+  world.course.visible = true;
+  const out: Array<Record<string, unknown>> = [];
+  const sleep = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms));
+  for (const ep of episodes) {
+    body.reset();
+    if (ep.start) {
+      body.state.position.x = ep.start.x;
+      body.state.position.z = ep.start.z;
+      body.state.yaw = ep.start.yaw;
+    }
+    body.applyTo(world.flyRoot);
+    const frames: Uint8Array[] = [];
+    recorderHook = () => {
+      if (!eyes) return;
+      const buf = new Uint8Array(C);
+      for (let i = 0; i < ommL.count; i++) buf[ommL.col[i]!] = Math.round(255 * Math.max(0, Math.min(1, eyes.lumL[i]!)));
+      for (let i = 0; i < ommR.count; i++) buf[ommR.col[i]!] = Math.round(255 * Math.max(0, Math.min(1, eyes.lumR[i]!)));
+      frames.push(buf);
+      body.state.yawRate = ep.omega ?? 0;
+      body.state.speed = ep.speed ?? 0;
+    };
+    // fixed 120 Hz frames, independent of the real frame rate; yield now and then so the page stays alive
+    const n = Math.round(ep.seconds * RECORD_HZ);
+    loop.stop();
+    for (let k = 0; k < n; k++) {
+      loop.step(1 / RECORD_HZ);
+      if (k % 30 === 29) await sleep(0);
+    }
+    loop.start();
+    recorderHook = undefined;
+    const all = new Uint8Array(frames.length * C);
+    frames.forEach((f, k) => all.set(f, k * C));
+    let bin = "";
+    for (let k = 0; k < all.length; k += 8192) bin += String.fromCharCode(...all.subarray(k, k + 8192));
+    out.push({ kind: ep.kind, omega: ep.omega ?? 0, speed: ep.speed ?? 0, columns: C, frames: frames.length, dt: 1 / RECORD_HZ, data: btoa(bin) });
+  }
+  world.course.visible = false;
+  brainOn = wasOn;
+  reset();
+  return out;
+};
+
 // ---------- loop ----------
 const fwd = new THREE.Vector3();
 const camTarget = new THREE.Vector3();
@@ -253,6 +318,8 @@ const loop = new SimLoop({
       eye.sample(eyes.ommL, eyes.lumL);
       eye.sample(eyes.ommR, eyes.lumR);
     }
+
+    recorderHook?.(dt);
 
     // 3. brain
     const brain = brainOn ? optic : undefined;
@@ -364,5 +431,6 @@ Object.assign(window, {
     },
     reset,
     loop,
+    record,
   },
 });

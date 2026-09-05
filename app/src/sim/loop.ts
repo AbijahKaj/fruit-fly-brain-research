@@ -28,6 +28,12 @@ export class SimLoop {
     this.running = false;
   }
 
+  /** Advance one frame of exactly `dt` sim seconds, outside the animation-frame clock. */
+  step(dt: number): void {
+    this.time += dt;
+    this.cb.frame(dt, this.time);
+  }
+
   private readonly tick = (now: number): void => {
     if (!this.running) return;
     const real = (now - this.last) / 1000;
