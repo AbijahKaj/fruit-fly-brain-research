@@ -88,4 +88,14 @@ Head-on approaches are the open case: the LC receptive fields start 17° off the
 
 Hand-written here: the top-k population readout per eye (the trainer scores the same top-5), the loom gain / tie-break / brake, the collision counter. LC4/LPLC2 tau, bias and every input synapse type are fitted; their receptive fields are the wiring's.
 
-**Open, and what was tried.** During forward flight both HS populations rise, more on the side with nearer objects, and the optomotor loop reads that as a rotation: the fly turns toward the pillars (about 110° over 7 s of cruise). Real flies separate rotation from translation. Three attempts did not transfer to the scene and are recorded in `train/README.md`: a hand-written common-mode arbitration in the motor layer (the unfitted HS respond to both directions, so the common-mode test fires on rotation too), an HS fit for rotation selectivity (impossible with this graph's purely ipsilateral HS inputs), and an HS fit for the classic bidirectional response with fast membranes (converged on the trainer's ray-cast flow fields, but in the scene every drum direction produced a left turn). The shipped state keeps the unfitted HS, a fixed per-side offset, and drum-calibrated per-side gains; the drum is followed at ω = +1 / +2 (0.7 / 1.6) and weakly at −1 / −2.
+**Rotation vs translation, solved by training on the scene.** During forward flight both HS populations rise, more on the side with nearer objects, and an unfitted HS readout took that for a rotation: the fly turned toward the pillars (110–135° over 7 s of cruise). The fix that transferred was to fit the HS cells on eye input recorded from this scene (`fly.record`, 50 episodes of the fly yawing, cruising or sitting still, played through the browser's own photoreceptor pipeline in the trainer), with the classic bidirectional objective: progressive motion up, regressive below rest, rest level held on every static view. Three things had to be true first, all found on the way: the eye must stay level while the body banks (the head does that in a real fly; a banked eye collapsed both HS sides and locked the loop in a spin), the readout offsets must be taken after a 2.5 s live warm-up in the scene, and the trainer had to run the pooling cells at the browser's synapse scale with a fitted bias instead of the browser re-centring them (see `train/README.md`). The readout is now each side's deviation relative to its own rest, so a fast self-rotation that silences both sides cancels instead of leaving the difference of two rest levels as a permanent turn.
+
+With that (`fitted-params.json` = stage `hs7`, out gain 0.25):
+
+| | before | now |
+| --- | --- | --- |
+| drum ω = +1 / −1 / +2 / −2 | 0.7 / −0.3 / 1.6 / 0.0 | 0.55 / −0.62 / 1.33 / −1.61 |
+| cruise drift over 7 s | 110–135° | 10–50° |
+| pillar course, 45 s at cruise, loom gain 5 | 0–1 collisions, circling | 0 collisions, 53 units travelled |
+
+Still open: a rest wobble with the loop closed (mean |yaw| ≈ 0.2 rad/s at out gain 0.25, more at higher gain; the readout is sensitive and the wing-to-yaw dynamics add delay), and the residual cruise drift.

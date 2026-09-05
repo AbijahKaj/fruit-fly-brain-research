@@ -87,7 +87,7 @@ export class OpticBrain implements Brain {
     restTarget: 0.3,
     restRounds: 40,
     wScale: 1,
-    outputGain: 4,
+    outputGain: 0.25,
     readoutSign: -1,
     baseAmp: 0.5,
     maxTurn: 0.5,

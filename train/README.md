@@ -51,13 +51,18 @@ Runs are in `runs/loom*.log`. Sequence, each starting from the previous stage's 
 
 Lessons: score the best-placed cells (top-k), not the population mean, because only cells whose receptive field sits at the loom centre see all four expanding edges; train with static controls, otherwise motion detectors learn to answer contrast; put stimuli where the readout will need them (frontal looms).
 
-### HS stage (hs1–hs4), not shipped
+### HS stage (hs1–hs7)
 
-Goal: HS_L − HS_R should read yaw rotation and not the translation flow of forward flight, which in the scene turned the optomotor loop into a bias toward nearby pillars. Findings:
+Goal: HS_L − HS_R should read yaw rotation and not the translation flow of forward flight, which in the scene turned the optomotor loop into a bias toward nearby pillars.
 
 - In `optic-v2` the HS cells receive only ipsilateral input (T4a, T5a, LPi21, TmY5a; no H2 or other contralateral partner), so a rotation-selective single HS cell is not expressible. The graph does support the classic bidirectional HS (up for progressive, below rest for regressive motion via LPi21), which is what `--hs` fits.
-- Sparse dot flow fields did not drive the fitted T4/T5 at all (0.11 vs 0.10 static); the ray-cast striped wall plus checkered ground does (T4a 1.35 for the preferred rotation vs 0.18 static).
-- hs3 and hs4 converge on the trainer (rotation separation 1.6–2.2, regressive side below rest, tau bounded at 50 ms in hs4), but do not transfer: in the scene every drum direction produced a left turn and the cruise drift got worse. The HS rest and the scene's static structure differ too much from the ray-cast world; a closed-loop calibration or recording the scene's own eye input for training is the next thing to try.
+- hs1–hs2: sparse dot flow fields did not drive the fitted T4/T5 at all (0.11 vs 0.10 static). hs3–hs4: a ray-cast striped wall plus checkered ground does (T4a 1.35 for the preferred rotation vs 0.18 static) and the fit converged, but did not transfer: in the scene every drum direction produced a left turn.
+- hs5: **stimuli recorded from the scene** (`--scene data/scene-episodes.json`, from `fly.record` in the app; `scene_episodes.py` replays them through the browser's photoreceptor pipeline). Transferred halfway: directions right, loop still oscillating.
+- The trainer and the browser were not running the same network: the browser scales inputs onto pooling cells (LPTCs, LPi, LCs) by `lptcScale` = 0.001 and gives them a homeostatic bias; the trainer scaled them by 0.02 with no bias. LPi21 feeds both HS and T4/T5. `graph_torch.py` now uses the pooling scale, and every pooling type flyvis does not cover gets a homeostat-style bias in the trainer (rest membrane 0.3 under grey) that is exported; the browser treats those types as fitted and runs no homeostat at all. Looming selectivity and DS were unchanged by the switch.
+- hs6 on the matched model: rotation separation 1.2–1.4, translation 0.05–0.13, rest 0.82/0.82. In the scene the right HS rest still swung from 0 to 0.8 with the view (the constraint held only on average over two static episodes).
+- hs7: 16 static views, rest ≥ 0.6 and sides matched on every one. Shipped. In the scene: rest 0.9 / 0.5–0.7 across views, drum followed in all four directions, cruise drift 10–50° over 7 s (from 110–135°), pillar course 45 s with no collision.
+
+`train_loom.py --device cuda --steps 600 --T 160 --lr 0.02 --hs --scene data/scene-episodes.json --params out/fitted-loom6.json`, 4.5 minutes. The recording (32 MB) is not in git; re-record with `fly.record` (see `app/README.md`).
 
 ## What we learned transferring flyvis
 
