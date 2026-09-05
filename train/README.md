@@ -45,7 +45,8 @@ Runs are in `runs/loom*.log`. Sequence, each starting from the previous stage's 
 | loom1–3 | only LC input pairs + LC tau/bias trainable, population-mean readout, l/v 20–80 ms | no selectivity: the presynaptic drive onto LC4/LPLC2 is the same for every stimulus (see `diag_loom.py`); the dark disc even *lowers* the ON-pathway drive, and with fixed synapse signs nothing can go up |
 | loom4 | `--joint`: everything trainable, stage 1 grating loss kept, top-5 readout, slower l/v (0.1–0.4 s) | selectivity 0.98–1.0, DSI up to 0.74; but in the scene hundreds of T4/T5 sat at the ceiling at rest |
 | loom5 | + static-grating control (T4/T5 penalised above 0.15 under static contrast), object trials over structured backgrounds | T4/T5 quiet under static patterns; LC selectivity kept |
-| loom6 | + frontal loom positions (az 5–110°), L/R symmetry term on T4/T5 | shipped as `app/public/graphs/fitted-params.json`: selectivity 0.97–1.0, DSI 0.66, corr 0.96, eyes within ~30% |
+| loom6 | + frontal loom positions (az 5–110°), L/R symmetry term on T4/T5 | selectivity 0.97–1.0, DSI 0.66, corr 0.96, eyes within ~30% |
+| loom7 | looms scored while the disc is 8–35° wide (was the last 40% of the trial, 30–70°), HS frozen (`--freeze`), on top of hs7 | shipped: selectivity 0.89–0.97, DSI 0.67; in the scene the LC response starts at ~2 units instead of ~0.8, and a hovering fly sideslips out of the way |
 
 `train_loom.py --device cuda --steps 600 --T 160 --joint --ds-batch 4`, 6.5 minutes, 27 GB (two forward passes keep every per-edge product for the backward pass; `--T 200` with a batch of 8 gratings went out of memory).
 

@@ -18,12 +18,12 @@ npm run build    # typecheck + bundle
 | | `src/brain/flyvis.ts` | Applies the fitted per-type tau/bias and per-pair strengths (flyvis format) to the graph |
 | | `src/brain/net-backend.ts`, `src/brain/gpu-net.ts` | Network runtime interface; WebGPU backend (two WGSL compute passes per Euler step, state stays on the GPU) |
 | | `src/brain/net.worker.ts`, `src/brain/remote-net.ts` | CPU fallback: the same RateNet in a Web Worker |
-| 4 motor | `src/motor/wings.ts` | Wing amplitudes → thrust, yaw torque, bank |
+| 4 motor | `src/motor/wings.ts` | Wing amplitudes → thrust, yaw torque, bank and sideslip |
 | glue | `src/sim/loop.ts`, `src/ui/hud.ts`, `src/main.ts` | Frame loop, eye + network HUD, wiring |
 
 Graph data in `public/graphs/`: `optic-v2.json` + `.bin` (from `data/extract_v2.py`), `fitted-params.json` (from `train/`), `flyvis-params.json` (the raw flyvis transfer, used only if no fitted file is present).
 
-Controls: `[` `]` drum speed, space stops the drum, `b` brain on/off (off = hover), `r` resets, `v` switches the eye HUD between luminance and T4a − T4b per column, `l` launches or stops a looming object. Sliders: net gain (global weight multiplier), loom gain, out gain (steering readout). `net on` picks WebGPU or the CPU worker. Console: `fly.loom(azDeg, opts)`, `fly.cruise(0.8)` (forward flight through the pillar field, `fly.collisions` counts contacts), `fly.calibrateSides()`, `fly.brain.params`.
+Controls: `[` `]` drum speed, space stops the drum, `b` brain on/off (off = hover), `r` resets, `v` switches the eye HUD between luminance and T4a − T4b per column, `l` launches (or stops) a world-fixed sphere approaching the fly at 2 units/s. Sliders: net gain (global weight multiplier), loom gain, out gain (steering readout). `net on` picks WebGPU or the CPU worker. Console: `fly.loom(azDeg, opts)`, `fly.cruise(0.8)` (forward flight through the pillar field, `fly.collisions` counts contacts), `fly.calibrateSides()`, `fly.brain.params`.
 
 ## Runtime shape
 
@@ -83,6 +83,16 @@ Closed loop, fly cruising at 1.1 units/s toward a stationary sphere (radius 0.6)
 | ±6° | 0.84 | 1.03–1.05 | 66° away |
 | ±8° | 1.3 | 1.3–1.36 | 45–58° away |
 | 0° | 0 (hit) | 0.02–0.2 (hit) | −5 to 16° |
+
+Hovering, with the sideslip (`l` launches a world-fixed sphere at 2 units/s; the LC stage is scored while the disc is 8–35° wide, so the response starts at ~2 units instead of ~0.8):
+
+| approach | closest, loom gain 0 | loom gain 5 |
+| --- | --- | --- |
+| 45° left or right, 2 units/s | 0.02 (hit) | 0.86–0.99 (miss, ~2 units of sideslip) |
+| 20°, 2 units/s | | 0.79 (miss) |
+| 45°, 3 units/s | | 0.27 / 0.92 (one of two) |
+| 45°, 6 units/s | | 0.26 (hit: too fast for the pipeline) |
+| head-on, 2 units/s | | 0.41 (hit, tie-break moves it 2 units but late) |
 
 Head-on approaches are the open case: the LC receptive fields start 17° off the midline, so a centred object only enters them when it already subtends ~20° (1.5 s before impact at this speed), and both eyes then fire equally. The readout has a tie-break (a bilateral signal turns right and lowers the wing amplitude) but the signal comes too late. Pillar course (40 pillars over 70 × 70, 45 s at cruise): 0 collisions with or without the optomotor output.
 

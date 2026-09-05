@@ -178,7 +178,7 @@ window.addEventListener("keydown", (e) => {
     case "l":
       // a world-fixed object aimed at where the fly is now, so turning and sideslipping away works
       if (loomer.active) loomer.stop();
-      else loomer.launch(body.state.position, body.state.yaw, { retinal: false, loop: false });
+      else loomer.launch(body.state.position, body.state.yaw, { retinal: false, loop: false, speed: 2, startDistance: 12 });
       break;
   }
 });

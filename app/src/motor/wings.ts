@@ -33,7 +33,7 @@ export const defaultWingParams: WingParams = {
   thrustGain: 6,
   yawGain: 16,
   bankGain: 1.0,
-  sideGain: 4,
+  sideGain: 8,
 };
 
 export function wingsToForces(cmd: MotorCommand, p: WingParams = defaultWingParams): BodyForces {
