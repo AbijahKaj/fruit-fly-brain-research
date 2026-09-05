@@ -45,9 +45,9 @@ kinds = sorted(set(KINDS))
 acc = {k: [] for k in list(groups) + list(ds)}
 with torch.no_grad():
     for rep in range(args.reps):
-        ext = stim.kinds(kinds)
+        ext, score = stim.kinds_scored(kinds)
         rates = model(ext, args.dt, record=rec.tolist())
-        resp = rates[-int(args.T * WIN):].mean(0)
+        resp = (rates * score[:, :, None]).sum(0) / score.sum(0)[:, None]
         for k, p in pos.items():
             acc[k].append((topk_rate(resp, p, args.topk) if k in groups else resp[:, p].mean(1)).cpu().numpy())
 print(f"{'group':8s} " + " ".join(f"{k:>8s}" for k in kinds) + "   sel")

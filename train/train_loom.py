@@ -91,10 +91,18 @@ class Stimuli:
         return ext
 
     def kinds(self, kinds: list[str]) -> torch.Tensor:
-        """One stimulus per entry of `kinds` (loomL/R, recedeL/R, transL/R, grating)."""
+        return self.kinds_scored(kinds)[0]
+
+    def kinds_scored(self, kinds: list[str], band=(8.0, 35.0)) -> tuple[torch.Tensor, torch.Tensor]:
+        """One stimulus per entry of `kinds` (loomL/R, recedeL/R, transL/R, grating, static), and
+        the frames to score per stimulus (T, B): for looms and recedes the frames where the disc
+        radius lies in `band` degrees (LPLC2 responds from ~10 deg on, not only when the object
+        fills the eye), for the others the last WIN fraction."""
         T, dev, t_axis, dur = self.T, self.dev, self.t_axis, self.dur
         col_az, col_el = self.col_az, self.col_el
         lum = torch.full((T, len(kinds), len(self.g.col_az)), 0.5, device=dev)
+        score = torch.zeros(T, len(kinds), device=dev)
+        score[-int(T * WIN):] = 1.0
 
         def grating(tf, contrast):
             theta = torch.rand((), device=dev) * 2 * math.pi
@@ -129,9 +137,11 @@ class Stimuli:
                     radius = radius.flip(0)
                 radius = radius.clamp(2 * DEG, 70 * DEG)
                 d = angular_distance(az0, el0, col_az[None, :], col_el[None, :]).expand(T, -1)
+                inband = ((radius >= band[0] * DEG) & (radius <= band[1] * DEG)).float()
+                score[:, b] = inband if inband.sum() > 0 else score[:, b]
             inside = (d < radius[:, None]).float()
             lum[:, b] = lum[:, b] * (1 - inside) + 0.05 * inside
-        return self.to_ext(lum)
+        return self.to_ext(lum), score
 
     def flow(self, kinds: list[str], radius: float = 10.0) -> torch.Tensor:
         """Self-motion flow fields by ray casting a striped cylinder wall (radius `radius`, the
@@ -252,6 +262,7 @@ def main() -> None:
                          "(up for progressive, below rest for regressive motion); L-R then reads rotation")
     ap.add_argument("--hs-weight", type=float, default=1.0)
     ap.add_argument("--hs-tau-max", type=float, default=0.05, help="upper bound on the HS membrane time constant (s)")
+    ap.add_argument("--freeze", default="", help="comma-separated types whose tau/bias and input pairs stay fixed (e.g. a finished HS fit)")
     ap.add_argument("--scene", default=None,
                     help="HS stage stimuli from eye input recorded in the browser (app: fly.record) instead of the ray-cast world")
     args = ap.parse_args()
@@ -265,6 +276,14 @@ def main() -> None:
         masks = model.grad_masks(HS_TYPES, train_extra_pairs_only=True)
     else:
         masks = model.grad_masks(None if args.joint else LC_TYPES, train_extra_pairs_only=not args.joint)
+    for t in [x for x in args.freeze.split(",") if x]:
+        k = g.types.index(t) if t in g.types else -1
+        if k >= 0:
+            masks["log_tau"][k] = 0.0
+            masks["bias"][k] = 0.0
+        for i, (_a, b) in enumerate(model.pairs):
+            if b == t:
+                masks["log_strength"][i] = 0.0
     init = {k: v.detach().clone() for k, v in model.named_parameters()}
     n_extra = len(model.pairs) - model.n_fv_pairs
     print(f"trainable: {n_extra} new input pairs onto {extra}, plus their tau/bias")
@@ -342,9 +361,9 @@ def main() -> None:
         loss_rate = torch.zeros((), device=dev)
         report = {}
         if do_loom:
-            ext = stim.kinds(KINDS)
+            ext, score = stim.kinds_scored(KINDS)
             rates = model(ext, dt, record=all_rec.tolist())        # (T, B, nrec + nds)
-            resp = rates[-int(T * WIN):].mean(0)                    # (B, nrec + nds)
+            resp = (rates * score[:, :, None]).sum(0) / score.sum(0)[:, None]   # (B, nrec + nds), scored frames
             loss_static = torch.zeros((), device=dev)
             if ds_rec is not None:
                 # T4/T5 population under the static grating: mean rate above 0.15 is penalised

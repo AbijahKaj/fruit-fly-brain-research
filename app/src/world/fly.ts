@@ -13,6 +13,8 @@ export interface FlyState {
   roll: number;
   yawRate: number;
   speed: number;
+  /** Sideways velocity in the fly frame, positive = right. */
+  sideSpeed: number;
 }
 
 export interface BodyParams {
@@ -38,6 +40,7 @@ export class FlyBody {
     roll: 0,
     yawRate: 0,
     speed: 0,
+    sideSpeed: 0,
   };
   private readonly euler = new THREE.Euler(0, 0, 0, "YXZ");
 
@@ -45,7 +48,7 @@ export class FlyBody {
 
   reset(): void {
     this.state.position.set(0, this.params.altitude, 0);
-    this.state.yaw = this.state.roll = this.state.yawRate = this.state.speed = 0;
+    this.state.yaw = this.state.roll = this.state.yawRate = this.state.speed = this.state.sideSpeed = 0;
   }
 
   step(f: BodyForces, dt: number): void {
@@ -56,9 +59,10 @@ export class FlyBody {
     s.speed += (f.thrust - p.drag * s.speed) * dt;
     s.speed = Math.max(0, Math.min(p.maxSpeed, s.speed));
     s.roll += (f.bank - s.roll) * Math.min(1, p.rollResponse * dt);
-    // yaw = 0 faces -Z; positive yaw rotates the nose toward -X.
-    s.position.x += -Math.sin(s.yaw) * s.speed * dt;
-    s.position.z += -Math.cos(s.yaw) * s.speed * dt;
+    s.sideSpeed += (f.sideForce - p.drag * s.sideSpeed) * dt;
+    // yaw = 0 faces -Z; positive yaw rotates the nose toward -X. Right is (cos yaw, 0, -sin yaw).
+    s.position.x += (-Math.sin(s.yaw) * s.speed + Math.cos(s.yaw) * s.sideSpeed) * dt;
+    s.position.z += (-Math.cos(s.yaw) * s.speed - Math.sin(s.yaw) * s.sideSpeed) * dt;
     s.position.y = p.altitude;
   }
 

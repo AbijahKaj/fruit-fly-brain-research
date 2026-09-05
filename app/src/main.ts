@@ -176,8 +176,9 @@ window.addEventListener("keydown", (e) => {
       hud.view = hud.view === "luminance" ? "brain" : "luminance";
       break;
     case "l":
+      // a world-fixed object aimed at where the fly is now, so turning and sideslipping away works
       if (loomer.active) loomer.stop();
-      else loomer.launch(body.state.position, body.state.yaw);
+      else loomer.launch(body.state.position, body.state.yaw, { retinal: false, loop: false });
       break;
   }
 });
@@ -270,6 +271,7 @@ const record = async (episodes: Episode[]): Promise<Array<Record<string, unknown
       frames.push(buf);
       body.state.yawRate = ep.omega ?? 0;
       body.state.speed = ep.speed ?? 0;
+      body.state.sideSpeed = 0;
     };
     // fixed 120 Hz frames, independent of the real frame rate; yield now and then so the page stays alive
     const n = Math.round(ep.seconds * RECORD_HZ);
