@@ -23,7 +23,7 @@
  */
 import type { Ommatidia } from "../eye/ommatidia";
 import { unitsWhere, typeName, sideName, type Graph } from "./graph";
-import { applyFlyvis, flyvisRestV, isPooling, type FlyvisParams } from "./flyvis";
+import { applyFlyvis, flyvisRestV, hasFlyvisType, isPooling, type FlyvisParams } from "./flyvis";
 import { createNet, gpuAvailable } from "./net-backend";
 import type { NetBackend, NetBackendKind } from "./net-backend";
 import type { Brain, EyeInput, MotorCommand } from "./types";
@@ -66,6 +66,8 @@ export interface OpticParams {
   loomGain: number;
   loomThreshold: number;
   loomTopK: number;
+  loomTieBias: number;
+  loomBrake: number;
 }
 
 export class OpticBrain implements Brain {
@@ -95,6 +97,10 @@ export class OpticBrain implements Brain {
     loomThreshold: 0.02,
     /** Cells per eye that carry the looming readout (the best-placed ones; matches train_loom.py). */
     loomTopK: 5,
+    /** Head-on approaches drive both eyes equally: this fraction of the bilateral level becomes a turn to the right. */
+    loomTieBias: 0.5,
+    /** Bilateral looming lowers the mean wing amplitude by this times the bilateral level (brake). */
+    loomBrake: 0.3,
   };
   readonly net: NetBackend;
   calibrated = false;
@@ -131,6 +137,7 @@ export class OpticBrain implements Brain {
   private readonly homeoUnits: Int32Array;
   private readonly homeoTargets: Float32Array;
   private turn = 0;
+  private brake = 0;
   private offset = 0;
   homeoErr = 0;
   homeoBias = 0;
@@ -247,15 +254,18 @@ export class OpticBrain implements Brain {
       DNg02: g(/^DNg02_/),
       MN: unitsWhere(graph, (_t, _s, r) => r === "output"),
     };
-    // Homeostatic bias for the pooling cells (LPTCs, LPi, looming LCs), which flyvis does not
-    // cover, and, with raw flyvis params, for the covered optic types too (targeting the flyvis
-    // resting membrane value under grey). Fitted params already carry the right optic biases.
+    // Homeostatic bias for the pooling cells (LPTCs, LPi, looming LCs) whose parameters are not
+    // fitted, and, with raw flyvis params, for the covered optic types too (targeting the flyvis
+    // resting membrane value under grey). Fitted types (including LC4/LPLC2 after train_loom.py)
+    // carry their own bias and are left alone; a homeostat would re-centre them on the scene's
+    // static contrast and cancel the fitted operating point.
     // The central brain and VNC run as in milestone 2: no bias, DNg02 tonic drive only.
     const fitted = fv.source.startsWith("fitted");
     const homeo: number[] = [];
     for (let i = 0; i < graph.n; i++) {
       const t = typeName(graph, i);
-      if (isPooling(graph, i) || (graph.role[i] === 5 && !fitted && flyvisRestV(fv, t) !== undefined)) homeo.push(i);
+      const coveredType = fitted && hasFlyvisType(fv, t);
+      if ((isPooling(graph, i) && !coveredType) || (graph.role[i] === 5 && !fitted && flyvisRestV(fv, t) !== undefined)) homeo.push(i);
     }
     this.homeoUnits = Int32Array.from(homeo);
     this.homeoTargets = new Float32Array(this.homeoUnits.length);
@@ -348,13 +358,17 @@ export class OpticBrain implements Brain {
     const diff = this.readoutDiff() - this.offset;
     this.loom.L = Math.max(0, this.topkRate(this.lc.L) - this.loomRest.L - p.loomThreshold);
     this.loom.R = Math.max(0, this.topkRate(this.lc.R) - this.loomRest.R - p.loomThreshold);
-    // Looming on the left eye -> turn right (turn > 0 = yaw right).
-    const avoid = p.loomGain * (this.loom.L - this.loom.R);
+    // Looming on the left eye -> turn right (turn > 0 = yaw right). A head-on object drives both
+    // eyes: break the tie toward the right and brake.
+    const bilateral = Math.min(this.loom.L, this.loom.R);
+    const avoid = p.loomGain * (this.loom.L - this.loom.R + p.loomTieBias * bilateral);
+    this.brake = Math.min(p.baseAmp, p.loomBrake * bilateral);
     const raw = this.calibrated ? p.readoutSign * p.outputGain * diff + avoid : 0;
     this.turn = Math.max(-p.maxTurn, Math.min(p.maxTurn, raw));
+    const base = p.baseAmp - this.brake;
     return {
-      left: clamp01(p.baseAmp + this.turn / 2),
-      right: clamp01(p.baseAmp - this.turn / 2),
+      left: clamp01(base + this.turn / 2),
+      right: clamp01(base - this.turn / 2),
     };
   }
 
@@ -428,6 +442,7 @@ export class OpticBrain implements Brain {
       lplc2R: n.meanRate(g["LPLC2R"]!),
       loomL: this.loom.L,
       loomR: this.loom.R,
+      brake: this.brake,
       dnp: n.meanRate(g["DNp"]!),
     };
   }

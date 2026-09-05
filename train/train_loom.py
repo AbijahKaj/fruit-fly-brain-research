@@ -71,9 +71,10 @@ class Stimuli:
         self.dur = T * dt
 
     def disc_centre(self, side: int):
-        """Random RF-ish centre within one eye: az 25-110 deg on that side, el -30..30."""
+        """Random RF-ish centre within one eye: az 5-110 deg on that side (frontal included, so
+        head-on approaches are covered), el -30..30."""
         dev = self.dev
-        az = (25 + 85 * torch.rand((), device=dev)) * DEG * (1 if side == 1 else -1)
+        az = (5 + 105 * torch.rand((), device=dev)) * DEG * (1 if side == 1 else -1)
         el = (torch.rand((), device=dev) - 0.5) * 60 * DEG
         return az, el
 
@@ -180,6 +181,7 @@ def main() -> None:
     ap.add_argument("--ds-weight", type=float, default=1.0)
     ap.add_argument("--ds-batch", type=int, default=4)
     ap.add_argument("--static-weight", type=float, default=2.0, help="penalty on T4/T5 rate under a static grating")
+    ap.add_argument("--sym-weight", type=float, default=1.0, help="left/right response symmetry of T4/T5 under gratings")
     args = ap.parse_args()
     dev = args.device
 
@@ -231,6 +233,7 @@ def main() -> None:
 
     def ds_loss(resp, theta):
         total = 0.0
+        side_mean = {}
         for (st, side), pos in ds_pos.items():
             r = resp[:, pos].mean(1)
             cosv = torch.cos(theta - PD[st][side])
@@ -238,6 +241,12 @@ def main() -> None:
             corr = (rc * cc).sum() / (rc.norm() * cc.norm() + 1e-6)
             depth = r.std() / (r.mean() + 1e-3)
             total = total + (1 - corr) + 0.5 * torch.relu(0.5 - depth) - 0.2 * torch.log(r.mean() + 1e-3).clamp(max=0)
+            side_mean.setdefault(st, {})[side] = r.mean()
+        # the two eyes should respond alike (directions are uniform over the batch, PDs mirrored);
+        # otherwise the HS left-right readout drifts during straight flight
+        for st, m in side_mean.items():
+            if "L" in m and "R" in m:
+                total = total + args.sym_weight * (m["L"] - m["R"]).abs() / (m["L"] + m["R"] + 1e-3)
         return total
 
     # record T4/T5 too, so the static control can penalise motion detectors that respond to static contrast
