@@ -122,6 +122,8 @@ const buildOptic = (): void => {
   optic = new OpticBrain(g, fv, eyes.columns.ommL, eyes.columns.ommR, netSel.value as NetBackendKind);
   brains.optic = optic;
   syncBrainControls();
+  sidesCalibrated = false;
+  void calibrateSides();
 };
 netSel.addEventListener("change", buildOptic);
 Promise.all([loadGraph(`${BASE}graphs/optic-v2`), loadParams()])
@@ -138,6 +140,19 @@ Promise.all([loadGraph(`${BASE}graphs/optic-v2`), loadParams()])
 const currentBrain = (): Brain | undefined => (brainKey === "off" ? undefined : brains[brainKey]);
 
 const loomer = new Loomer(world.scene);
+/** Collisions with pillars (box half-width 0.75 plus the fly's 0.3), counted once per contact. */
+let collisions = 0;
+let inContact = false;
+const countCollisions = (): void => {
+  const p = body.state.position;
+  let touching = false;
+  const near = (o: THREE.Object3D): boolean => Math.abs(o.position.x - p.x) < 1.05 && Math.abs(o.position.z - p.z) < 1.05;
+  for (const o of world.obstacles) if (near(o)) touching = true;
+  if (world.course.visible) for (const o of world.course.children) if (near(o)) touching = true;
+  if (loomer.active && loomer.distance < loomer.params.radius + 0.1) touching = true;
+  if (touching && !inContact) collisions++;
+  inContact = touching;
+};
 
 // ---------- ui ----------
 const hud = new Hud($<HTMLCanvasElement>("eyes"), $("stats"));
@@ -236,6 +251,51 @@ window.addEventListener("keydown", (e) => {
   }
 });
 
+/**
+ * Open-loop side calibration for the optic brain: spin the drum each way with the
+ * output off, take each side's preferred-direction response, and hand the gains to the
+ * brain. Runs once after the brain has settled; `fly.calibrateSides()` re-runs it.
+ */
+let sidesCalibrated = false;
+const calibrateSides = async (): Promise<{ L: number; R: number } | undefined> => {
+  const o = optic;
+  if (!o) return undefined;
+  const sleep = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, ms));
+  while (!o.calibrated) await sleep(100);
+  const outGain = o.params.outputGain;
+  const loomGain = o.params.loomGain;
+  o.params.outputGain = 0;
+  o.params.loomGain = 0;
+  const drum0 = drumOmega;
+  const measure = async (omega: number): Promise<{ L: number; R: number }> => {
+    setDrum(omega);
+    await sleep(1200);
+    const acc = { L: 0, R: 0 };
+    let n = 0;
+    const t0 = performance.now();
+    while (performance.now() - t0 < 1000) {
+      const s = o.readoutSides();
+      acc.L += s.L;
+      acc.R += s.R;
+      n++;
+      await sleep(25);
+    }
+    return { L: acc.L / n, R: acc.R / n };
+  };
+  const rest = await measure(0);
+  const ccw = await measure(1);
+  const cw = await measure(-1);
+  setDrum(drum0);
+  const pdL = Math.max(ccw.L - rest.L, cw.L - rest.L);
+  const pdR = Math.max(ccw.R - rest.R, cw.R - rest.R);
+  await sleep(1000);
+  o.setSideGain(pdL, pdR);
+  o.params.outputGain = outGain;
+  o.params.loomGain = loomGain;
+  sidesCalibrated = true;
+  return o.sideGain;
+};
+
 // ---------- loop ----------
 const fwd = new THREE.Vector3();
 const camTarget = new THREE.Vector3();
@@ -254,6 +314,7 @@ const loop = new SimLoop({
     world.drum.position.x = body.state.position.x;
     world.drum.position.z = body.state.position.z;
     loomer.update(dt, body.state.position, body.state.yaw);
+    countCollisions();
 
     // 2. eye: render once, sample every registered lattice
     world.flyRoot.updateMatrixWorld(true);
@@ -330,6 +391,7 @@ const loop = new SimLoop({
       ["brain", status],
       ["drum ω", drumOmega],
       ["loom", loomer.active ? `${loomer.distance.toFixed(1)} away, hits ${loomer.hits}` : "off"],
+      ["collisions", collisions],
       ["yaw rate", body.state.yawRate],
       ["slip", body.state.yawRate - drumOmega],
       ["heading°", ((body.state.yaw * 180) / Math.PI) % 360],
@@ -358,6 +420,21 @@ Object.assign(window, {
     eye,
     setDrum,
     loomer,
+    get collisions() {
+      return collisions;
+    },
+    resetCollisions() {
+      collisions = 0;
+    },
+    calibrateSides,
+    get sidesCalibrated() {
+      return sidesCalibrated;
+    },
+    /** Cruise through the pillar field: mean wing amplitude above hover (optic brain only). 0 stops. */
+    cruise(baseAmp = 0.8) {
+      if (optic) optic.params.baseAmp = baseAmp > 0 ? baseAmp : 0.5;
+      world.course.visible = baseAmp > 0;
+    },
     /** Launch an approach from azimuth azDeg (positive = right); opts override LoomParams. */
     loom(azDeg = 45, opts: Record<string, unknown> = {}) {
       loomer.launch(body.state.position, body.state.yaw, { az: (azDeg * Math.PI) / 180, ...opts });

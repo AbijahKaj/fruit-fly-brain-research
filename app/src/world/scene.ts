@@ -12,6 +12,10 @@ export const FLY_LAYER = 1;
 export interface World {
   scene: THREE.Scene;
   drum: THREE.Mesh;
+  /** Pillars, for collision counting. */
+  obstacles: THREE.Mesh[];
+  /** A denser pillar field for the obstacle course, hidden until `course.visible` is set. */
+  course: THREE.Group;
   flyRoot: THREE.Object3D;
   wings: { left: THREE.Mesh; right: THREE.Mesh };
 }
@@ -76,6 +80,7 @@ export function buildWorld(): World {
 
   const boxMat = new THREE.MeshStandardMaterial({ color: "#b0473c" });
   const rng = mulberry32(7);
+  const obstacles: THREE.Mesh[] = [];
   for (let i = 0; i < 6; i++) {
     const r = 8 + rng() * 14;
     const a = rng() * Math.PI * 2;
@@ -83,7 +88,23 @@ export function buildWorld(): World {
     const box = new THREE.Mesh(new THREE.BoxGeometry(1.5, h, 1.5), boxMat);
     box.position.set(Math.cos(a) * r, h / 2, Math.sin(a) * r);
     scene.add(box);
+    obstacles.push(box);
   }
+
+  // Obstacle course: 40 more pillars over a 70 x 70 area, none within 4 of the origin.
+  const course = new THREE.Group();
+  course.visible = false;
+  const rng2 = mulberry32(11);
+  while (course.children.length < 40) {
+    const x = (rng2() - 0.5) * 70;
+    const z = (rng2() - 0.5) * 70;
+    if (Math.hypot(x, z) < 4) continue;
+    const h = 1.5 + rng2() * 4;
+    const box = new THREE.Mesh(new THREE.BoxGeometry(1.5, h, 1.5), boxMat);
+    box.position.set(x, h / 2, z);
+    course.add(box);
+  }
+  scene.add(course);
 
   // The fly. Body on FLY_LAYER so its own eyes cannot see it.
   const flyRoot = new THREE.Object3D();
@@ -122,7 +143,7 @@ export function buildWorld(): World {
   flyRoot.add(left, right);
   scene.add(flyRoot);
 
-  return { scene, drum, flyRoot, wings: { left, right } };
+  return { scene, drum, obstacles, course, flyRoot, wings: { left, right } };
 }
 
 function mulberry32(seed: number): () => number {

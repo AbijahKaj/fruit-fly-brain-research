@@ -68,6 +68,7 @@ export interface OpticParams {
   loomTopK: number;
   loomTieBias: number;
   loomBrake: number;
+  offsetTau: number;
 }
 
 export class OpticBrain implements Brain {
@@ -92,11 +93,16 @@ export class OpticBrain implements Brain {
     netDt: 0.004,
     rMax: 5,
     /** Looming: turn away from the eye whose LC4/LPLC2 population fires more. 0 = off. */
-    loomGain: 0,
+    loomGain: 5,
     /** Rate above the calibrated rest that counts as looming (dead zone). */
-    loomThreshold: 0.02,
+    loomThreshold: 0.1,
     /** Cells per eye that carry the looming readout (the best-placed ones; matches train_loom.py). */
     loomTopK: 5,
+    /**
+     * The readout offset tracks the readout with this time constant (s): static scene asymmetries
+     * and slow drifts of the pooled tonic drive are cancelled, optomotor transients pass.
+     */
+    offsetTau: 6,
     /** Head-on approaches drive both eyes equally: this fraction of the bilateral level becomes a turn to the right. */
     loomTieBias: 0.5,
     /** Bilateral looming lowers the mean wing amplitude by this times the bilateral level (brake). */
@@ -138,7 +144,10 @@ export class OpticBrain implements Brain {
   private readonly homeoTargets: Float32Array;
   private turn = 0;
   private brake = 0;
-  private offset = 0;
+  sideGain = { L: 1, R: 1 };
+  /** Slow per-side readout offsets (rest level of each side, adapting). */
+  private offsetL = 0;
+  private offsetR = 0;
   homeoErr = 0;
   homeoBias = 0;
 
@@ -246,6 +255,14 @@ export class OpticBrain implements Brain {
       HSL: g(/^HS[ENS]$/, "L"),
       HSR: g(/^HS[ENS]$/, "R"),
       VS: g(/^VS/),
+      T4aL: g(/^T4a$/, "L"),
+      T4aR: g(/^T4a$/, "R"),
+      T4bL: g(/^T4b$/, "L"),
+      T4bR: g(/^T4b$/, "R"),
+      T5aL: g(/^T5a$/, "L"),
+      T5aR: g(/^T5a$/, "R"),
+      T5bL: g(/^T5b$/, "L"),
+      T5bR: g(/^T5b$/, "R"),
       LC4L: g(/^LC4$/, "L"),
       LC4R: g(/^LC4$/, "R"),
       LPLC2L: g(/^LPLC2$/, "L"),
@@ -298,7 +315,9 @@ export class OpticBrain implements Brain {
       } else {
         await this.net.settle(0.5);
       }
-      this.offset = this.readoutDiff();
+      const sides = this.readoutSides();
+      this.offsetL = sides.L;
+      this.offsetR = sides.R;
       this.loomRest = { L: this.topkRate(this.lc.L), R: this.topkRate(this.lc.R) };
       this.calibrated = true;
     });
@@ -355,7 +374,14 @@ export class OpticBrain implements Brain {
     this.adapted = true;
     if (this.calibrated) this.net.step(dt);
 
-    const diff = this.readoutDiff() - this.offset;
+    const sides = this.readoutSides();
+    if (this.calibrated) {
+      this.offsetL += ((sides.L - this.offsetL) * dt) / p.offsetTau;
+      this.offsetR += ((sides.R - this.offsetR) * dt) / p.offsetTau;
+    }
+    const dL = this.sideGain.L * (sides.L - this.offsetL);
+    const dR = this.sideGain.R * (sides.R - this.offsetR);
+    const diff = dL - dR;
     this.loom.L = Math.max(0, this.topkRate(this.lc.L) - this.loomRest.L - p.loomThreshold);
     this.loom.R = Math.max(0, this.topkRate(this.lc.R) - this.loomRest.R - p.loomThreshold);
     // Looming on the left eye -> turn right (turn > 0 = yaw right). A head-on object drives both
@@ -394,12 +420,23 @@ export class OpticBrain implements Brain {
     return s / k;
   }
 
-  /** Left minus right at the chosen readout level. */
-  private readoutDiff(): number {
+  /** Readout rates per side, for the side-gain calibration in main.ts. */
+  readoutSides(): { L: number; R: number } {
     const n = this.net;
     return this.params.readout === "hs"
-      ? n.meanRate(this.hsL) - n.meanRate(this.hsR)
-      : n.meanRate(this.dnL) - n.meanRate(this.dnR);
+      ? { L: n.meanRate(this.hsL), R: n.meanRate(this.hsR) }
+      : { L: n.meanRate(this.dnL), R: n.meanRate(this.dnR) };
+  }
+
+  /**
+   * Equalise the two eyes: the wiring (and the fit) give the left and right readout
+   * populations different gains, so straight flight, which drives both with the same
+   * front-to-back flow, would read as a turn. Gains are set so the preferred-direction
+   * response of each side is the same; the offset is re-centred afterwards.
+   */
+  setSideGain(pdL: number, pdR: number): void {
+    const m = (pdL + pdR) / 2;
+    if (pdL > 1e-3 && pdR > 1e-3) this.sideGain = { L: m / pdL, R: m / pdR };
   }
 
   /** Per-ommatidium T4a - T4b mean rate (front-to-back minus back-to-front). */
@@ -414,7 +451,10 @@ export class OpticBrain implements Brain {
     const g = this.groups;
     return {
       turn: this.turn,
-      offset: this.offset,
+      offsetL: this.offsetL,
+      offsetR: this.offsetR,
+      gainL: this.sideGain.L,
+      gainR: this.sideGain.R,
       calib: this.calibrated ? 1 : 0,
       homeoErr: this.homeoErr,
       homeoBias: this.homeoBias,

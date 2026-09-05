@@ -36,6 +36,8 @@ from train_optic import PD
 HERE = Path(__file__).parent
 DEG = math.pi / 180
 LC_TYPES = ["LC4", "LPLC2"]
+HS_TYPES = ["HSE", "HSN", "HSS"]
+FLOW_KINDS = ["rotCCW", "rotCW", "transFwd", "transAsym", "transAsym"]
 KINDS = ["loomL", "loomR", "recedeL", "recedeR", "transL", "transR", "grating", "grating", "static"]
 # Half of the object trials play over a static high-contrast grating instead of grey, as in the scene.
 P_STRUCTURED_BG = 0.5
@@ -128,6 +130,57 @@ class Stimuli:
             lum[:, b] = lum[:, b] * (1 - inside) + 0.05 * inside
         return self.to_ext(lum)
 
+    def flow(self, kinds: list[str], n_dots: int = 1500, radius: float = 10.0, sigma_deg: float = 4.0) -> torch.Tensor:
+        """Self-motion flow fields: dark dots on a cylinder wall (radius `radius`, the drum) and on
+        the ground seen from the fly. Kinds: rotCCW / rotCW (yaw, 0.5-2 rad/s), transFwd (forward
+        flight, 1-3 units/s, centred), transAsym (same, but the wall is 3 units nearer on one side).
+        Returns lamina ext (T, B, n)."""
+        T, dev, t_axis = self.T, self.dev, self.t_axis
+        C = len(self.g.col_az)
+        lum = torch.full((T, len(kinds), C), 0.5, device=dev)
+        sig2 = 2 * (sigma_deg * DEG) ** 2
+        cos_el = torch.cos(self.col_el)
+        for b, kind in enumerate(kinds):
+            # dots: half on the wall (az, height), half on the ground (x, z)
+            nw = n_dots // 2
+            az_w = torch.rand(nw, device=dev) * 2 * math.pi
+            y_w = (torch.rand(nw, device=dev) - 0.5) * 2 * radius
+            ng = n_dots - nw
+            x_g = (torch.rand(ng, device=dev) - 0.5) * 4 * radius
+            z_g = (torch.rand(ng, device=dev) - 0.5) * 4 * radius
+            y_g = torch.full((ng,), -2.0, device=dev)
+            omega = 0.0
+            speed = 0.0
+            x_off = 0.0
+            if kind.startswith("rot"):
+                omega = (0.5 + 1.5 * torch.rand(()).item()) * (1 if kind == "rotCCW" else -1)
+            else:
+                speed = 1.0 + 2.0 * torch.rand(()).item()
+                if kind == "transAsym":
+                    x_off = 3.0 * (1 if torch.rand(()) < 0.5 else -1)
+            for t in range(T):
+                tt = t_axis[t].item()
+                # fly at (x_off, 0, -speed t), heading -z, yawed by omega t (positive = left)
+                yaw = omega * tt
+                fx, fz = x_off, -speed * tt
+                wx, wz = radius * torch.sin(az_w), -radius * torch.cos(az_w)
+                px = torch.cat([wx - fx, x_g - fx])
+                pz = torch.cat([wz - fz, z_g - fz])
+                py = torch.cat([y_w, y_g])
+                # world -> fly frame: rotate by -yaw about +y
+                c, sn = math.cos(-yaw), math.sin(-yaw)
+                rx = c * px + sn * pz
+                rz = -sn * px + c * pz
+                az = torch.atan2(rx, -rz)                      # positive = right
+                el = torch.atan2(py, torch.sqrt(rx * rx + rz * rz))
+                # splat onto columns with a planar small-angle distance (az scaled by cos el)
+                daz = (self.col_az[None, :] - az[:, None])
+                daz = torch.atan2(torch.sin(daz), torch.cos(daz)) * cos_el[None, :]
+                del_ = self.col_el[None, :] - el[:, None]
+                occ = torch.exp(-(daz * daz + del_ * del_) / sig2).sum(0).clamp(max=1.0)
+                lum[t, b] = 0.5 - 0.45 * occ
+        return self.to_ext(lum)
+
     def gratings(self, Bg: int):
         """Random drifting gratings as in train_optic.py. Returns ext, theta."""
         dev, T, t_axis = self.dev, self.T, self.t_axis
@@ -144,16 +197,18 @@ class Stimuli:
         return self.to_ext(torch.full((self.T, B, len(self.g.col_az)), 0.5, device=self.dev))
 
 
-def load_model(graph: str, params: str, dev: str, max_el: float = 90):
+def load_model(graph: str, params: str, dev: str, max_el: float = 90, extra_types: list[str] | None = None):
+    extra_types = list(extra_types or LC_TYPES)
     g0 = Graph(Path(graph))
     fv = json.load(open(params))
     tn0 = np.array([g0.types[t] for t in g0.unit_type])
-    keep = (g0.unit_role == g0.roles.index("optic")) | np.isin(tn0, LC_TYPES)
+    keep = (g0.unit_role == g0.roles.index("optic")) | np.isin(tn0, extra_types)
     if max_el < 90:
         col_ok = np.abs(g0.col_el) <= max_el * DEG
-        keep &= ((g0.unit_col >= 0) & col_ok[np.clip(g0.unit_col, 0, None)]) | np.isin(tn0, LC_TYPES)
+        keep &= ((g0.unit_col >= 0) & col_ok[np.clip(g0.unit_col, 0, None)]) | np.isin(tn0, extra_types)
     g = g0.subgraph(keep)
-    model = FlyvisModel(g, fv, device=dev, extra_post_types=LC_TYPES, extra_scale=0.005)
+    # new input pairs start at the browser's pooling scale (lptcScale)
+    model = FlyvisModel(g, fv, device=dev, extra_post_types=extra_types, extra_scale=0.001)
     return g, fv, model
 
 
@@ -182,23 +237,26 @@ def main() -> None:
     ap.add_argument("--ds-batch", type=int, default=4)
     ap.add_argument("--static-weight", type=float, default=2.0, help="penalty on T4/T5 rate under a static grating")
     ap.add_argument("--sym-weight", type=float, default=1.0, help="left/right response symmetry of T4/T5 under gratings")
+    ap.add_argument("--hs", action="store_true",
+                    help="stage 3: fit the HS cells' inputs, tau and bias so HS_L - HS_R reads yaw rotation and not translation")
+    ap.add_argument("--hs-weight", type=float, default=1.0)
     args = ap.parse_args()
     dev = args.device
 
-    g0 = Graph(Path(args.graph))
-    fv = json.load(open(args.params))
-    tn0 = np.array([g0.types[t] for t in g0.unit_type])
-    keep = (g0.unit_role == g0.roles.index("optic")) | np.isin(tn0, LC_TYPES)
-    if args.max_el < 90:
-        col_ok = np.abs(g0.col_el) <= args.max_el * DEG
-        keep &= ((g0.unit_col >= 0) & col_ok[np.clip(g0.unit_col, 0, None)]) | np.isin(tn0, LC_TYPES)
-    g = g0.subgraph(keep)
+    extra = LC_TYPES + (HS_TYPES if args.hs else [])
+    g, fv, model = load_model(args.graph, args.params, dev, args.max_el, extra_types=extra)
     print(f"model: {g.n} units, {len(g.pre)} edges on {dev}")
-    model = FlyvisModel(g, fv, device=dev, extra_post_types=LC_TYPES, extra_scale=0.001)
-    masks = model.grad_masks(None if args.joint else LC_TYPES, train_extra_pairs_only=not args.joint)
+    if args.hs and not args.joint:
+        # stage 3 alone: only the HS cells' inputs, tau and bias move (pairs onto HS are the extra
+        # pairs beyond those of the LC stage, which are frozen with everything else)
+        masks = model.grad_masks(HS_TYPES, train_extra_pairs_only=True)
+        n_lc_pairs = sum(1 for a, b in model.pairs[model.n_fv_pairs:] if b in LC_TYPES)
+        masks["log_strength"][model.n_fv_pairs: model.n_fv_pairs + n_lc_pairs] = 0.0
+    else:
+        masks = model.grad_masks(None if args.joint else LC_TYPES, train_extra_pairs_only=not args.joint)
     init = {k: v.detach().clone() for k, v in model.named_parameters()}
     n_extra = len(model.pairs) - model.n_fv_pairs
-    print(f"trainable: {n_extra} input pairs onto {LC_TYPES}, plus their tau/bias")
+    print(f"trainable: {n_extra} new input pairs onto {extra}, plus their tau/bias")
 
     stim = Stimuli(g, fv, dev, args.T, args.dt)
     tn = stim.tn
@@ -249,39 +307,66 @@ def main() -> None:
                 total = total + args.sym_weight * (m["L"] - m["R"]).abs() / (m["L"] + m["R"] + 1e-3)
         return total
 
+    hs_groups = {}
+    if args.hs:
+        for side, sidx in [("L", 0), ("R", 1)]:
+            u = np.where(np.isin(tn, HS_TYPES) & (g.unit_side == sidx))[0]
+            hs_groups[side] = torch.tensor(u, device=dev)
+        print(f"HS readout: L {len(hs_groups['L'])} cells, R {len(hs_groups['R'])} cells")
+    hs_rec = torch.tensor(np.concatenate([v.cpu().numpy() for v in hs_groups.values()]), device=dev) if hs_groups else None
     # record T4/T5 too, so the static control can penalise motion detectors that respond to static contrast
     all_rec = torch.cat([rec, ds_rec]) if ds_rec is not None else rec
     ds_off = len(rec)
     kind_idx = {k: [b for b, kk in enumerate(KINDS) if kk == k] for k in set(KINDS)}
     t0 = time.time()
     for step in range(args.steps):
-        ext = stim.kinds(KINDS)
-        rates = model(ext, dt, record=all_rec.tolist())        # (T, B, nrec + nds)
-        resp = rates[-int(T * WIN):].mean(0)                    # (B, nrec + nds)
+        do_loom = not args.hs or args.joint      # the HS-only stage skips the (frozen) looming batch
         loss_static = torch.zeros((), device=dev)
-        if ds_rec is not None:
-            # T4/T5 population under the static grating: mean rate above 0.15 is penalised
-            for (st, side), pos in ds_pos.items():
-                rs = resp[kind_idx["static"]][:, ds_off + pos].mean()
-                loss_static = loss_static + torch.relu(rs - 0.15) * args.static_weight
-        loss_sel = 0.0
+        loss_sel = torch.zeros((), device=dev)
+        loss_rate = torch.zeros((), device=dev)
         report = {}
-        for (st, side), pos in rec_pos.items():
-            r = topk_rate(resp, pos, args.topk)                 # (B,)
-            ipsi = r[kind_idx[f"loom{side}"]].mean()
-            others = torch.cat([r[kind_idx[k]] for k in KINDS if k != f"loom{side}"])
-            worst = others.max()
-            sel = (ipsi - worst) / (ipsi + worst + 1e-3)
-            loss_sel = loss_sel + torch.relu(args.margin - (ipsi - worst)) + (1 - sel) + torch.relu(0.3 - ipsi)
-            report[f"{st}{side}"] = (ipsi.item(), worst.item())
-        loss_rate = torch.relu(rates - 5.0).pow(2).mean() * 10
+        if do_loom:
+            ext = stim.kinds(KINDS)
+            rates = model(ext, dt, record=all_rec.tolist())        # (T, B, nrec + nds)
+            resp = rates[-int(T * WIN):].mean(0)                    # (B, nrec + nds)
+            loss_static = torch.zeros((), device=dev)
+            if ds_rec is not None:
+                # T4/T5 population under the static grating: mean rate above 0.15 is penalised
+                for (st, side), pos in ds_pos.items():
+                    rs = resp[kind_idx["static"]][:, ds_off + pos].mean()
+                    loss_static = loss_static + torch.relu(rs - 0.15) * args.static_weight
+            for (st, side), pos in rec_pos.items():
+                r = topk_rate(resp, pos, args.topk)                 # (B,)
+                ipsi = r[kind_idx[f"loom{side}"]].mean()
+                others = torch.cat([r[kind_idx[k]] for k in KINDS if k != f"loom{side}"])
+                worst = others.max()
+                sel = (ipsi - worst) / (ipsi + worst + 1e-3)
+                loss_sel = loss_sel + torch.relu(args.margin - (ipsi - worst)) + (1 - sel) + torch.relu(0.3 - ipsi)
+                report[f"{st}{side}"] = (ipsi.item(), worst.item())
+            loss_rate = torch.relu(rates - 5.0).pow(2).mean() * 10
         loss_reg = sum(((p - init[k]) ** 2 * masks[k]).mean() for k, p in model.named_parameters()) * args.reg
         loss_ds = torch.zeros((), device=dev)
         if args.joint and ds_rec is not None:
             gext, theta = stim.gratings(args.ds_batch)
             grates = model(gext, dt, record=ds_rec.tolist())
             loss_ds = ds_loss(grates[T // 3:].mean(0), theta) * args.ds_weight
-        loss = loss_sel + loss_rate + loss_reg + loss_ds + loss_static
+        loss_hs = torch.zeros((), device=dev)
+        if args.hs and hs_rec is not None:
+            fext = stim.flow(FLOW_KINDS)
+            frates = model(fext, dt, record=hs_rec.tolist())              # (T, Bf, nhs)
+            fresp = frates[-int(T * WIN):].mean(0)                          # (Bf, nhs)
+            nl = len(hs_groups["L"])
+            d = fresp[:, :nl].mean(1) - fresp[:, nl:].mean(1)               # HS_L - HS_R per stimulus
+            ccw = d[FLOW_KINDS.index("rotCCW")]
+            cw = d[FLOW_KINDS.index("rotCW")]
+            trans = d[[i for i, k in enumerate(FLOW_KINDS) if k.startswith("trans")]]
+            # rotation must separate the two directions by a margin (either sign convention is
+            # fine, the browser has readoutSign); translation must not move the difference
+            rot = (ccw - cw).abs()
+            loss_hs = (torch.relu(1.0 - rot) + trans.abs().sum() / (rot + 0.1)
+                       + torch.relu(0.3 - fresp.mean())) * args.hs_weight
+            report["HS rot/trans"] = (rot.item(), trans.abs().max().item())
+        loss = loss_sel + loss_rate + loss_reg + loss_ds + loss_static + loss_hs
         opt.zero_grad()
         loss.backward()
         for k, p in model.named_parameters():
@@ -291,7 +376,7 @@ def main() -> None:
         opt.step()
         if step % 10 == 0 or step == args.steps - 1:
             rep = " ".join(f"{k} {a:.2f}/{b:.2f}" for k, (a, b) in report.items())
-            print(f"step {step:5d} loss {loss.item():.4f} sel {float(loss_sel):.4f} ds {loss_ds.item():.3f} static {loss_static.item():.3f} | loom/worst: {rep}  {time.time() - t0:.0f}s", flush=True)
+            print(f"step {step:5d} loss {loss.item():.4f} sel {float(loss_sel):.4f} ds {loss_ds.item():.3f} static {loss_static.item():.3f} hs {loss_hs.item():.3f} | loom/worst: {rep}  {time.time() - t0:.0f}s", flush=True)
 
     # resting membrane under grey for the browser's homeostat target
     with torch.no_grad():
@@ -304,7 +389,7 @@ def main() -> None:
             r = model.r_max * torch.tanh(torch.relu(x) / model.r_max)
             drive = torch.zeros(1, g.n, device=dev).index_add_(1, model.e_post, r[:, model.e_pre] * w[None, :])
             x = x + (dt / tau) * (-x + bias + drive + ext[0])
-        rest_v = {st: float(x[0, torch.tensor(np.where(tn == st)[0], device=dev)].mean()) for st in LC_TYPES}
+        rest_v = {st: float(x[0, torch.tensor(np.where(tn == st)[0], device=dev)].mean()) for st in extra}
     print("rest membrane under grey:", rest_v)
     model.export(Path(args.out), fv, rest_v=rest_v, source="fitted on MaleCNS optic-v2 (train_optic.py + train_loom.py)")
     print("wrote", args.out)
