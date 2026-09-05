@@ -37,7 +37,7 @@ HERE = Path(__file__).parent
 DEG = math.pi / 180
 LC_TYPES = ["LC4", "LPLC2"]
 HS_TYPES = ["HSE", "HSN", "HSS"]
-FLOW_KINDS = ["rotCCW", "rotCW", "transFwd", "transAsym", "transAsym"]
+FLOW_KINDS = ["static", "rotCCW", "rotCW", "transFwd", "transAsym"]
 KINDS = ["loomL", "loomR", "recedeL", "recedeR", "transL", "transR", "grating", "grating", "static"]
 # Half of the object trials play over a static high-contrast grating instead of grey, as in the scene.
 P_STRUCTURED_BG = 0.5
@@ -238,7 +238,8 @@ def main() -> None:
     ap.add_argument("--static-weight", type=float, default=2.0, help="penalty on T4/T5 rate under a static grating")
     ap.add_argument("--sym-weight", type=float, default=1.0, help="left/right response symmetry of T4/T5 under gratings")
     ap.add_argument("--hs", action="store_true",
-                    help="stage 3: fit the HS cells' inputs, tau and bias so HS_L - HS_R reads yaw rotation and not translation")
+                    help="stage 3: fit the HS cells' inputs, tau and bias so each side is bidirectional "
+                         "(up for progressive, below rest for regressive motion); L-R then reads rotation")
     ap.add_argument("--hs-weight", type=float, default=1.0)
     args = ap.parse_args()
     dev = args.device
@@ -356,16 +357,28 @@ def main() -> None:
             frates = model(fext, dt, record=hs_rec.tolist())              # (T, Bf, nhs)
             fresp = frates[-int(T * WIN):].mean(0)                          # (Bf, nhs)
             nl = len(hs_groups["L"])
-            d = fresp[:, :nl].mean(1) - fresp[:, nl:].mean(1)               # HS_L - HS_R per stimulus
-            ccw = d[FLOW_KINDS.index("rotCCW")]
-            cw = d[FLOW_KINDS.index("rotCW")]
-            trans = d[[i for i, k in enumerate(FLOW_KINDS) if k.startswith("trans")]]
-            # rotation must separate the two directions by a margin (either sign convention is
-            # fine, the browser has readoutSign); translation must not move the difference
-            rot = (ccw - cw).abs()
-            loss_hs = (torch.relu(1.0 - rot) + trans.abs().sum() / (rot + 0.1)
-                       + torch.relu(0.3 - fresp.mean())) * args.hs_weight
+            mL = fresp[:, :nl].mean(1)                                      # per stimulus
+            mR = fresp[:, nl:].mean(1)
+            k = {name: i for i, name in enumerate(FLOW_KINDS)}
+            restL, restR = mL[k["static"]], mR[k["static"]]
+            dL = mL - restL
+            dR = mR - restR
+            m = 1.0
+            # each side: the two rotations move it in opposite directions, one of them below rest
+            rotL = dL[k["rotCCW"]] - dL[k["rotCW"]]
+            rotR = dR[k["rotCCW"]] - dR[k["rotCW"]]
+            loss_hs = (torch.relu(m - rotL.abs()) + torch.relu(m - rotR.abs())
+                       + torch.relu(rotL * rotR) * 2                          # opposite signs across eyes
+                       + torch.relu(0.25 * m + torch.min(dL[k["rotCCW"]], dL[k["rotCW"]]))
+                       + torch.relu(0.25 * m + torch.min(dR[k["rotCCW"]], dR[k["rotCW"]]))
+                       + torch.relu(0.8 - restL) + torch.relu(0.8 - restR)    # room to go down
+                       + torch.relu(-dL[k["transFwd"]]) + torch.relu(-dR[k["transFwd"]])  # translation: not below rest
+                       ) * args.hs_weight
+            rot = (rotL - rotR).abs() / 2
+            trans = (dL - dR)[[k["transFwd"], k["transAsym"]]]
             report["HS rot/trans"] = (rot.item(), trans.abs().max().item())
+            report["HS restL/R"] = (restL.item(), restR.item())
+            report["HS dL ccw/cw"] = (dL[k["rotCCW"]].item(), dL[k["rotCW"]].item())
         loss = loss_sel + loss_rate + loss_reg + loss_ds + loss_static + loss_hs
         opt.zero_grad()
         loss.backward()
