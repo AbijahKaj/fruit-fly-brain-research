@@ -396,20 +396,140 @@
    "bias": -1.4790339469909668,
    "restV": -3.1788463592529297
   },
+  "DCH": {
+   "tau": 0.029999999329447746,
+   "bias": 5.2063703536987305,
+   "restV": 0.4873269200325012
+  },
+  "H2": {
+   "tau": 0.029999999329447746,
+   "bias": 0.9233007431030273,
+   "restV": 0.722322940826416
+  },
   "HSE": {
-   "tau": 0.04960303008556366,
-   "bias": 0.6477803587913513,
-   "restV": -0.7791895866394043
+   "tau": 0.0485871396958828,
+   "bias": 0.8297649621963501,
+   "restV": -2.7494022846221924
   },
   "HSN": {
-   "tau": 0.020707082003355026,
-   "bias": 2.7109994888305664,
-   "restV": 3.901522159576416
+   "tau": 0.047274962067604065,
+   "bias": 1.3880611658096313,
+   "restV": -4.419372081756592
   },
   "HSS": {
-   "tau": 0.04803754761815071,
-   "bias": 0.632148265838623,
-   "restV": 0.7360378503799438
+   "tau": 0.04797797277569771,
+   "bias": 1.7263801097869873,
+   "restV": -0.34773242473602295
+  },
+  "HST": {
+   "tau": 0.029999999329447746,
+   "bias": 0.9556680917739868,
+   "restV": 0.2248837649822235
+  },
+  "LPi12": {
+   "tau": 0.029999999329447746,
+   "bias": 0.35266488790512085,
+   "restV": 0.01168334111571312
+  },
+  "LPi14": {
+   "tau": 0.029999999329447746,
+   "bias": 0.5237793922424316,
+   "restV": 0.29258057475090027
+  },
+  "LPi21": {
+   "tau": 0.029999999329447746,
+   "bias": 0.015495151281356812,
+   "restV": 0.5360015630722046
+  },
+  "LPi2b": {
+   "tau": 0.029999999329447746,
+   "bias": 1.847599744796753,
+   "restV": 0.41812169551849365
+  },
+  "LPi2c": {
+   "tau": 0.029999999329447746,
+   "bias": -0.0033951103687286377,
+   "restV": 0.3289717137813568
+  },
+  "LPi2d": {
+   "tau": 0.029999999329447746,
+   "bias": 0.3294413089752197,
+   "restV": 0.2740893065929413
+  },
+  "LPi2e": {
+   "tau": 0.029999999329447746,
+   "bias": 0.33727356791496277,
+   "restV": 0.3073132336139679
+  },
+  "LPi34": {
+   "tau": 0.029999999329447746,
+   "bias": 0.31154176592826843,
+   "restV": 0.28898122906684875
+  },
+  "LPi3412": {
+   "tau": 0.029999999329447746,
+   "bias": 0.17987781763076782,
+   "restV": 0.27299878001213074
+  },
+  "LPi3a": {
+   "tau": 0.029999999329447746,
+   "bias": 0.31479454040527344,
+   "restV": 0.29503723978996277
+  },
+  "LPi3b": {
+   "tau": 0.029999999329447746,
+   "bias": 0.5026896595954895,
+   "restV": 0.278670996427536
+  },
+  "LPi3c": {
+   "tau": 0.029999999329447746,
+   "bias": 0.3834553360939026,
+   "restV": 0.2602079510688782
+  },
+  "LPi43": {
+   "tau": 0.029999999329447746,
+   "bias": 0.3316144645214081,
+   "restV": 0.2543694078922272
+  },
+  "LPi4a": {
+   "tau": 0.029999999329447746,
+   "bias": 0.33286967873573303,
+   "restV": 0.29969605803489685
+  },
+  "LPi4b": {
+   "tau": 0.029999999329447746,
+   "bias": 16.000011444091797,
+   "restV": 1.1578365564346313
+  },
+  "LPi_unclear": {
+   "tau": 0.029999999329447746,
+   "bias": 0.29749596118927,
+   "restV": 0.2988179326057434
+  },
+  "VCH": {
+   "tau": 0.029999999329447746,
+   "bias": 12.354751586914062,
+   "restV": -0.37421751022338867
+  },
+  "VS": {
+   "tau": 0.029999999329447746,
+   "bias": 0.3405330181121826,
+   "restV": 0.15361952781677246
+  },
+  "VST1": {
+   "tau": 0.029999999329447746,
+   "bias": 0.3510720729827881,
+   "restV": 0.285128116607666
+  },
+  "VST2": {
+   "tau": 0.029999999329447746,
+   "bias": 0.35395973920822144,
+   "restV": 0.24624261260032654
+  },
+  "VSm": {
+   "tau": 0.029999999329447746,
+   "bias": 0.7097275853157043,
+   "restV": 0.30964136123657227
   }
  },
  "photoreceptor": {
@@ -4440,225 +4560,5259 @@
    "sign": 1.0
   },
   {
+   "pre": "DCH",
+   "post": "H2",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "DCH",
+   "post": "HSE",
+   "strength": 0.0025621207896620035,
+   "sign": -1.0
+  },
+  {
+   "pre": "DCH",
+   "post": "HSN",
+   "strength": 0.005699629429727793,
+   "sign": -1.0
+  },
+  {
+   "pre": "DCH",
+   "post": "HSS",
+   "strength": 0.002037788974121213,
+   "sign": -1.0
+  },
+  {
+   "pre": "DCH",
+   "post": "HST",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "DCH",
+   "post": "LPLC2",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "DCH",
+   "post": "LPi12",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "DCH",
+   "post": "LPi21",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "DCH",
+   "post": "LPi2b",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "DCH",
+   "post": "LPi2c",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "DCH",
+   "post": "LPi2d",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "DCH",
+   "post": "LPi2e",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "DCH",
+   "post": "LPi34",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "DCH",
+   "post": "LPi3412",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "DCH",
+   "post": "LPi43",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "DCH",
+   "post": "LPi4a",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "DCH",
+   "post": "LPi4b",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "DCH",
+   "post": "VCH",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "DCH",
+   "post": "VS",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "DCH",
+   "post": "VST1",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "DCH",
+   "post": "VST2",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "H2",
+   "post": "DCH",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "H2",
+   "post": "HSE",
+   "strength": 0.013370667584240437,
+   "sign": 1.0
+  },
+  {
+   "pre": "H2",
+   "post": "HSS",
+   "strength": 0.011445501819252968,
+   "sign": 1.0
+  },
+  {
+   "pre": "H2",
+   "post": "LPi12",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "H2",
+   "post": "LPi14",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "H2",
+   "post": "LPi21",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "H2",
+   "post": "LPi2b",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "H2",
+   "post": "LPi2c",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "H2",
+   "post": "LPi2d",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "H2",
+   "post": "LPi2e",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "H2",
+   "post": "VCH",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "HSE",
+   "post": "DCH",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "HSE",
+   "post": "H2",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
    "pre": "HSE",
    "post": "HSN",
-   "strength": 0.0006665636319667101,
+   "strength": 0.0007873045979067683,
+   "sign": 1.0
+  },
+  {
+   "pre": "HSE",
+   "post": "LPi12",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "HSE",
+   "post": "LPi21",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "HSE",
+   "post": "VCH",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "HSE",
+   "post": "VS",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "HSN",
+   "post": "DCH",
+   "strength": 0.0010999998776242137,
    "sign": 1.0
   },
   {
    "pre": "HSN",
    "post": "HSE",
-   "strength": 0.0006223475211299956,
+   "strength": 0.0008030330063775182,
+   "sign": 1.0
+  },
+  {
+   "pre": "HSN",
+   "post": "LPi21",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "HSN",
+   "post": "VCH",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "HSN",
+   "post": "VS",
+   "strength": 0.0010999998776242137,
    "sign": 1.0
   },
   {
    "pre": "HSS",
    "post": "HSE",
-   "strength": 0.23327332735061646,
+   "strength": 0.0026050370652228594,
    "sign": 1.0
   },
   {
-   "pre": "LPLC2",
-   "post": "HSE",
+   "pre": "HSS",
+   "post": "LPi12",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "HSS",
+   "post": "LPi21",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "HSS",
+   "post": "LPi2b",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "HSS",
+   "post": "LPi2c",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "HSS",
+   "post": "LPi2d",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "HSS",
+   "post": "LPi2e",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "HST",
+   "post": "DCH",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "HST",
+   "post": "LPi2d",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "HST",
+   "post": "VCH",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "L5",
+   "post": "LPi34",
    "strength": 0.0010999998776242137,
    "sign": 1.0
   },
   {
    "pre": "LPLC2",
+   "post": "DCH",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "LPLC2",
+   "post": "H2",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "LPLC2",
+   "post": "HSE",
+   "strength": 0.0011009917361661792,
+   "sign": 1.0
+  },
+  {
+   "pre": "LPLC2",
    "post": "HSN",
-   "strength": 0.00513275433331728,
+   "strength": 0.001338501926511526,
    "sign": 1.0
   },
   {
    "pre": "LPLC2",
    "post": "HSS",
-   "strength": 0.0010888432152569294,
+   "strength": 0.0010845180368050933,
+   "sign": 1.0
+  },
+  {
+   "pre": "LPLC2",
+   "post": "HST",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "LPLC2",
+   "post": "LPi12",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "LPLC2",
+   "post": "LPi21",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "LPLC2",
+   "post": "LPi2c",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "LPLC2",
+   "post": "LPi2d",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "LPLC2",
+   "post": "LPi2e",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "LPLC2",
+   "post": "LPi34",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "LPLC2",
+   "post": "LPi3412",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "LPLC2",
+   "post": "LPi3a",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "LPLC2",
+   "post": "LPi3b",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "LPLC2",
+   "post": "LPi43",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "LPLC2",
+   "post": "LPi4a",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "LPLC2",
+   "post": "LPi4b",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "LPLC2",
+   "post": "VCH",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "LPLC2",
+   "post": "VS",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "LPLC2",
+   "post": "VST2",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "LPLC2",
+   "post": "VSm",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "LPi12",
+   "post": "DCH",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi12",
+   "post": "H2",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi12",
+   "post": "HSE",
+   "strength": 0.008874738588929176,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi12",
+   "post": "HSN",
+   "strength": 0.005518586374819279,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi12",
+   "post": "HSS",
+   "strength": 0.0026833247393369675,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi12",
+   "post": "LPLC2",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi12",
+   "post": "LPi12",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi12",
+   "post": "LPi21",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi12",
+   "post": "LPi2b",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi12",
+   "post": "LPi2c",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi12",
+   "post": "LPi2d",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi12",
+   "post": "LPi2e",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi12",
+   "post": "LPi34",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi12",
+   "post": "LPi3412",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi12",
+   "post": "LPi3a",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi12",
+   "post": "LPi43",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi12",
+   "post": "LPi4a",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi12",
+   "post": "LPi4b",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi12",
+   "post": "VCH",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi12",
+   "post": "VS",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi12",
+   "post": "VSm",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi14",
+   "post": "LPi12",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi14",
+   "post": "LPi14",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi14",
+   "post": "LPi21",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi14",
+   "post": "LPi2c",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi14",
+   "post": "LPi2e",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi14",
+   "post": "LPi3a",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi14",
+   "post": "VS",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi14",
+   "post": "VST2",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi21",
+   "post": "DCH",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi21",
+   "post": "H2",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi21",
+   "post": "HSE",
+   "strength": 0.0024540466256439686,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi21",
+   "post": "HSN",
+   "strength": 0.005078939255326986,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi21",
+   "post": "HSS",
+   "strength": 0.0012182730715721846,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi21",
+   "post": "HST",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi21",
+   "post": "LPLC2",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi21",
+   "post": "LPi12",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi21",
+   "post": "LPi14",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi21",
+   "post": "LPi2b",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi21",
+   "post": "LPi2c",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi21",
+   "post": "LPi2d",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi21",
+   "post": "LPi2e",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi21",
+   "post": "LPi34",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi21",
+   "post": "LPi3412",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi21",
+   "post": "LPi3a",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi21",
+   "post": "LPi43",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi21",
+   "post": "LPi4a",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi21",
+   "post": "LPi4b",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi21",
+   "post": "VCH",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi21",
+   "post": "VS",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi21",
+   "post": "VST2",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi21",
+   "post": "VSm",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2b",
+   "post": "DCH",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2b",
+   "post": "H2",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2b",
+   "post": "HSS",
+   "strength": 0.007976109161973,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2b",
+   "post": "HST",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2b",
+   "post": "LPLC2",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2b",
+   "post": "LPi12",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2b",
+   "post": "LPi14",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2b",
+   "post": "LPi21",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2b",
+   "post": "LPi2c",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2b",
+   "post": "LPi2d",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2b",
+   "post": "LPi2e",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2b",
+   "post": "LPi34",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2b",
+   "post": "LPi3412",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2b",
+   "post": "LPi3a",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2b",
+   "post": "LPi43",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2b",
+   "post": "VCH",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2b",
+   "post": "VS",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2b",
+   "post": "VST1",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2b",
+   "post": "VST2",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2b",
+   "post": "VSm",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2c",
+   "post": "DCH",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2c",
+   "post": "H2",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2c",
+   "post": "HSS",
+   "strength": 0.0011369624407961965,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2c",
+   "post": "LPLC2",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2c",
+   "post": "LPi12",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2c",
+   "post": "LPi14",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2c",
+   "post": "LPi21",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2c",
+   "post": "LPi2b",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2c",
+   "post": "LPi2c",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2c",
+   "post": "LPi2d",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2c",
+   "post": "LPi2e",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2c",
+   "post": "LPi34",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2c",
+   "post": "LPi3412",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2c",
+   "post": "LPi3a",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2c",
+   "post": "LPi3b",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2c",
+   "post": "LPi43",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2c",
+   "post": "LPi4b",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2c",
+   "post": "VCH",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2c",
+   "post": "VS",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2c",
+   "post": "VSm",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2d",
+   "post": "DCH",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2d",
+   "post": "H2",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2d",
+   "post": "HSE",
+   "strength": 0.0006924356566742063,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2d",
+   "post": "HSN",
+   "strength": 0.0006481815944425762,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2d",
+   "post": "HSS",
+   "strength": 0.0005845892592333257,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2d",
+   "post": "HST",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2d",
+   "post": "LPLC2",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2d",
+   "post": "LPi12",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2d",
+   "post": "LPi14",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2d",
+   "post": "LPi21",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2d",
+   "post": "LPi2b",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2d",
+   "post": "LPi2c",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2d",
+   "post": "LPi2d",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2d",
+   "post": "LPi2e",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2d",
+   "post": "LPi3412",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2d",
+   "post": "LPi3a",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2d",
+   "post": "LPi43",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2d",
+   "post": "LPi4a",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2d",
+   "post": "LPi4b",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2d",
+   "post": "VCH",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2d",
+   "post": "VS",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2d",
+   "post": "VSm",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2e",
+   "post": "DCH",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2e",
+   "post": "H2",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2e",
+   "post": "HSE",
+   "strength": 0.0008937543607316911,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2e",
+   "post": "HSN",
+   "strength": 0.0008778825867921114,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2e",
+   "post": "HSS",
+   "strength": 0.0006128359818831086,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2e",
+   "post": "HST",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2e",
+   "post": "LPLC2",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2e",
+   "post": "LPi12",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2e",
+   "post": "LPi14",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2e",
+   "post": "LPi21",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2e",
+   "post": "LPi2b",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2e",
+   "post": "LPi2c",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2e",
+   "post": "LPi2d",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2e",
+   "post": "LPi2e",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2e",
+   "post": "LPi34",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2e",
+   "post": "LPi3412",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2e",
+   "post": "LPi3a",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2e",
+   "post": "LPi3b",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2e",
+   "post": "LPi3c",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2e",
+   "post": "LPi43",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2e",
+   "post": "LPi4a",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2e",
+   "post": "LPi4b",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2e",
+   "post": "VCH",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2e",
+   "post": "VS",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2e",
+   "post": "VST1",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2e",
+   "post": "VST2",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi2e",
+   "post": "VSm",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi34",
+   "post": "DCH",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi34",
+   "post": "HSE",
+   "strength": 0.0023679458536207676,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi34",
+   "post": "HSN",
+   "strength": 0.0027756723575294018,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi34",
+   "post": "HST",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi34",
+   "post": "LPLC2",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi34",
+   "post": "LPi12",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi34",
+   "post": "LPi21",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi34",
+   "post": "LPi2b",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi34",
+   "post": "LPi2c",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi34",
+   "post": "LPi2d",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi34",
+   "post": "LPi2e",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi34",
+   "post": "LPi34",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi34",
+   "post": "LPi3412",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi34",
+   "post": "LPi3a",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi34",
+   "post": "LPi3b",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi34",
+   "post": "LPi3c",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi34",
+   "post": "LPi43",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi34",
+   "post": "LPi4a",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi34",
+   "post": "LPi4b",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi34",
+   "post": "VS",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi34",
+   "post": "VST1",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi34",
+   "post": "VST2",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi34",
+   "post": "VSm",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3412",
+   "post": "DCH",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3412",
+   "post": "H2",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3412",
+   "post": "HSE",
+   "strength": 0.0007941683870740235,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3412",
+   "post": "HSN",
+   "strength": 0.0022279396653175354,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3412",
+   "post": "HSS",
+   "strength": 0.0024147839285433292,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3412",
+   "post": "HST",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3412",
+   "post": "LPLC2",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3412",
+   "post": "LPi12",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3412",
+   "post": "LPi14",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3412",
+   "post": "LPi21",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3412",
+   "post": "LPi2b",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3412",
+   "post": "LPi2c",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3412",
+   "post": "LPi2d",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3412",
+   "post": "LPi2e",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3412",
+   "post": "LPi34",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3412",
+   "post": "LPi3412",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3412",
+   "post": "LPi3a",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3412",
+   "post": "LPi3b",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3412",
+   "post": "LPi3c",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3412",
+   "post": "LPi43",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3412",
+   "post": "LPi4a",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3412",
+   "post": "LPi4b",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3412",
+   "post": "VCH",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3412",
+   "post": "VS",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3412",
+   "post": "VST1",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3412",
+   "post": "VST2",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3a",
+   "post": "H2",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3a",
+   "post": "LPLC2",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3a",
+   "post": "LPi12",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3a",
+   "post": "LPi14",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3a",
+   "post": "LPi21",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3a",
+   "post": "LPi2b",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3a",
+   "post": "LPi2c",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3a",
+   "post": "LPi2d",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3a",
+   "post": "LPi2e",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3a",
+   "post": "LPi34",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3a",
+   "post": "LPi3412",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3a",
+   "post": "LPi3a",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3a",
+   "post": "LPi3b",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3a",
+   "post": "LPi3c",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3a",
+   "post": "LPi43",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3a",
+   "post": "LPi4a",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3a",
+   "post": "LPi4b",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3a",
+   "post": "VS",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3a",
+   "post": "VST2",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3a",
+   "post": "VSm",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3b",
+   "post": "H2",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3b",
+   "post": "LPLC2",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3b",
+   "post": "LPi12",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3b",
+   "post": "LPi21",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3b",
+   "post": "LPi2c",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3b",
+   "post": "LPi2d",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3b",
+   "post": "LPi2e",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3b",
+   "post": "LPi34",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3b",
+   "post": "LPi3412",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3b",
+   "post": "LPi3a",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3b",
+   "post": "LPi3b",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3b",
+   "post": "LPi3c",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3b",
+   "post": "LPi43",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3b",
+   "post": "LPi4a",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3b",
+   "post": "LPi4b",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3b",
+   "post": "VS",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3b",
+   "post": "VST1",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3b",
+   "post": "VST2",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3b",
+   "post": "VSm",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3c",
+   "post": "LPi14",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3c",
+   "post": "LPi2c",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3c",
+   "post": "LPi2d",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3c",
+   "post": "LPi2e",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3c",
+   "post": "LPi34",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3c",
+   "post": "LPi3412",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3c",
+   "post": "LPi3a",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3c",
+   "post": "LPi3b",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3c",
+   "post": "LPi3c",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3c",
+   "post": "LPi43",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3c",
+   "post": "LPi4b",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3c",
+   "post": "VS",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3c",
+   "post": "VST2",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi3c",
+   "post": "VSm",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi43",
+   "post": "LPLC2",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi43",
+   "post": "LPi12",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi43",
+   "post": "LPi14",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi43",
+   "post": "LPi2b",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi43",
+   "post": "LPi2c",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi43",
+   "post": "LPi2d",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi43",
+   "post": "LPi2e",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi43",
+   "post": "LPi34",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi43",
+   "post": "LPi3412",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi43",
+   "post": "LPi3a",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi43",
+   "post": "LPi3b",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi43",
+   "post": "LPi3c",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi43",
+   "post": "LPi43",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi43",
+   "post": "LPi4a",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi43",
+   "post": "LPi4b",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi43",
+   "post": "VS",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi43",
+   "post": "VST1",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi43",
+   "post": "VSm",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi4a",
+   "post": "DCH",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi4a",
+   "post": "H2",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi4a",
+   "post": "HST",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi4a",
+   "post": "LPLC2",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi4a",
+   "post": "LPi12",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi4a",
+   "post": "LPi14",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi4a",
+   "post": "LPi2b",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi4a",
+   "post": "LPi2c",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi4a",
+   "post": "LPi2d",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi4a",
+   "post": "LPi2e",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi4a",
+   "post": "LPi34",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi4a",
+   "post": "LPi3412",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi4a",
+   "post": "LPi3a",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi4a",
+   "post": "LPi3b",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi4a",
+   "post": "LPi43",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi4a",
+   "post": "LPi4a",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi4a",
+   "post": "LPi4b",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi4a",
+   "post": "VCH",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi4a",
+   "post": "VS",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi4a",
+   "post": "VST1",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi4a",
+   "post": "VSm",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi4b",
+   "post": "DCH",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi4b",
+   "post": "H2",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi4b",
+   "post": "LPLC2",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi4b",
+   "post": "LPi12",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi4b",
+   "post": "LPi14",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi4b",
+   "post": "LPi21",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi4b",
+   "post": "LPi2b",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi4b",
+   "post": "LPi2c",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi4b",
+   "post": "LPi2d",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi4b",
+   "post": "LPi2e",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi4b",
+   "post": "LPi34",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi4b",
+   "post": "LPi3412",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi4b",
+   "post": "LPi3a",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi4b",
+   "post": "LPi3b",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi4b",
+   "post": "LPi3c",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi4b",
+   "post": "LPi43",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi4b",
+   "post": "LPi4a",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi4b",
+   "post": "VCH",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi4b",
+   "post": "VS",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi4b",
+   "post": "VST1",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi4b",
+   "post": "VST2",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi4b",
+   "post": "VSm",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi_unclear",
+   "post": "LC4",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi_unclear",
+   "post": "LPLC2",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "LPi_unclear",
+   "post": "LPi_unclear",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "Mi1",
+   "post": "LPi34",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "Mi1",
+   "post": "LPi4a",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "Mi10",
+   "post": "LPi2e",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "Mi15",
+   "post": "LPi34",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "Mi2",
+   "post": "LPi34",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "Mi9",
+   "post": "LPi34",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "Mi9",
+   "post": "LPi4a",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "T2",
+   "post": "DCH",
+   "strength": 0.0010999998776242137,
    "sign": 1.0
   },
   {
    "pre": "T2",
    "post": "HSE",
-   "strength": 0.0019617455545812845,
+   "strength": 0.003833212424069643,
    "sign": 1.0
   },
   {
    "pre": "T2",
    "post": "HSS",
-   "strength": 0.006443567108362913,
+   "strength": 0.00880526378750801,
+   "sign": 1.0
+  },
+  {
+   "pre": "T2",
+   "post": "LPi12",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T2",
+   "post": "LPi14",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T2",
+   "post": "LPi2d",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T2",
+   "post": "LPi2e",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T2",
+   "post": "LPi3c",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T2",
+   "post": "LPi4a",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T2",
+   "post": "LPi_unclear",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T2",
+   "post": "VCH",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T2",
+   "post": "VS",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T2",
+   "post": "VST2",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T2",
+   "post": "VSm",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T2a",
+   "post": "LPi4b",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T2a",
+   "post": "VSm",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4a",
+   "post": "DCH",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4a",
+   "post": "H2",
+   "strength": 0.0010999998776242137,
    "sign": 1.0
   },
   {
    "pre": "T4a",
    "post": "HSE",
-   "strength": 0.000511710939463228,
+   "strength": 0.00026578258257359266,
    "sign": 1.0
   },
   {
    "pre": "T4a",
    "post": "HSN",
-   "strength": 6.331538315862417e-05,
+   "strength": 0.00012081572640454397,
    "sign": 1.0
   },
   {
    "pre": "T4a",
    "post": "HSS",
-   "strength": 0.0004101760860066861,
+   "strength": 0.00019502882787492126,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4a",
+   "post": "HST",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4a",
+   "post": "LPi12",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4a",
+   "post": "LPi14",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4a",
+   "post": "LPi21",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4a",
+   "post": "LPi2b",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4a",
+   "post": "LPi2c",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4a",
+   "post": "LPi2d",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4a",
+   "post": "LPi2e",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4a",
+   "post": "LPi34",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4a",
+   "post": "LPi3412",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4a",
+   "post": "LPi3a",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4a",
+   "post": "LPi3b",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4a",
+   "post": "LPi4a",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4a",
+   "post": "LPi4b",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4a",
+   "post": "VCH",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4a",
+   "post": "VS",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4a",
+   "post": "VST1",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4a",
+   "post": "VST2",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4a",
+   "post": "VSm",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4b",
+   "post": "DCH",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4b",
+   "post": "H2",
+   "strength": 0.0010999998776242137,
    "sign": 1.0
   },
   {
    "pre": "T4b",
    "post": "HSS",
-   "strength": 0.00045743025839328766,
+   "strength": 0.0010508548002690077,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4b",
+   "post": "HST",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4b",
+   "post": "LPi12",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4b",
+   "post": "LPi14",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4b",
+   "post": "LPi21",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4b",
+   "post": "LPi2b",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4b",
+   "post": "LPi2c",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4b",
+   "post": "LPi2d",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4b",
+   "post": "LPi2e",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4b",
+   "post": "LPi34",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4b",
+   "post": "LPi3412",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4b",
+   "post": "LPi3a",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4b",
+   "post": "LPi3c",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4b",
+   "post": "LPi43",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4b",
+   "post": "LPi4a",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4b",
+   "post": "LPi4b",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4b",
+   "post": "VCH",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4b",
+   "post": "VS",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4b",
+   "post": "VSm",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4c",
+   "post": "DCH",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4c",
+   "post": "H2",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4c",
+   "post": "LPi12",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4c",
+   "post": "LPi14",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4c",
+   "post": "LPi21",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4c",
+   "post": "LPi2c",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4c",
+   "post": "LPi2d",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4c",
+   "post": "LPi2e",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4c",
+   "post": "LPi34",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4c",
+   "post": "LPi3412",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4c",
+   "post": "LPi3a",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4c",
+   "post": "LPi3b",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4c",
+   "post": "LPi3c",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4c",
+   "post": "LPi43",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4c",
+   "post": "LPi4a",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4c",
+   "post": "LPi4b",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4c",
+   "post": "VS",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4c",
+   "post": "VST2",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4c",
+   "post": "VSm",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4d",
+   "post": "DCH",
+   "strength": 0.0010999998776242137,
    "sign": 1.0
   },
   {
    "pre": "T4d",
    "post": "HSN",
-   "strength": 0.000691437569912523,
+   "strength": 0.0004659447877202183,
    "sign": 1.0
   },
   {
    "pre": "T4d",
    "post": "HSS",
-   "strength": 0.0011068794410675764,
+   "strength": 0.0011509450851008296,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4d",
+   "post": "HST",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4d",
+   "post": "LPi12",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4d",
+   "post": "LPi14",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4d",
+   "post": "LPi21",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4d",
+   "post": "LPi2c",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4d",
+   "post": "LPi2d",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4d",
+   "post": "LPi2e",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4d",
+   "post": "LPi34",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4d",
+   "post": "LPi3412",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4d",
+   "post": "LPi3a",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4d",
+   "post": "LPi3b",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4d",
+   "post": "LPi3c",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4d",
+   "post": "LPi43",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4d",
+   "post": "LPi4a",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4d",
+   "post": "LPi4b",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4d",
+   "post": "VCH",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4d",
+   "post": "VS",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4d",
+   "post": "VST1",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4d",
+   "post": "VST2",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4d",
+   "post": "VSm",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5a",
+   "post": "DCH",
+   "strength": 0.0010999998776242137,
    "sign": 1.0
   },
   {
    "pre": "T5a",
    "post": "HSE",
-   "strength": 6.238563219085336e-05,
+   "strength": 0.00025829067453742027,
    "sign": 1.0
   },
   {
    "pre": "T5a",
    "post": "HSN",
-   "strength": 3.152385033899918e-05,
+   "strength": 0.0001247119507752359,
    "sign": 1.0
   },
   {
    "pre": "T5a",
    "post": "HSS",
-   "strength": 6.860311987111345e-05,
+   "strength": 0.0001980266097234562,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5a",
+   "post": "HST",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5a",
+   "post": "LPi12",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5a",
+   "post": "LPi14",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5a",
+   "post": "LPi21",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5a",
+   "post": "LPi2b",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5a",
+   "post": "LPi2c",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5a",
+   "post": "LPi2d",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5a",
+   "post": "LPi2e",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5a",
+   "post": "LPi34",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5a",
+   "post": "LPi3412",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5a",
+   "post": "LPi3b",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5a",
+   "post": "LPi4a",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5a",
+   "post": "LPi4b",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5a",
+   "post": "VCH",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5a",
+   "post": "VS",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5a",
+   "post": "VST1",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5a",
+   "post": "VST2",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5a",
+   "post": "VSm",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5b",
+   "post": "DCH",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5b",
+   "post": "H2",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5b",
+   "post": "LPi12",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5b",
+   "post": "LPi14",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5b",
+   "post": "LPi21",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5b",
+   "post": "LPi2b",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5b",
+   "post": "LPi2c",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5b",
+   "post": "LPi2d",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5b",
+   "post": "LPi2e",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5b",
+   "post": "LPi34",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5b",
+   "post": "LPi3412",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5b",
+   "post": "LPi3a",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5b",
+   "post": "LPi3b",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5b",
+   "post": "LPi43",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5b",
+   "post": "LPi4a",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5b",
+   "post": "LPi4b",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5b",
+   "post": "VCH",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5b",
+   "post": "VS",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5b",
+   "post": "VST1",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5b",
+   "post": "VST2",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5b",
+   "post": "VSm",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5c",
+   "post": "H2",
+   "strength": 0.0010999998776242137,
    "sign": 1.0
   },
   {
    "pre": "T5c",
    "post": "HSE",
-   "strength": 0.0012116576544940472,
+   "strength": 0.0011002497049048543,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5c",
+   "post": "LPi12",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5c",
+   "post": "LPi14",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5c",
+   "post": "LPi21",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5c",
+   "post": "LPi2c",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5c",
+   "post": "LPi2d",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5c",
+   "post": "LPi2e",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5c",
+   "post": "LPi34",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5c",
+   "post": "LPi3412",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5c",
+   "post": "LPi3a",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5c",
+   "post": "LPi3b",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5c",
+   "post": "LPi3c",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5c",
+   "post": "LPi43",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5c",
+   "post": "LPi4a",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5c",
+   "post": "LPi4b",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5c",
+   "post": "VCH",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5c",
+   "post": "VS",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5c",
+   "post": "VSm",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5d",
+   "post": "DCH",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5d",
+   "post": "LPi12",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5d",
+   "post": "LPi21",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5d",
+   "post": "LPi2c",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5d",
+   "post": "LPi2d",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5d",
+   "post": "LPi2e",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5d",
+   "post": "LPi34",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5d",
+   "post": "LPi3412",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5d",
+   "post": "LPi3a",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5d",
+   "post": "LPi3b",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5d",
+   "post": "LPi3c",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5d",
+   "post": "LPi43",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5d",
+   "post": "LPi4a",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5d",
+   "post": "LPi4b",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5d",
+   "post": "VS",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5d",
+   "post": "VST1",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5d",
+   "post": "VST2",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5d",
+   "post": "VSm",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "Tm1",
+   "post": "LPi12",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "Tm1",
+   "post": "LPi14",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "Tm1",
+   "post": "LPi2e",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "Tm1",
+   "post": "LPi34",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "Tm1",
+   "post": "LPi3412",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "Tm1",
+   "post": "LPi3b",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "Tm1",
+   "post": "LPi43",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "Tm1",
+   "post": "VCH",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "Tm1",
+   "post": "VSm",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "Tm16",
+   "post": "VCH",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "Tm2",
+   "post": "DCH",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "Tm2",
+   "post": "H2",
+   "strength": 0.0010999998776242137,
    "sign": 1.0
   },
   {
    "pre": "Tm2",
    "post": "HSS",
-   "strength": 0.001112764235585928,
+   "strength": 0.001131668221205473,
+   "sign": 1.0
+  },
+  {
+   "pre": "Tm2",
+   "post": "LPi2e",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "Tm2",
+   "post": "LPi3412",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "Tm2",
+   "post": "VCH",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "Tm2",
+   "post": "VS",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "Tm20",
+   "post": "LPi_unclear",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "Tm3",
+   "post": "DCH",
+   "strength": 0.0010999998776242137,
    "sign": 1.0
   },
   {
    "pre": "Tm3",
    "post": "HSN",
-   "strength": 0.6235051155090332,
+   "strength": 0.0006421176949515939,
+   "sign": 1.0
+  },
+  {
+   "pre": "Tm3",
+   "post": "LPi2c",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "Tm3",
+   "post": "LPi2e",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "Tm3",
+   "post": "LPi34",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "Tm3",
+   "post": "LPi3412",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "Tm3",
+   "post": "LPi4a",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "Tm3",
+   "post": "LPi_unclear",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "Tm3",
+   "post": "VCH",
+   "strength": 0.0010999998776242137,
    "sign": 1.0
   },
   {
    "pre": "Tm4",
    "post": "HSN",
-   "strength": 0.0010993748437613249,
+   "strength": 0.001099603483453393,
+   "sign": 1.0
+  },
+  {
+   "pre": "Tm4",
+   "post": "LPi14",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "Tm4",
+   "post": "LPi2c",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "Tm4",
+   "post": "LPi2d",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "Tm4",
+   "post": "LPi2e",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "Tm4",
+   "post": "LPi3412",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "Tm4",
+   "post": "LPi3c",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "Tm4",
+   "post": "VCH",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "Tm5Y",
+   "post": "DCH",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "Tm5Y",
+   "post": "LPi21",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "Tm5Y",
+   "post": "LPi2d",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "Tm5Y",
+   "post": "LPi2e",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "Tm5Y",
+   "post": "LPi3a",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "Tm5Y",
+   "post": "LPi3c",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "Tm5Y",
+   "post": "LPi_unclear",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "Tm5Y",
+   "post": "VSm",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "Tm5a",
+   "post": "LPi_unclear",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "Tm5b",
+   "post": "LPi_unclear",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "Tm5c",
+   "post": "LPi_unclear",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "Tm9",
+   "post": "LPi2e",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY10",
+   "post": "DCH",
+   "strength": 0.0010999998776242137,
    "sign": 1.0
   },
   {
    "pre": "TmY10",
    "post": "HSE",
-   "strength": 0.001051519881002605,
+   "strength": 0.0010946340626105666,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY10",
+   "post": "LPi12",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY10",
+   "post": "LPi2c",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY10",
+   "post": "LPi2d",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY10",
+   "post": "LPi2e",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY10",
+   "post": "LPi34",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY10",
+   "post": "LPi3b",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY10",
+   "post": "LPi3c",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY10",
+   "post": "LPi4a",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY10",
+   "post": "LPi_unclear",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY10",
+   "post": "VCH",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY13",
+   "post": "DCH",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY13",
+   "post": "H2",
+   "strength": 0.0010999998776242137,
    "sign": 1.0
   },
   {
    "pre": "TmY13",
    "post": "HSS",
-   "strength": 0.0010114918695762753,
+   "strength": 0.0018469071947038174,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY13",
+   "post": "LPi12",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY13",
+   "post": "LPi21",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY13",
+   "post": "LPi2c",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY13",
+   "post": "LPi2d",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY13",
+   "post": "LPi2e",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY13",
+   "post": "LPi34",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY13",
+   "post": "LPi3412",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY13",
+   "post": "LPi3a",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY13",
+   "post": "LPi3b",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY13",
+   "post": "LPi43",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY13",
+   "post": "LPi4a",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY13",
+   "post": "LPi4b",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY13",
+   "post": "LPi_unclear",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY13",
+   "post": "VCH",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY13",
+   "post": "VST1",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY13",
+   "post": "VST2",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY13",
+   "post": "VSm",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY14",
+   "post": "DCH",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY14",
+   "post": "H2",
+   "strength": 0.0010999998776242137,
    "sign": 1.0
   },
   {
    "pre": "TmY14",
    "post": "HSE",
-   "strength": 0.01452566497027874,
+   "strength": 0.003196758683770895,
    "sign": 1.0
   },
   {
    "pre": "TmY14",
    "post": "HSN",
-   "strength": 0.1584016978740692,
+   "strength": 0.016896991059184074,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY14",
+   "post": "LPi12",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY14",
+   "post": "LPi14",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY14",
+   "post": "LPi21",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY14",
+   "post": "LPi2b",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY14",
+   "post": "LPi2c",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY14",
+   "post": "LPi2d",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY14",
+   "post": "LPi2e",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY14",
+   "post": "LPi34",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY14",
+   "post": "LPi3412",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY14",
+   "post": "LPi3a",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY14",
+   "post": "LPi3b",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY14",
+   "post": "LPi43",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY14",
+   "post": "LPi4b",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY14",
+   "post": "VCH",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY14",
+   "post": "VS",
+   "strength": 0.0010999998776242137,
    "sign": 1.0
   },
   {
    "pre": "TmY15",
+   "post": "DCH",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "TmY15",
+   "post": "H2",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "TmY15",
    "post": "HSS",
-   "strength": 0.004000779706984758,
+   "strength": 0.0007714176317676902,
+   "sign": -1.0
+  },
+  {
+   "pre": "TmY15",
+   "post": "LPi12",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "TmY15",
+   "post": "LPi14",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "TmY15",
+   "post": "LPi21",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "TmY15",
+   "post": "LPi2b",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "TmY15",
+   "post": "LPi2c",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "TmY15",
+   "post": "LPi2d",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "TmY15",
+   "post": "LPi2e",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "TmY15",
+   "post": "LPi34",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "TmY15",
+   "post": "LPi3412",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "TmY15",
+   "post": "LPi3a",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "TmY15",
+   "post": "LPi3b",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "TmY15",
+   "post": "LPi43",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "TmY15",
+   "post": "LPi4b",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "TmY15",
+   "post": "VCH",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "TmY15",
+   "post": "VS",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "TmY15",
+   "post": "VSm",
+   "strength": 0.0010999998776242137,
    "sign": -1.0
   },
   {
    "pre": "TmY18",
+   "post": "DCH",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY18",
    "post": "HSN",
-   "strength": 0.00254042143933475,
+   "strength": 0.00067096296697855,
    "sign": 1.0
   },
   {
    "pre": "TmY18",
    "post": "HSS",
-   "strength": 0.0008994850795716047,
+   "strength": 0.0009863317245617509,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY18",
+   "post": "HST",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY18",
+   "post": "LPi12",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY18",
+   "post": "LPi14",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY18",
+   "post": "LPi21",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY18",
+   "post": "LPi2c",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY18",
+   "post": "LPi2d",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY18",
+   "post": "LPi2e",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY18",
+   "post": "LPi34",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY18",
+   "post": "LPi3412",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY18",
+   "post": "LPi3a",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY18",
+   "post": "LPi3b",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY18",
+   "post": "LPi4a",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY18",
+   "post": "LPi4b",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY18",
+   "post": "LPi_unclear",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY18",
+   "post": "VCH",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY18",
+   "post": "VS",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY18",
+   "post": "VST2",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY18",
+   "post": "VSm",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY3",
+   "post": "DCH",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY3",
+   "post": "H2",
+   "strength": 0.0010999998776242137,
    "sign": 1.0
   },
   {
    "pre": "TmY3",
    "post": "HSE",
-   "strength": 0.0006684265099465847,
+   "strength": 0.0008961530984379351,
    "sign": 1.0
   },
   {
    "pre": "TmY3",
    "post": "HSS",
-   "strength": 0.0006449306383728981,
+   "strength": 0.0009479120490141213,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY3",
+   "post": "HST",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY3",
+   "post": "LPi12",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY3",
+   "post": "LPi14",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY3",
+   "post": "LPi21",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY3",
+   "post": "LPi2b",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY3",
+   "post": "LPi2c",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY3",
+   "post": "LPi2d",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY3",
+   "post": "LPi2e",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY3",
+   "post": "LPi34",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY3",
+   "post": "LPi3412",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY3",
+   "post": "LPi3a",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY3",
+   "post": "LPi3b",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY3",
+   "post": "LPi3c",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY3",
+   "post": "LPi43",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY3",
+   "post": "LPi4a",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY3",
+   "post": "LPi4b",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY3",
+   "post": "LPi_unclear",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY3",
+   "post": "VCH",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY3",
+   "post": "VS",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY3",
+   "post": "VST1",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY3",
+   "post": "VST2",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY3",
+   "post": "VSm",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY4",
+   "post": "DCH",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY4",
+   "post": "H2",
+   "strength": 0.0010999998776242137,
    "sign": 1.0
   },
   {
    "pre": "TmY4",
    "post": "HSN",
-   "strength": 0.028991132974624634,
+   "strength": 0.004251241683959961,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY4",
+   "post": "LPi12",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY4",
+   "post": "LPi14",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY4",
+   "post": "LPi21",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY4",
+   "post": "LPi2b",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY4",
+   "post": "LPi2c",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY4",
+   "post": "LPi2d",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY4",
+   "post": "LPi2e",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY4",
+   "post": "LPi34",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY4",
+   "post": "LPi3412",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY4",
+   "post": "LPi3a",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY4",
+   "post": "LPi3b",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY4",
+   "post": "LPi3c",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY4",
+   "post": "LPi43",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY4",
+   "post": "LPi4a",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY4",
+   "post": "LPi4b",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY4",
+   "post": "VCH",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY4",
+   "post": "VS",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY4",
+   "post": "VST1",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY4",
+   "post": "VST2",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY4",
+   "post": "VSm",
+   "strength": 0.0010999998776242137,
    "sign": 1.0
   },
   {
    "pre": "TmY5a",
+   "post": "DCH",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "TmY5a",
+   "post": "H2",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "TmY5a",
    "post": "HSE",
-   "strength": 0.005645817145705223,
+   "strength": 0.0011237850412726402,
    "sign": -1.0
   },
   {
    "pre": "TmY5a",
    "post": "HSN",
-   "strength": 0.006188266910612583,
+   "strength": 0.0030703023076057434,
    "sign": -1.0
   },
   {
    "pre": "TmY5a",
    "post": "HSS",
-   "strength": 0.010097869671881199,
+   "strength": 0.0017935876967385411,
+   "sign": -1.0
+  },
+  {
+   "pre": "TmY5a",
+   "post": "HST",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "TmY5a",
+   "post": "LPi12",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "TmY5a",
+   "post": "LPi14",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "TmY5a",
+   "post": "LPi21",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "TmY5a",
+   "post": "LPi2b",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "TmY5a",
+   "post": "LPi2c",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "TmY5a",
+   "post": "LPi2d",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "TmY5a",
+   "post": "LPi2e",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "TmY5a",
+   "post": "LPi34",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "TmY5a",
+   "post": "LPi3412",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "TmY5a",
+   "post": "LPi3a",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "TmY5a",
+   "post": "LPi3b",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "TmY5a",
+   "post": "LPi3c",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "TmY5a",
+   "post": "LPi43",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "TmY5a",
+   "post": "LPi4a",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "TmY5a",
+   "post": "LPi4b",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "TmY5a",
+   "post": "VCH",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "TmY5a",
+   "post": "VS",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "TmY5a",
+   "post": "VST1",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "TmY5a",
+   "post": "VST2",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "TmY5a",
+   "post": "VSm",
+   "strength": 0.0010999998776242137,
    "sign": -1.0
   },
   {
    "pre": "TmY9",
+   "post": "DCH",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY9",
+   "post": "H2",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY9",
    "post": "HSE",
-   "strength": 0.0023542228154838085,
+   "strength": 0.001485031796619296,
    "sign": 1.0
   },
   {
    "pre": "TmY9",
    "post": "HSN",
-   "strength": 0.17657116055488586,
+   "strength": 0.0011023659026250243,
    "sign": 1.0
   },
   {
    "pre": "TmY9",
    "post": "HSS",
-   "strength": 0.0182914100587368,
+   "strength": 0.0006429528584703803,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY9",
+   "post": "LPi12",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY9",
+   "post": "LPi14",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY9",
+   "post": "LPi21",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY9",
+   "post": "LPi2b",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY9",
+   "post": "LPi2c",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY9",
+   "post": "LPi2d",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY9",
+   "post": "LPi2e",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY9",
+   "post": "LPi34",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY9",
+   "post": "LPi3412",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY9",
+   "post": "LPi3a",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY9",
+   "post": "LPi3b",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY9",
+   "post": "LPi3c",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY9",
+   "post": "LPi43",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY9",
+   "post": "LPi4a",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY9",
+   "post": "LPi4b",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY9",
+   "post": "VCH",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY9",
+   "post": "VS",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY9",
+   "post": "VSm",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "VCH",
+   "post": "DCH",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "VCH",
+   "post": "H2",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "VCH",
+   "post": "HSE",
+   "strength": 0.0025893673300743103,
+   "sign": -1.0
+  },
+  {
+   "pre": "VCH",
+   "post": "HSN",
+   "strength": 0.006345741916447878,
+   "sign": -1.0
+  },
+  {
+   "pre": "VCH",
+   "post": "HSS",
+   "strength": 0.0006223852396942675,
+   "sign": -1.0
+  },
+  {
+   "pre": "VCH",
+   "post": "HST",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "VCH",
+   "post": "LPLC2",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "VCH",
+   "post": "LPi12",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "VCH",
+   "post": "LPi14",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "VCH",
+   "post": "LPi21",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "VCH",
+   "post": "LPi2b",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "VCH",
+   "post": "LPi2c",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "VCH",
+   "post": "LPi2d",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "VCH",
+   "post": "LPi2e",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "VCH",
+   "post": "LPi34",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "VCH",
+   "post": "LPi43",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "VCH",
+   "post": "LPi4a",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "VCH",
+   "post": "LPi4b",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "VCH",
+   "post": "VST1",
+   "strength": 0.0010999998776242137,
+   "sign": -1.0
+  },
+  {
+   "pre": "VS",
+   "post": "HSS",
+   "strength": 0.001829849323257804,
+   "sign": 1.0
+  },
+  {
+   "pre": "VS",
+   "post": "LPLC2",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "VS",
+   "post": "LPi12",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "VS",
+   "post": "LPi14",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "VS",
+   "post": "LPi34",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "VS",
+   "post": "LPi3a",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "VS",
+   "post": "LPi43",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "VS",
+   "post": "LPi4b",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "VS",
+   "post": "VS",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "VS",
+   "post": "VST1",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "VS",
+   "post": "VST2",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "VS",
+   "post": "VSm",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "VST1",
+   "post": "LPLC2",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "VST1",
+   "post": "LPi2b",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "VST1",
+   "post": "LPi34",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "VST1",
+   "post": "LPi3412",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "VST1",
+   "post": "LPi3a",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "VST1",
+   "post": "LPi3b",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "VST1",
+   "post": "LPi43",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "VST1",
+   "post": "LPi4a",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "VST1",
+   "post": "LPi4b",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "VST1",
+   "post": "VS",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "VST1",
+   "post": "VST1",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "VST1",
+   "post": "VST2",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "VST1",
+   "post": "VSm",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "VST2",
+   "post": "DCH",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "VST2",
+   "post": "LPLC2",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "VST2",
+   "post": "LPi12",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "VST2",
+   "post": "LPi21",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "VST2",
+   "post": "LPi34",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "VST2",
+   "post": "LPi3412",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "VST2",
+   "post": "LPi3a",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "VST2",
+   "post": "LPi43",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "VST2",
+   "post": "LPi4a",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "VST2",
+   "post": "LPi4b",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "VST2",
+   "post": "VS",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "VST2",
+   "post": "VST1",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "VST2",
+   "post": "VST2",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "VST2",
+   "post": "VSm",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "VSm",
+   "post": "LPLC2",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "VSm",
+   "post": "LPi34",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "VSm",
+   "post": "LPi3a",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "VSm",
+   "post": "LPi3b",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "VSm",
+   "post": "VS",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "VSm",
+   "post": "VST1",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "VSm",
+   "post": "VST2",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "VSm",
+   "post": "VSm",
+   "strength": 0.0010999998776242137,
    "sign": 1.0
   }
  ],

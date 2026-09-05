@@ -37,7 +37,7 @@ HERE = Path(__file__).parent
 DEG = math.pi / 180
 LC_TYPES = ["LC4", "LPLC2"]
 HS_TYPES = ["HSE", "HSN", "HSS"]
-FLOW_KINDS = ["static", "rotCCW", "rotCW", "transFwd", "transAsym"]
+FLOW_KINDS = ["static", "static", "static", "static", "rotCCW", "rotCW", "transFwd", "transAsym"]
 KINDS = ["loomL", "loomR", "recedeL", "recedeR", "transL", "transR", "grating", "grating", "static"]
 # Half of the object trials play over a static high-contrast grating instead of grey, as in the scene.
 P_STRUCTURED_BG = 0.5
@@ -374,8 +374,13 @@ def main() -> None:
             nl = len(hs_groups["L"])
             mL = fresp[:, :nl].mean(1)                                      # per stimulus
             mR = fresp[:, nl:].mean(1)
-            k = {name: i for i, name in enumerate(FLOW_KINDS)}
-            restL, restR = mL[k["static"]], mR[k["static"]]
+            k = {name: i for i, name in enumerate(FLOW_KINDS)}   # first index per name
+            st = [i for i, name in enumerate(FLOW_KINDS) if name == "static"]
+            # rest per side, and its dependence on the view: the scene is not grey, and a side
+            # whose rest collapses for some views has no downward range there
+            restL, restR = mL[st].mean(), mR[st].mean()
+            rest_view = (torch.relu(0.6 - mL[st]).sum() + torch.relu(0.6 - mR[st]).sum()
+                         + (mL[st] - mR[st]).abs().mean() + mL[st].std() + mR[st].std())
             dL = mL - restL
             dR = mR - restR
             m = 1.0
@@ -386,7 +391,7 @@ def main() -> None:
                        + torch.relu(rotL * rotR) * 2                          # opposite signs across eyes
                        + torch.relu(0.25 * m + torch.min(dL[k["rotCCW"]], dL[k["rotCW"]]))
                        + torch.relu(0.25 * m + torch.min(dR[k["rotCCW"]], dR[k["rotCW"]]))
-                       + torch.relu(0.8 - restL) + torch.relu(0.8 - restR)    # room to go down
+                       + torch.relu(0.8 - restL) + torch.relu(0.8 - restR) + rest_view    # room to go down, every view
                        + torch.relu(-dL[k["transFwd"]]) + torch.relu(-dR[k["transFwd"]])  # translation: not below rest
                        ) * args.hs_weight
             # fast membranes (real HS cells respond within tens of ms) and matched eyes
