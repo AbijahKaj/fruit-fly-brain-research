@@ -1,0 +1,158 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" font-family="Inter, Helvetica Neue, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#9aa4ae"/>
+    </marker>
+    <marker id="arrowBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#6fb3ff"/>
+    </marker>
+    <marker id="arrowRed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#ff8a65"/>
+    </marker>
+  </defs>
+  <rect width="1600" height="900" fill="#0b0d10"/>
+
+  <!-- title -->
+  <text x="60" y="70" fill="#e8ecf0" font-size="34" font-weight="700">How the fly sees and steers</text>
+  <text x="60" y="104" fill="#9aa4ae" font-size="19">One traced cell per unit, one synapse count per edge, from the 2026 MaleCNS connectome. 65,799 neurons · 1,967,771 synapses · real time on WebGPU.</text>
+
+  <!-- bracket: hand-written vs connectome -->
+  <g stroke="#6fb3ff" stroke-width="2" fill="none">
+    <path d="M60,175 v-14 h470 v14"/>
+  </g>
+  <text x="295" y="152" text-anchor="middle" fill="#6fb3ff" font-size="16" font-weight="600">hand-written: world, eye, photoreceptors</text>
+  <g stroke="#ffb74d" stroke-width="2" fill="none">
+    <path d="M560,175 v-14 h980 v14"/>
+  </g>
+  <text x="1050" y="152" text-anchor="middle" fill="#ffb74d" font-size="16" font-weight="600">the connectome: every cell and synapse count, sign from the predicted transmitter · dynamics and pair strengths fitted</text>
+
+  <!-- stage boxes -->
+  <g font-size="15" fill="#d6dbe0">
+    <!-- 1 scene -->
+    <rect x="60" y="210" width="210" height="300" rx="8" fill="#141920" stroke="#2a3038"/>
+    <text x="165" y="240" text-anchor="middle" font-size="19" font-weight="700" fill="#e8ecf0">3D scene</text>
+    <!-- icon: drum stripes, pillars, sphere -->
+    <g transform="translate(90,260)">
+      <rect x="0" y="0" width="150" height="70" fill="#1c232c"/>
+      <g fill="#e8ecf0"><rect x="0" y="0" width="12" height="70"/><rect x="25" y="0" width="12" height="70"/><rect x="50" y="0" width="12" height="70"/><rect x="75" y="0" width="12" height="70"/><rect x="100" y="0" width="12" height="70"/><rect x="125" y="0" width="12" height="70"/></g>
+      <rect x="0" y="70" width="150" height="40" fill="#151a20"/>
+      <rect x="30" y="52" width="16" height="42" fill="#b0473c"/>
+      <rect x="95" y="60" width="14" height="34" fill="#b0473c"/>
+      <circle cx="120" cy="45" r="13" fill="#7a8794"/>
+    </g>
+    <text x="165" y="400" text-anchor="middle">striped drum, pillars,</text>
+    <text x="165" y="422" text-anchor="middle">an approaching sphere</text>
+    <text x="165" y="456" text-anchor="middle" fill="#9aa4ae">three.js · rigid-body fly</text>
+    <text x="165" y="478" text-anchor="middle" fill="#9aa4ae">yaw, bank, sideslip</text>
+
+    <!-- 2 eye -->
+    <rect x="300" y="210" width="230" height="300" rx="8" fill="#141920" stroke="#2a3038"/>
+    <text x="415" y="240" text-anchor="middle" font-size="19" font-weight="700" fill="#e8ecf0">Compound eye</text>
+    <g fill="#e8ecf0" transform="translate(340,262)">
+      <g id="hexrow"><circle cx="0" cy="0" r="4"/><circle cx="16" cy="0" r="4"/><circle cx="32" cy="0" r="4"/><circle cx="48" cy="0" r="4"/><circle cx="64" cy="0" r="4"/><circle cx="80" cy="0" r="4"/><circle cx="96" cy="0" r="4"/><circle cx="112" cy="0" r="4"/><circle cx="128" cy="0" r="4"/><circle cx="144" cy="0" r="4"/></g>
+      <use href="#hexrow" x="8" y="14"/><use href="#hexrow" x="0" y="28"/><use href="#hexrow" x="8" y="42"/><use href="#hexrow" x="0" y="56"/><use href="#hexrow" x="8" y="70"/><use href="#hexrow" x="0" y="84"/>
+    </g>
+    <text x="415" y="400" text-anchor="middle">1,771 column directions,</text>
+    <text x="415" y="422" text-anchor="middle">one per ommatidium</text>
+    <text x="415" y="456" text-anchor="middle" fill="#9aa4ae">six-face render sampled at the</text>
+    <text x="415" y="478" text-anchor="middle" fill="#9aa4ae">connectome's own retinotopy</text>
+
+    <!-- 3 medulla -->
+    <rect x="560" y="210" width="220" height="300" rx="8" fill="#141920" stroke="#2a3038"/>
+    <text x="670" y="240" text-anchor="middle" font-size="19" font-weight="700" fill="#e8ecf0">Lamina + medulla</text>
+    <text x="670" y="280" text-anchor="middle" fill="#ffb74d" font-size="16" font-weight="600">R1–R8 → L1–L5</text>
+    <text x="670" y="318" text-anchor="middle">Mi1 Mi4 Mi9</text>
+    <text x="670" y="340" text-anchor="middle">Tm1 Tm2 Tm4 Tm9 TmY…</text>
+    <text x="670" y="362" text-anchor="middle">C2 C3 CT1 …</text>
+    <text x="670" y="410" text-anchor="middle" fill="#9aa4ae">per column, both eyes</text>
+    <text x="670" y="432" text-anchor="middle" fill="#9aa4ae">ON and OFF pathways</text>
+    <text x="670" y="466" text-anchor="middle" fill="#9aa4ae">photoreceptors: Weber</text>
+    <text x="670" y="488" text-anchor="middle" fill="#9aa4ae">adaptation, flyvis input weights</text>
+
+    <!-- 4 T4/T5 -->
+    <rect x="810" y="210" width="200" height="300" rx="8" fill="#141920" stroke="#2a3038"/>
+    <text x="910" y="240" text-anchor="middle" font-size="19" font-weight="700" fill="#e8ecf0">T4 / T5</text>
+    <g transform="translate(860,268)" stroke="#e8ecf0" stroke-width="3" fill="none" marker-end="url(#arrow)">
+      <path d="M50,50 L50,10"/><path d="M50,50 L90,50"/><path d="M50,50 L50,90"/><path d="M50,50 L10,50"/>
+    </g>
+    <text x="910" y="400" text-anchor="middle">motion detectors,</text>
+    <text x="910" y="422" text-anchor="middle">8 subtypes × 4 directions</text>
+    <text x="910" y="456" text-anchor="middle" fill="#9aa4ae">fitted: DSI 0.67,</text>
+    <text x="910" y="478" text-anchor="middle" fill="#9aa4ae">tuning correlation 0.96</text>
+
+    <!-- 5 lobula plate + lobula -->
+    <rect x="1040" y="210" width="240" height="300" rx="8" fill="#141920" stroke="#2a3038"/>
+    <text x="1160" y="240" text-anchor="middle" font-size="19" font-weight="700" fill="#e8ecf0">Lobula plate · lobula</text>
+    <rect x="1058" y="258" width="204" height="108" rx="6" fill="#0f1318" stroke="#6fb3ff"/>
+    <text x="1160" y="284" text-anchor="middle" fill="#6fb3ff" font-weight="700" font-size="16">HS · VS · LPi</text>
+    <text x="1160" y="308" text-anchor="middle">wide-field motion</text>
+    <text x="1160" y="330" text-anchor="middle" fill="#9aa4ae">progressive up,</text>
+    <text x="1160" y="352" text-anchor="middle" fill="#9aa4ae">regressive down</text>
+    <rect x="1058" y="380" width="204" height="108" rx="6" fill="#0f1318" stroke="#ff8a65"/>
+    <text x="1160" y="406" text-anchor="middle" fill="#ff8a65" font-weight="700" font-size="16">LC4 · LPLC2</text>
+    <text x="1160" y="430" text-anchor="middle">looming objects</text>
+    <text x="1160" y="452" text-anchor="middle" fill="#9aa4ae">selectivity 0.89–0.97,</text>
+    <text x="1160" y="474" text-anchor="middle" fill="#9aa4ae">quiet for gratings</text>
+
+    <!-- 6 descending -->
+    <rect x="1310" y="210" width="230" height="300" rx="8" fill="#141920" stroke="#2a3038"/>
+    <text x="1425" y="240" text-anchor="middle" font-size="19" font-weight="700" fill="#e8ecf0">Descending neurons</text>
+    <text x="1425" y="284" text-anchor="middle" fill="#6fb3ff" font-weight="600" font-size="16">HS → PS080 → DNg02</text>
+    <text x="1425" y="308" text-anchor="middle" fill="#9aa4ae">wingbeat amplitude code</text>
+    <text x="1425" y="406" text-anchor="middle" fill="#ff8a65" font-weight="600" font-size="16">LC4 · LPLC2 → DNp01–06</text>
+    <text x="1425" y="430" text-anchor="middle" fill="#9aa4ae">giant-fiber escape circuit</text>
+    <text x="1425" y="470" text-anchor="middle">→ wing + haltere</text>
+    <text x="1425" y="492" text-anchor="middle">motor neurons (VNC)</text>
+  </g>
+
+  <!-- forward arrows between boxes -->
+  <g stroke="#9aa4ae" stroke-width="2.5" fill="none" marker-end="url(#arrow)">
+    <path d="M272,360 L296,360"/>
+    <path d="M532,360 L556,360"/>
+    <path d="M782,360 L806,360"/>
+    <path d="M1012,360 L1036,360"/>
+    <path d="M1282,360 L1306,360"/>
+  </g>
+
+  <!-- motor loop back to the scene -->
+  <g fill="none" stroke-width="2.5">
+    <path d="M1425,512 V640 H165 V514" stroke="#9aa4ae" marker-end="url(#arrow)"/>
+  </g>
+  <rect x="480" y="606" width="640" height="68" rx="8" fill="#141920" stroke="#2a3038"/>
+  <text x="800" y="634" text-anchor="middle" fill="#e8ecf0" font-size="17" font-weight="700">Motor: wing amplitudes L / R</text>
+  <text x="800" y="658" text-anchor="middle" fill="#9aa4ae" font-size="15">thrust · yaw torque · bank · sideslip — the turn is read at HS, the escape at LC4 / LPLC2</text>
+
+  <!-- readout tags on the way down -->
+  <g font-size="14">
+    <rect x="1310" y="530" width="230" height="26" rx="4" fill="#0f1318" stroke="#6fb3ff"/>
+    <text x="1425" y="548" text-anchor="middle" fill="#6fb3ff">optomotor: follow the drum</text>
+    <rect x="1310" y="566" width="230" height="26" rx="4" fill="#0f1318" stroke="#ff8a65"/>
+    <text x="1425" y="584" text-anchor="middle" fill="#ff8a65">avoid: turn + sideslip + brake</text>
+  </g>
+
+  <!-- bottom callouts -->
+  <g font-size="15" fill="#d6dbe0">
+    <rect x="60" y="690" width="470" height="160" rx="8" fill="#101419" stroke="#2a3038"/>
+    <text x="80" y="720" font-size="17" font-weight="700" fill="#e8ecf0">The model</text>
+    <text x="80" y="752" font-family="ui-monospace, Menlo, monospace" font-size="15" fill="#e8ecf0">τ dx/dt = −x + Σ w·r + ext + bias</text>
+    <text x="80" y="776" font-family="ui-monospace, Menlo, monospace" font-size="15" fill="#e8ecf0">r = clamp(x, 0, rMax)</text>
+    <text x="80" y="810" fill="#9aa4ae">w = synapse count × transmitter sign × fitted pair strength</text>
+    <text x="80" y="834" fill="#9aa4ae">per-type τ and bias · 4 ms substeps · 0.86 ms on WebGPU</text>
+
+    <rect x="560" y="690" width="480" height="160" rx="8" fill="#101419" stroke="#2a3038"/>
+    <text x="580" y="720" font-size="17" font-weight="700" fill="#e8ecf0">What was fitted (PyTorch, one RTX 5090)</text>
+    <text x="580" y="752">1. direction selectivity of T4/T5 on gratings</text>
+    <text x="580" y="776">2. looming selectivity of LC4/LPLC2, with static-contrast controls</text>
+    <text x="580" y="800">3. HS cells on eye input recorded from this very scene</text>
+    <text x="580" y="834" fill="#9aa4ae">93 cell types, 1,545 type pairs · the wiring itself is never changed</text>
+
+    <rect x="1070" y="690" width="470" height="160" rx="8" fill="#101419" stroke="#2a3038"/>
+    <text x="1090" y="720" font-size="17" font-weight="700" fill="#e8ecf0">In the loop</text>
+    <text x="1090" y="752">follows a rotating drum in both directions</text>
+    <text x="1090" y="776">crosses a 40-pillar course without a collision</text>
+    <text x="1090" y="800">sideslips away from a sphere approaching from the side</text>
+    <text x="1090" y="834" fill="#9aa4ae">open: head-on objects, rest wobble, the DNg02 hop</text>
+  </g>
+
+  <text x="1540" y="886" text-anchor="end" fill="#5c6670" font-size="14">github.com/AbijahKaj/fruit-fly-brain-research · huggingface.co/AbijahKaj/fruit-fly-brain · MaleCNS: Berg et al., Cell 2026 (CC BY)</text>
+</svg>

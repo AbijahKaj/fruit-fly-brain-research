@@ -4,6 +4,8 @@ A workspace for understanding the 2026 male *Drosophila* connectome, playing wit
 
 The map is not a mind. It is a wiring diagram. The bet of this project is that a small, well-chosen subgraph — vision in, wing motor out — is enough to start, and that a web app is the right place to see that graph think.
 
+![How the fly sees and steers](docs/how-it-works.png)
+
 ## Goal
 
 1. **Understand the research** — what was mapped, why the male CNS (brain + nerve cord) is a milestone, where male and female flies actually differ.
