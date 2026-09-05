@@ -130,55 +130,50 @@ class Stimuli:
             lum[:, b] = lum[:, b] * (1 - inside) + 0.05 * inside
         return self.to_ext(lum)
 
-    def flow(self, kinds: list[str], n_dots: int = 1500, radius: float = 10.0, sigma_deg: float = 4.0) -> torch.Tensor:
-        """Self-motion flow fields: dark dots on a cylinder wall (radius `radius`, the drum) and on
-        the ground seen from the fly. Kinds: rotCCW / rotCW (yaw, 0.5-2 rad/s), transFwd (forward
-        flight, 1-3 units/s, centred), transAsym (same, but the wall is 3 units nearer on one side).
-        Returns lamina ext (T, B, n)."""
+    def flow(self, kinds: list[str], radius: float = 10.0) -> torch.Tensor:
+        """Self-motion flow fields by ray casting a striped cylinder wall (radius `radius`, the
+        drum) and a checkered ground 2 units below the fly. Kinds: static, rotCCW / rotCW (yaw,
+        0.5-2 rad/s), transFwd (forward flight, 1-3 units/s, centred), transAsym (same, but the
+        wall is 3 units nearer on one side). Returns lamina ext (T, B, n)."""
         T, dev, t_axis = self.T, self.dev, self.t_axis
         C = len(self.g.col_az)
         lum = torch.full((T, len(kinds), C), 0.5, device=dev)
-        sig2 = 2 * (sigma_deg * DEG) ** 2
-        cos_el = torch.cos(self.col_el)
+        # column directions in the fly frame
+        dx0 = torch.sin(self.col_az) * torch.cos(self.col_el)
+        dy = torch.sin(self.col_el)
+        dz0 = -torch.cos(self.col_az) * torch.cos(self.col_el)
         for b, kind in enumerate(kinds):
-            # dots: half on the wall (az, height), half on the ground (x, z)
-            nw = n_dots // 2
-            az_w = torch.rand(nw, device=dev) * 2 * math.pi
-            y_w = (torch.rand(nw, device=dev) - 0.5) * 2 * radius
-            ng = n_dots - nw
-            x_g = (torch.rand(ng, device=dev) - 0.5) * 4 * radius
-            z_g = (torch.rand(ng, device=dev) - 0.5) * 4 * radius
-            y_g = torch.full((ng,), -2.0, device=dev)
-            omega = 0.0
-            speed = 0.0
-            x_off = 0.0
+            omega, speed, x_off = 0.0, 0.0, 0.0
             if kind.startswith("rot"):
                 omega = (0.5 + 1.5 * torch.rand(()).item()) * (1 if kind == "rotCCW" else -1)
-            else:
+            elif kind.startswith("trans"):
                 speed = 1.0 + 2.0 * torch.rand(()).item()
                 if kind == "transAsym":
                     x_off = 3.0 * (1 if torch.rand(()) < 0.5 else -1)
+            period = (15 + 15 * torch.rand(()).item()) * DEG          # wall stripe period
+            checker = 1.0 + 1.5 * torch.rand(()).item()               # ground cell size
             for t in range(T):
                 tt = t_axis[t].item()
-                # fly at (x_off, 0, -speed t), heading -z, yawed by omega t (positive = left)
-                yaw = omega * tt
+                yaw = omega * tt                                       # positive = left
                 fx, fz = x_off, -speed * tt
-                wx, wz = radius * torch.sin(az_w), -radius * torch.cos(az_w)
-                px = torch.cat([wx - fx, x_g - fx])
-                pz = torch.cat([wz - fz, z_g - fz])
-                py = torch.cat([y_w, y_g])
-                # world -> fly frame: rotate by -yaw about +y
-                c, sn = math.cos(-yaw), math.sin(-yaw)
-                rx = c * px + sn * pz
-                rz = -sn * px + c * pz
-                az = torch.atan2(rx, -rz)                      # positive = right
-                el = torch.atan2(py, torch.sqrt(rx * rx + rz * rz))
-                # splat onto columns with a planar small-angle distance (az scaled by cos el)
-                daz = (self.col_az[None, :] - az[:, None])
-                daz = torch.atan2(torch.sin(daz), torch.cos(daz)) * cos_el[None, :]
-                del_ = self.col_el[None, :] - el[:, None]
-                occ = torch.exp(-(daz * daz + del_ * del_) / sig2).sum(0).clamp(max=1.0)
-                lum[t, b] = 0.5 - 0.45 * occ
+                c, sn = math.cos(yaw), math.sin(yaw)
+                dx = c * dx0 - sn * dz0                                # fly -> world
+                dz = sn * dx0 + c * dz0
+                # cylinder |p + s d| = R in the xz plane
+                a = dx * dx + dz * dz
+                bq = 2 * (fx * dx + fz * dz)
+                cq = fx * fx + fz * fz - radius * radius
+                disc = (bq * bq - 4 * a * cq).clamp_min(0)
+                s_wall = (-bq + torch.sqrt(disc)) / (2 * a + 1e-9)
+                s_ground = torch.where(dy < -1e-3, -2.0 / dy, torch.full_like(dy, 1e9))
+                on_ground = s_ground < s_wall
+                s = torch.where(on_ground, s_ground, s_wall)
+                hx, hz = fx + s * dx, fz + s * dz
+                phi = torch.atan2(hx, -hz)
+                wall_lum = 0.5 + 0.5 * torch.sin(2 * math.pi * phi / period)
+                parity = (torch.floor(hx / checker) + torch.floor(hz / checker)) % 2
+                ground_lum = 0.3 + 0.4 * parity
+                lum[t, b] = torch.where(on_ground, ground_lum, wall_lum)
         return self.to_ext(lum)
 
     def gratings(self, Bg: int):

@@ -69,6 +69,8 @@ export interface OpticParams {
   loomTieBias: number;
   loomBrake: number;
   offsetTau: number;
+  centeringLevel: number;
+  centeringGain: number;
 }
 
 export class OpticBrain implements Brain {
@@ -103,6 +105,14 @@ export class OpticBrain implements Brain {
      * and slow drifts of the pooled tonic drive are cancelled, optomotor transients pass.
      */
     offsetTau: 6,
+    /**
+     * Rotation vs translation. The fitted HS cells are bidirectional: a yaw drives one side up
+     * and the other below rest, flying past objects drives both up, more on the nearer side.
+     * The common-mode rise (rate units) at which the differential is read fully as a centering
+     * cue (turn away from the side with more flow) instead of an optomotor cue (turn with it).
+     */
+    centeringLevel: 0.5,
+    centeringGain: 2,
     /** Head-on approaches drive both eyes equally: this fraction of the bilateral level becomes a turn to the right. */
     loomTieBias: 0.5,
     /** Bilateral looming lowers the mean wing amplitude by this times the bilateral level (brake). */
@@ -148,6 +158,8 @@ export class OpticBrain implements Brain {
   /** Slow per-side readout offsets (rest level of each side, adapting). */
   private offsetL = 0;
   private offsetR = 0;
+  /** Weight of the centering interpretation of the last step, 0 (rotation) .. 1 (translation). */
+  private centering = 0;
   homeoErr = 0;
   homeoBias = 0;
 
@@ -382,6 +394,8 @@ export class OpticBrain implements Brain {
     const dL = this.sideGain.L * (sides.L - this.offsetL);
     const dR = this.sideGain.R * (sides.R - this.offsetR);
     const diff = dL - dR;
+    const common = Math.max(0, Math.min(dL, dR));
+    this.centering = Math.min(1, common / p.centeringLevel);
     this.loom.L = Math.max(0, this.topkRate(this.lc.L) - this.loomRest.L - p.loomThreshold);
     this.loom.R = Math.max(0, this.topkRate(this.lc.R) - this.loomRest.R - p.loomThreshold);
     // Looming on the left eye -> turn right (turn > 0 = yaw right). A head-on object drives both
@@ -389,7 +403,9 @@ export class OpticBrain implements Brain {
     const bilateral = Math.min(this.loom.L, this.loom.R);
     const avoid = p.loomGain * (this.loom.L - this.loom.R + p.loomTieBias * bilateral);
     this.brake = Math.min(p.baseAmp, p.loomBrake * bilateral);
-    const raw = this.calibrated ? p.readoutSign * p.outputGain * diff + avoid : 0;
+    const optomotor = p.readoutSign * p.outputGain * diff;
+    const centering = p.centeringGain * diff;
+    const raw = this.calibrated ? (1 - this.centering) * optomotor + this.centering * centering + avoid : 0;
     this.turn = Math.max(-p.maxTurn, Math.min(p.maxTurn, raw));
     const base = p.baseAmp - this.brake;
     return {
@@ -453,6 +469,7 @@ export class OpticBrain implements Brain {
       turn: this.turn,
       offsetL: this.offsetL,
       offsetR: this.offsetR,
+      centering: this.centering,
       gainL: this.sideGain.L,
       gainR: this.sideGain.R,
       calib: this.calibrated ? 1 : 0,
