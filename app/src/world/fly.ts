@@ -67,9 +67,11 @@ export class FlyBody {
     return out.set(-Math.sin(this.state.yaw), 0, -Math.cos(this.state.yaw));
   }
 
-  applyTo(obj: THREE.Object3D): void {
-    obj.position.copy(this.state.position);
-    this.euler.set(0, this.state.yaw, this.state.roll);
-    obj.quaternion.setFromEuler(this.euler);
+  /** `root` gets position and yaw (the eye lives there, level); `bodyMesh`, if given, gets the bank. */
+  applyTo(root: THREE.Object3D, bodyMesh?: THREE.Object3D): void {
+    root.position.copy(this.state.position);
+    this.euler.set(0, this.state.yaw, 0);
+    root.quaternion.setFromEuler(this.euler);
+    if (bodyMesh) bodyMesh.rotation.z = this.state.roll;
   }
 }

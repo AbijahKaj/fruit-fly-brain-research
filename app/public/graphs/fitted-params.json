@@ -1,5 +1,5 @@
 {
- "source": "fitted on MaleCNS optic-v2 (train_optic.py + train_loom.py), init fitted on MaleCNS optic-v2 (train_optic.py + train_loom.py), init fitted on MaleCNS optic-v2 (train_optic.py + train_loom.py), init fitted on MaleCNS optic-v2 (train/train_optic.py), init flyvis 1.2 pretrained ensemble flow/0000, models flow/0000/000",
+ "source": "fitted on MaleCNS optic-v2 (train_optic.py + train_loom.py), init fitted on MaleCNS optic-v2 (train_optic.py + train_loom.py), init fitted on MaleCNS optic-v2 (train_optic.py + train_loom.py), init fitted on MaleCNS optic-v2 (train_optic.py + train_loom.py), init fitted on MaleCNS optic-v2 (train/train_optic.py), init flyvis 1.2 pretrained ensemble flow/0000, models flow/0000/000",
  "citation": "Lappalainen et al., Nature 2024",
  "types": {
   "R1": {
@@ -273,7 +273,7 @@
    "restV": 1.2386935949325562
   },
   "Tm4": {
-   "tau": 0.4357370138168335,
+   "tau": 0.4357370436191559,
    "bias": 1.0752980709075928,
    "tauSd": 0.0,
    "restV": 0.01933581940829754
@@ -395,6 +395,21 @@
    "tau": 0.004978091921657324,
    "bias": -1.4790339469909668,
    "restV": -3.1788463592529297
+  },
+  "HSE": {
+   "tau": 0.04960303008556366,
+   "bias": 0.6477803587913513,
+   "restV": -0.7791895866394043
+  },
+  "HSN": {
+   "tau": 0.020707082003355026,
+   "bias": 2.7109994888305664,
+   "restV": 3.901522159576416
+  },
+  "HSS": {
+   "tau": 0.04803754761815071,
+   "bias": 0.632148265838623,
+   "restV": 0.7360378503799438
   }
  },
  "photoreceptor": {
@@ -413,4015 +428,4237 @@
   {
    "pre": "R1",
    "post": "L1",
-   "strength": 0.007283953949809074,
+   "strength": 0.007383955176919699,
    "sign": -1.0
   },
   {
    "pre": "R1",
    "post": "L2",
-   "strength": 0.006681413389742374,
+   "strength": 0.0067814127542078495,
    "sign": -1.0
   },
   {
    "pre": "R1",
    "post": "L3",
-   "strength": 0.0037828858476132154,
+   "strength": 0.0038828859105706215,
    "sign": -1.0
   },
   {
    "pre": "R1",
    "post": "Am1",
-   "strength": 0.011190041899681091,
+   "strength": 0.011290041729807854,
    "sign": -1.0
   },
   {
    "pre": "R1",
    "post": "T1",
-   "strength": 0.032586220651865005,
+   "strength": 0.03268622234463692,
    "sign": -1.0
   },
   {
    "pre": "R2",
    "post": "L1",
-   "strength": 0.007251336704939604,
+   "strength": 0.007351335603743792,
    "sign": -1.0
   },
   {
    "pre": "R2",
    "post": "L2",
-   "strength": 0.0067250849679112434,
+   "strength": 0.006825083866715431,
    "sign": -1.0
   },
   {
    "pre": "R2",
    "post": "L3",
-   "strength": 0.0038220039568841457,
+   "strength": 0.0039220042526721954,
    "sign": -1.0
   },
   {
    "pre": "R2",
    "post": "Am1",
-   "strength": 0.01100105419754982,
+   "strength": 0.011101054027676582,
    "sign": -1.0
   },
   {
    "pre": "R2",
    "post": "T1",
-   "strength": 0.030791696161031723,
+   "strength": 0.030891692265868187,
    "sign": -1.0
   },
   {
    "pre": "R3",
    "post": "L1",
-   "strength": 0.00738648371770978,
+   "strength": 0.0074864826165139675,
    "sign": -1.0
   },
   {
    "pre": "R3",
    "post": "L2",
-   "strength": 0.006416135933250189,
+   "strength": 0.006516134366393089,
    "sign": -1.0
   },
   {
    "pre": "R3",
    "post": "L3",
-   "strength": 0.0005243013729341328,
+   "strength": 0.0006243014940991998,
    "sign": -1.0
   },
   {
    "pre": "R3",
    "post": "Am1",
-   "strength": 0.013902471400797367,
+   "strength": 0.014002474024891853,
    "sign": -1.0
   },
   {
    "pre": "R3",
    "post": "T1",
-   "strength": 0.05112788826227188,
+   "strength": 0.05122789368033409,
    "sign": -1.0
   },
   {
    "pre": "R4",
    "post": "L1",
-   "strength": 0.007227679714560509,
+   "strength": 0.007327680476009846,
    "sign": -1.0
   },
   {
    "pre": "R4",
    "post": "L2",
-   "strength": 0.006802113726735115,
+   "strength": 0.006902111694216728,
    "sign": -1.0
   },
   {
    "pre": "R4",
    "post": "L3",
-   "strength": 0.006884158588945866,
+   "strength": 0.006984158419072628,
    "sign": -1.0
   },
   {
    "pre": "R4",
    "post": "Am1",
-   "strength": 0.01024055015295744,
+   "strength": 0.010340552777051926,
    "sign": -1.0
   },
   {
    "pre": "R4",
    "post": "T1",
-   "strength": 0.027753328904509544,
+   "strength": 0.02785332500934601,
    "sign": -1.0
   },
   {
    "pre": "R5",
    "post": "L1",
-   "strength": 0.007237739861011505,
+   "strength": 0.007337740156799555,
    "sign": -1.0
   },
   {
    "pre": "R5",
    "post": "L2",
-   "strength": 0.006782537791877985,
+   "strength": 0.00688253715634346,
    "sign": -1.0
   },
   {
    "pre": "R5",
    "post": "L3",
-   "strength": 0.012112949043512344,
+   "strength": 0.012212947010993958,
    "sign": -1.0
   },
   {
    "pre": "R5",
    "post": "Am1",
-   "strength": 0.010327273048460484,
+   "strength": 0.010427271947264671,
    "sign": -1.0
   },
   {
    "pre": "R5",
    "post": "T1",
-   "strength": 0.02648952789604664,
+   "strength": 0.0265895277261734,
    "sign": -1.0
   },
   {
    "pre": "R6",
    "post": "L1",
-   "strength": 0.00726593192666769,
+   "strength": 0.007365932688117027,
    "sign": -1.0
   },
   {
    "pre": "R6",
    "post": "L2",
-   "strength": 0.006738043390214443,
+   "strength": 0.006838042289018631,
    "sign": -1.0
   },
   {
    "pre": "R6",
    "post": "L3",
-   "strength": 0.0104178786277771,
+   "strength": 0.010517877526581287,
    "sign": -1.0
   },
   {
    "pre": "R6",
    "post": "Am1",
-   "strength": 0.010499667376279831,
+   "strength": 0.010599666275084019,
    "sign": -1.0
   },
   {
    "pre": "R6",
    "post": "T1",
-   "strength": 0.02905159816145897,
+   "strength": 0.029151596128940582,
    "sign": -1.0
   },
   {
    "pre": "R7",
    "post": "R8",
-   "strength": 0.02436778135597706,
+   "strength": 0.024467777460813522,
    "sign": -1.0
   },
   {
    "pre": "R7",
    "post": "Mi9",
-   "strength": 0.14576713740825653,
+   "strength": 0.14586713910102844,
    "sign": -1.0
   },
   {
    "pre": "R7",
    "post": "Mi15",
-   "strength": 0.00043112371349707246,
+   "strength": 0.0005311238346621394,
    "sign": -1.0
   },
   {
    "pre": "R7",
    "post": "Tm5a",
-   "strength": 0.08382754772901535,
+   "strength": 0.08392755687236786,
    "sign": -1.0
   },
   {
    "pre": "R7",
    "post": "Tm5b",
-   "strength": 0.05675045773386955,
+   "strength": 0.056850455701351166,
    "sign": -1.0
   },
   {
    "pre": "R8",
    "post": "R7",
-   "strength": 0.03016393817961216,
+   "strength": 0.030263938009738922,
    "sign": -1.0
   },
   {
    "pre": "R8",
    "post": "L1",
-   "strength": 0.008577067404985428,
+   "strength": 0.00867706723511219,
    "sign": -1.0
   },
   {
    "pre": "R8",
    "post": "L3",
-   "strength": 0.010629747062921524,
+   "strength": 0.010729747824370861,
    "sign": -1.0
   },
   {
    "pre": "R8",
    "post": "Mi1",
-   "strength": 0.17592720687389374,
+   "strength": 0.17602722346782684,
    "sign": 1.0
   },
   {
    "pre": "R8",
    "post": "Mi4",
-   "strength": 0.06410802900791168,
+   "strength": 0.06420803815126419,
    "sign": 1.0
   },
   {
    "pre": "R8",
    "post": "Mi9",
-   "strength": 0.02892867475748062,
+   "strength": 0.029028674587607384,
    "sign": 1.0
   },
   {
    "pre": "R8",
    "post": "Mi15",
-   "strength": 0.04336429014801979,
+   "strength": 0.043464288115501404,
    "sign": 1.0
   },
   {
    "pre": "R8",
    "post": "Tm5c",
-   "strength": 0.07781307399272919,
+   "strength": 0.0779130756855011,
    "sign": -1.0
   },
   {
    "pre": "R8",
    "post": "Tm20",
-   "strength": 0.016823474317789078,
+   "strength": 0.016923479735851288,
    "sign": -1.0
   },
   {
    "pre": "L1",
    "post": "L5",
-   "strength": 0.001141557120718062,
+   "strength": 0.0012415569508448243,
    "sign": -1.0
   },
   {
    "pre": "L1",
    "post": "Lawf2",
-   "strength": 0.0015743313124403358,
+   "strength": 0.0016743310261517763,
    "sign": -1.0
   },
   {
    "pre": "L1",
    "post": "C2",
-   "strength": 0.023143058642745018,
+   "strength": 0.02324305847287178,
    "sign": -1.0
   },
   {
    "pre": "L1",
    "post": "C3",
-   "strength": 0.00018875479872804135,
+   "strength": 0.00028875473071821034,
    "sign": -1.0
   },
   {
    "pre": "L1",
    "post": "Mi1",
-   "strength": 0.0017116093076765537,
+   "strength": 0.0018116097198799253,
    "sign": -1.0
   },
   {
    "pre": "L1",
    "post": "Tm3",
-   "strength": 0.006317042279988527,
+   "strength": 0.006417041178792715,
    "sign": -1.0
   },
   {
    "pre": "L2",
    "post": "R1",
-   "strength": 0.015386858023703098,
+   "strength": 0.015486855059862137,
    "sign": 1.0
   },
   {
    "pre": "L2",
    "post": "R2",
-   "strength": 0.010122320614755154,
+   "strength": 0.010222318582236767,
    "sign": 1.0
   },
   {
    "pre": "L2",
    "post": "L1",
-   "strength": 0.0013284542364999652,
+   "strength": 0.001428454415872693,
    "sign": 1.0
   },
   {
    "pre": "L2",
    "post": "L4",
-   "strength": 0.003263431368395686,
+   "strength": 0.003363430965691805,
    "sign": 1.0
   },
   {
    "pre": "L2",
    "post": "L5",
-   "strength": 0.0009708034922368824,
+   "strength": 0.0010708036134019494,
    "sign": 1.0
   },
   {
    "pre": "L2",
    "post": "Lawf2",
-   "strength": 0.014750704169273376,
+   "strength": 0.014850701205432415,
    "sign": 1.0
   },
   {
    "pre": "L2",
    "post": "C3",
-   "strength": 0.09209926426410675,
+   "strength": 0.09219926595687866,
    "sign": 1.0
   },
   {
    "pre": "L2",
    "post": "Mi1",
-   "strength": 0.01993059739470482,
+   "strength": 0.02003059722483158,
    "sign": 1.0
   },
   {
    "pre": "L2",
    "post": "Mi4",
-   "strength": 0.002374468371272087,
+   "strength": 0.0024744688998907804,
    "sign": 1.0
   },
   {
    "pre": "L2",
    "post": "Mi9",
-   "strength": 0.01044271606951952,
+   "strength": 0.010542716830968857,
    "sign": 1.0
   },
   {
    "pre": "L2",
    "post": "T1",
-   "strength": 0.00033525729668326676,
+   "strength": 0.0004352574178483337,
    "sign": 1.0
   },
   {
    "pre": "L2",
    "post": "Tm1",
-   "strength": 0.007748679257929325,
+   "strength": 0.007848677225410938,
    "sign": 1.0
   },
   {
    "pre": "L2",
    "post": "Tm2",
-   "strength": 0.0005232825642451644,
+   "strength": 0.0006232823943719268,
    "sign": 1.0
   },
   {
    "pre": "L2",
    "post": "Tm4",
-   "strength": 0.00014675095735583454,
+   "strength": 0.00024675100576132536,
    "sign": 1.0
   },
   {
    "pre": "L2",
    "post": "Tm20",
-   "strength": 0.0006806586752645671,
+   "strength": 0.0007806586218066514,
    "sign": 1.0
   },
   {
    "pre": "L2",
    "post": "TmY3",
-   "strength": 0.0011488801101222634,
+   "strength": 0.0012488799402490258,
    "sign": 1.0
   },
   {
    "pre": "L3",
    "post": "Lawf1",
-   "strength": 0.00542621873319149,
+   "strength": 0.005526217166334391,
    "sign": 1.0
   },
   {
    "pre": "L3",
    "post": "C3",
-   "strength": 3.5113658905029297,
+   "strength": 3.5114657878875732,
    "sign": 1.0
   },
   {
    "pre": "L3",
    "post": "Mi1",
-   "strength": 0.00013594706251751631,
+   "strength": 0.0002359470963710919,
    "sign": 1.0
   },
   {
    "pre": "L3",
    "post": "Mi2",
-   "strength": 0.01818126067519188,
+   "strength": 0.01828126050531864,
    "sign": 1.0
   },
   {
    "pre": "L3",
    "post": "Mi9",
-   "strength": 1.2943004369735718,
+   "strength": 1.2944004535675049,
    "sign": 1.0
   },
   {
    "pre": "L3",
    "post": "Mi13",
-   "strength": 2.7580502033233643,
+   "strength": 2.758150339126587,
    "sign": 1.0
   },
   {
    "pre": "L3",
    "post": "Mi15",
-   "strength": 0.014116697944700718,
+   "strength": 0.014216701500117779,
    "sign": 1.0
   },
   {
    "pre": "L3",
    "post": "Tm3",
-   "strength": 0.00044601780246011913,
+   "strength": 0.0005460178363136947,
    "sign": 1.0
   },
   {
    "pre": "L3",
    "post": "Tm5Y",
-   "strength": 0.8977821469306946,
+   "strength": 0.8978822231292725,
    "sign": 1.0
   },
   {
    "pre": "L3",
    "post": "Tm5a",
-   "strength": 0.004501021467149258,
+   "strength": 0.004601021762937307,
    "sign": 1.0
   },
   {
    "pre": "L3",
    "post": "Tm5c",
-   "strength": 0.0194828063249588,
+   "strength": 0.019582806155085564,
    "sign": 1.0
   },
   {
    "pre": "L3",
    "post": "Tm9",
-   "strength": 0.047650296241045,
+   "strength": 0.04775029420852661,
    "sign": 1.0
   },
   {
    "pre": "L3",
    "post": "Tm20",
-   "strength": 0.05982762575149536,
+   "strength": 0.05992762744426727,
    "sign": 1.0
   },
   {
    "pre": "L3",
    "post": "Tm28",
-   "strength": 0.018197976052761078,
+   "strength": 0.01829797960817814,
    "sign": 1.0
   },
   {
    "pre": "L3",
    "post": "TmY9",
-   "strength": 0.00038785484503023326,
+   "strength": 0.0004878549079876393,
    "sign": 1.0
   },
   {
    "pre": "L3",
    "post": "TmY10",
-   "strength": 0.0813460499048233,
+   "strength": 0.08144605159759521,
    "sign": 1.0
   },
   {
    "pre": "L4",
    "post": "R1",
-   "strength": 0.14691437780857086,
+   "strength": 0.14701437950134277,
    "sign": 1.0
   },
   {
    "pre": "L4",
    "post": "R2",
-   "strength": 0.15198685228824615,
+   "strength": 0.15208685398101807,
    "sign": 1.0
   },
   {
    "pre": "L4",
    "post": "R3",
-   "strength": 0.021200163289904594,
+   "strength": 0.021300164982676506,
    "sign": 1.0
   },
   {
    "pre": "L4",
    "post": "R4",
-   "strength": 0.15321031212806702,
+   "strength": 0.15331031382083893,
    "sign": 1.0
   },
   {
    "pre": "L4",
    "post": "R5",
-   "strength": 0.14782311022281647,
+   "strength": 0.14792309701442719,
    "sign": 1.0
   },
   {
    "pre": "L4",
    "post": "R6",
-   "strength": 0.19014641642570496,
+   "strength": 0.19024640321731567,
    "sign": 1.0
   },
   {
    "pre": "L4",
    "post": "L2",
-   "strength": 0.0004002422792837024,
+   "strength": 0.0005002422840334475,
    "sign": 1.0
   },
   {
    "pre": "L4",
    "post": "L3",
-   "strength": 0.008215700276196003,
+   "strength": 0.00831570103764534,
    "sign": 1.0
   },
   {
    "pre": "L4",
    "post": "L4",
-   "strength": 0.03487205132842064,
+   "strength": 0.03497205674648285,
    "sign": 1.0
   },
   {
    "pre": "L4",
    "post": "L5",
-   "strength": 0.0003999554901383817,
+   "strength": 0.0004999556113034487,
    "sign": 1.0
   },
   {
    "pre": "L4",
    "post": "Am1",
-   "strength": 0.03411795198917389,
+   "strength": 0.0342179536819458,
    "sign": 1.0
   },
   {
    "pre": "L4",
    "post": "Mi9",
-   "strength": 0.0461869053542614,
+   "strength": 0.04628690332174301,
    "sign": 1.0
   },
   {
    "pre": "L4",
    "post": "T2",
-   "strength": 0.010493045672774315,
+   "strength": 0.010593042708933353,
    "sign": 1.0
   },
   {
    "pre": "L4",
    "post": "Tm2",
-   "strength": 0.006155849434435368,
+   "strength": 0.006255849730223417,
    "sign": 1.0
   },
   {
    "pre": "L4",
    "post": "Tm4",
-   "strength": 0.0006224089302122593,
+   "strength": 0.0007224089349620044,
    "sign": 1.0
   },
   {
    "pre": "L4",
    "post": "Tm9",
-   "strength": 0.031098712235689163,
+   "strength": 0.031198713928461075,
    "sign": 1.0
   },
   {
    "pre": "L4",
    "post": "TmY3",
-   "strength": 0.020062685012817383,
+   "strength": 0.020162686705589294,
    "sign": 1.0
   },
   {
    "pre": "L4",
    "post": "TmY13",
-   "strength": 0.012797465547919273,
+   "strength": 0.012897462584078312,
    "sign": 1.0
   },
   {
    "pre": "L5",
    "post": "L1",
-   "strength": 0.0003820114361587912,
+   "strength": 0.0004820114409085363,
    "sign": 1.0
   },
   {
    "pre": "L5",
    "post": "L2",
-   "strength": 0.00034609518479555845,
+   "strength": 0.0004460951895453036,
    "sign": 1.0
   },
   {
    "pre": "L5",
    "post": "L5",
-   "strength": 0.0003471827949397266,
+   "strength": 0.00044718285789713264,
    "sign": 1.0
   },
   {
    "pre": "L5",
    "post": "C2",
-   "strength": 0.00029393285512924194,
+   "strength": 0.00039393280167132616,
    "sign": 1.0
   },
   {
    "pre": "L5",
    "post": "C3",
-   "strength": 9.268795110983774e-05,
+   "strength": 0.00019268793403171003,
    "sign": 1.0
   },
   {
    "pre": "L5",
    "post": "Mi1",
-   "strength": 4.1600455006118864e-05,
+   "strength": 0.00014160045247990638,
    "sign": 1.0
   },
   {
    "pre": "L5",
    "post": "Mi2",
-   "strength": 0.07292728871107101,
+   "strength": 0.07302728295326233,
    "sign": 1.0
   },
   {
    "pre": "L5",
    "post": "Mi4",
-   "strength": 0.17467862367630005,
+   "strength": 0.17477864027023315,
    "sign": 1.0
   },
   {
    "pre": "L5",
    "post": "Mi15",
-   "strength": 0.0003989020478911698,
+   "strength": 0.0004989020526409149,
    "sign": 1.0
   },
   {
    "pre": "L5",
    "post": "T1",
-   "strength": 0.1777968853712082,
+   "strength": 0.1778968870639801,
    "sign": 1.0
   },
   {
    "pre": "L5",
    "post": "T2",
-   "strength": 0.000353702693246305,
+   "strength": 0.0004537026397883892,
    "sign": 1.0
   },
   {
    "pre": "L5",
    "post": "Tm3",
-   "strength": 0.00012268110003788024,
+   "strength": 0.0002226810611318797,
    "sign": 1.0
   },
   {
    "pre": "L5",
    "post": "Tm20",
-   "strength": 0.12600097060203552,
+   "strength": 0.12610098719596863,
    "sign": 1.0
   },
   {
    "pre": "L5",
    "post": "TmY3",
-   "strength": 0.026994742453098297,
+   "strength": 0.02709474228322506,
    "sign": 1.0
   },
   {
    "pre": "L5",
    "post": "TmY13",
-   "strength": 0.002147968392819166,
+   "strength": 0.002247968688607216,
    "sign": 1.0
   },
   {
    "pre": "L5",
    "post": "TmY14",
-   "strength": 0.0004489814455155283,
+   "strength": 0.0005489814793691039,
    "sign": 1.0
   },
   {
    "pre": "L5",
    "post": "TmY18",
-   "strength": 0.018048163503408432,
+   "strength": 0.018148167058825493,
    "sign": 1.0
   },
   {
    "pre": "Lawf1",
    "post": "Tm3",
-   "strength": 0.044723499566316605,
+   "strength": 0.044823504984378815,
    "sign": 1.0
   },
   {
    "pre": "Lawf2",
    "post": "L3",
-   "strength": 0.020587781444191933,
+   "strength": 0.020687781274318695,
    "sign": 1.0
   },
   {
    "pre": "Lawf2",
    "post": "Lawf2",
-   "strength": 0.002961657475680113,
+   "strength": 0.003061657538637519,
    "sign": 1.0
   },
   {
    "pre": "Lawf2",
    "post": "Am1",
-   "strength": 0.0033507479820400476,
+   "strength": 0.0034507482778280973,
    "sign": 1.0
   },
   {
    "pre": "Am1",
    "post": "R1",
-   "strength": 0.015267632901668549,
+   "strength": 0.015367631800472736,
    "sign": -1.0
   },
   {
    "pre": "Am1",
    "post": "R2",
-   "strength": 0.012195815332233906,
+   "strength": 0.012295817956328392,
    "sign": -1.0
   },
   {
    "pre": "Am1",
    "post": "R4",
-   "strength": 0.010356767103075981,
+   "strength": 0.010456767864525318,
    "sign": -1.0
   },
   {
    "pre": "Am1",
    "post": "R5",
-   "strength": 0.007519271690398455,
+   "strength": 0.007619269657880068,
    "sign": -1.0
   },
   {
    "pre": "Am1",
    "post": "L1",
-   "strength": 0.011042720638215542,
+   "strength": 0.011142722330987453,
    "sign": 1.0
   },
   {
    "pre": "Am1",
    "post": "L2",
-   "strength": 0.012138384394347668,
+   "strength": 0.01223838236182928,
    "sign": -1.0
   },
   {
    "pre": "Am1",
    "post": "L3",
-   "strength": 0.04061411693692207,
+   "strength": 0.04071411117911339,
    "sign": -1.0
   },
   {
    "pre": "Am1",
    "post": "L4",
-   "strength": 0.03641892969608307,
+   "strength": 0.03651892766356468,
    "sign": -1.0
   },
   {
    "pre": "Am1",
    "post": "C2",
-   "strength": 0.020983289927244186,
+   "strength": 0.021083293482661247,
    "sign": -1.0
   },
   {
    "pre": "Am1",
    "post": "C3",
-   "strength": 0.00040000700391829014,
+   "strength": 0.0005000071250833571,
    "sign": -1.0
   },
   {
    "pre": "Am1",
    "post": "T1",
-   "strength": 0.0042424737475812435,
+   "strength": 0.004342474043369293,
    "sign": 1.0
   },
   {
    "pre": "C2",
    "post": "L1",
-   "strength": 0.00039653416024520993,
+   "strength": 0.0004965341649949551,
    "sign": 1.0
   },
   {
    "pre": "C2",
    "post": "L2",
-   "strength": 0.0003717736399266869,
+   "strength": 0.0004717735864687711,
    "sign": 1.0
   },
   {
    "pre": "C2",
    "post": "L3",
-   "strength": 0.009495669044554234,
+   "strength": 0.00959566980600357,
    "sign": -1.0
   },
   {
    "pre": "C2",
    "post": "L4",
-   "strength": 0.09092788398265839,
+   "strength": 0.0910278931260109,
    "sign": -1.0
   },
   {
    "pre": "C2",
    "post": "L5",
-   "strength": 0.021358177065849304,
+   "strength": 0.021458176895976067,
    "sign": -1.0
   },
   {
    "pre": "C2",
    "post": "Lawf2",
-   "strength": 0.03241792321205139,
+   "strength": 0.0325179249048233,
    "sign": -1.0
   },
   {
    "pre": "C2",
    "post": "Am1",
-   "strength": 0.0035966485738754272,
+   "strength": 0.0036966493353247643,
    "sign": -1.0
   },
   {
    "pre": "C2",
    "post": "Mi1",
-   "strength": 0.01969609595835209,
+   "strength": 0.019796097651124,
    "sign": -1.0
   },
   {
    "pre": "C2",
    "post": "T1",
-   "strength": 0.00044418018660508096,
+   "strength": 0.0005441802204586565,
    "sign": -1.0
   },
   {
    "pre": "C2",
    "post": "T2",
-   "strength": 0.033913832157850266,
+   "strength": 0.034013837575912476,
    "sign": -1.0
   },
   {
    "pre": "C2",
    "post": "T4a",
-   "strength": 0.19936557114124298,
+   "strength": 0.1994655728340149,
    "sign": -1.0
   },
   {
    "pre": "C2",
    "post": "Tm1",
-   "strength": 0.00040289561729878187,
+   "strength": 0.0005028955638408661,
    "sign": -1.0
   },
   {
    "pre": "C2",
    "post": "Tm9",
-   "strength": 0.13566294312477112,
+   "strength": 0.13576294481754303,
    "sign": -1.0
   },
   {
    "pre": "C2",
    "post": "TmY14",
-   "strength": 0.07415203005075455,
+   "strength": 0.07425203919410706,
    "sign": -1.0
   },
   {
    "pre": "C3",
    "post": "R3",
-   "strength": 0.0004245946474839002,
+   "strength": 0.0005245947395451367,
    "sign": -1.0
   },
   {
    "pre": "C3",
    "post": "L1",
-   "strength": 0.000402665144065395,
+   "strength": 0.0005026651779189706,
    "sign": 1.0
   },
   {
    "pre": "C3",
    "post": "L2",
-   "strength": 0.0002506618620827794,
+   "strength": 0.00035066192504018545,
    "sign": 1.0
   },
   {
    "pre": "C3",
    "post": "L3",
-   "strength": 0.01218699011951685,
+   "strength": 0.012286990880966187,
    "sign": -1.0
   },
   {
    "pre": "C3",
    "post": "L5",
-   "strength": 0.25891822576522827,
+   "strength": 0.259018212556839,
    "sign": -1.0
   },
   {
    "pre": "C3",
    "post": "Lawf2",
-   "strength": 0.028155332431197166,
+   "strength": 0.028255335986614227,
    "sign": -1.0
   },
   {
    "pre": "C3",
    "post": "Am1",
-   "strength": 0.010122369043529034,
+   "strength": 0.010222367011010647,
    "sign": -1.0
   },
   {
    "pre": "C3",
    "post": "CT1",
-   "strength": 0.005422528367489576,
+   "strength": 0.005522529128938913,
    "sign": -1.0
   },
   {
    "pre": "C3",
    "post": "Mi1",
-   "strength": 0.0005672500119544566,
+   "strength": 0.0006672501913271844,
    "sign": -1.0
   },
   {
    "pre": "C3",
    "post": "Mi4",
-   "strength": 0.04949735850095749,
+   "strength": 0.0495973639190197,
    "sign": -1.0
   },
   {
    "pre": "C3",
    "post": "Mi9",
-   "strength": 0.44229835271835327,
+   "strength": 0.4423983097076416,
    "sign": -1.0
   },
   {
    "pre": "C3",
    "post": "T1",
-   "strength": 0.0009373716893605888,
+   "strength": 0.001037371577695012,
    "sign": -1.0
   },
   {
    "pre": "C3",
    "post": "T2",
-   "strength": 0.014790285378694534,
+   "strength": 0.014890281483530998,
    "sign": -1.0
   },
   {
    "pre": "C3",
    "post": "T4a",
-   "strength": 0.004056348465383053,
+   "strength": 0.004156347829848528,
    "sign": -1.0
   },
   {
    "pre": "C3",
    "post": "T4b",
-   "strength": 0.02848406694829464,
+   "strength": 0.028584066778421402,
    "sign": -1.0
   },
   {
    "pre": "C3",
    "post": "T4c",
-   "strength": 0.004833821207284927,
+   "strength": 0.0049338205717504025,
    "sign": -1.0
   },
   {
    "pre": "C3",
    "post": "T4d",
-   "strength": 0.024650482460856438,
+   "strength": 0.0247504860162735,
    "sign": -1.0
   },
   {
    "pre": "C3",
    "post": "Tm1",
-   "strength": 0.0003958212037105113,
+   "strength": 0.0004958210629411042,
    "sign": -1.0
   },
   {
    "pre": "C3",
    "post": "Tm2",
-   "strength": 0.07100903242826462,
+   "strength": 0.07110903412103653,
    "sign": -1.0
   },
   {
    "pre": "C3",
    "post": "Tm4",
-   "strength": 0.0009428334305994213,
+   "strength": 0.0010428335517644882,
    "sign": -1.0
   },
   {
    "pre": "C3",
    "post": "Tm9",
-   "strength": 0.10971694439649582,
+   "strength": 0.10981693863868713,
    "sign": -1.0
   },
   {
    "pre": "C3",
    "post": "Tm20",
-   "strength": 0.055235184729099274,
+   "strength": 0.055335190147161484,
    "sign": -1.0
   },
   {
    "pre": "CT1",
    "post": "T5a",
-   "strength": 0.03564148768782616,
+   "strength": 0.03574148938059807,
    "sign": -1.0
   },
   {
    "pre": "CT1",
    "post": "T5b",
-   "strength": 0.037305232137441635,
+   "strength": 0.03740523010492325,
    "sign": -1.0
   },
   {
    "pre": "CT1",
    "post": "T5c",
-   "strength": 0.03175041824579239,
+   "strength": 0.0318504236638546,
    "sign": -1.0
   },
   {
    "pre": "CT1",
    "post": "T5d",
-   "strength": 0.03680615872144699,
+   "strength": 0.0369061641395092,
    "sign": -1.0
   },
   {
    "pre": "CT1",
    "post": "Tm1",
-   "strength": 0.00043415091931819916,
+   "strength": 0.0005341509822756052,
    "sign": -1.0
   },
   {
    "pre": "CT1",
    "post": "Tm9",
-   "strength": 0.019744956865906715,
+   "strength": 0.019844958558678627,
    "sign": -1.0
   },
   {
    "pre": "CT1",
    "post": "C3",
-   "strength": 0.1303962916135788,
+   "strength": 0.13049627840518951,
    "sign": -1.0
   },
   {
    "pre": "CT1",
    "post": "Mi1",
-   "strength": 0.2131710797548294,
+   "strength": 0.21327106654644012,
    "sign": -1.0
   },
   {
    "pre": "CT1",
    "post": "T4a",
-   "strength": 0.021872365847229958,
+   "strength": 0.02197236567735672,
    "sign": -1.0
   },
   {
    "pre": "CT1",
    "post": "T4b",
-   "strength": 0.01849871315062046,
+   "strength": 0.018598711118102074,
    "sign": -1.0
   },
   {
    "pre": "CT1",
    "post": "T4c",
-   "strength": 0.011532492004334927,
+   "strength": 0.01163248997181654,
    "sign": -1.0
   },
   {
    "pre": "CT1",
    "post": "T4d",
-   "strength": 0.00042228776146657765,
+   "strength": 0.0005222876789048314,
    "sign": -1.0
   },
   {
    "pre": "Mi1",
    "post": "L1",
-   "strength": 0.00038392358692362905,
+   "strength": 0.0004839235916733742,
    "sign": 1.0
   },
   {
    "pre": "Mi1",
    "post": "L5",
-   "strength": 0.06498489528894424,
+   "strength": 0.06508488953113556,
    "sign": 1.0
   },
   {
    "pre": "Mi1",
    "post": "C2",
-   "strength": 0.0008527967147529125,
+   "strength": 0.0009527966612949967,
    "sign": 1.0
   },
   {
    "pre": "Mi1",
    "post": "C3",
-   "strength": 0.0011894600465893745,
+   "strength": 0.0012894602259621024,
    "sign": 1.0
   },
   {
    "pre": "Mi1",
    "post": "CT1",
-   "strength": 0.18284545838832855,
+   "strength": 0.18294547498226166,
    "sign": 1.0
   },
   {
    "pre": "Mi1",
    "post": "Mi2",
-   "strength": 0.007825852371752262,
+   "strength": 0.00792585127055645,
    "sign": 1.0
   },
   {
    "pre": "Mi1",
    "post": "Mi4",
-   "strength": 0.049659889191389084,
+   "strength": 0.049759894609451294,
    "sign": 1.0
   },
   {
    "pre": "Mi1",
    "post": "Mi9",
-   "strength": 0.018369778990745544,
+   "strength": 0.018469780683517456,
    "sign": 1.0
   },
   {
    "pre": "Mi1",
    "post": "Mi10",
-   "strength": 0.5260654091835022,
+   "strength": 0.5261654257774353,
    "sign": 1.0
   },
   {
    "pre": "Mi1",
    "post": "Mi12",
-   "strength": 0.20132455229759216,
+   "strength": 0.20142453908920288,
    "sign": 1.0
   },
   {
    "pre": "Mi1",
    "post": "Mi13",
-   "strength": 0.046330492943525314,
+   "strength": 0.04643048718571663,
    "sign": 1.0
   },
   {
    "pre": "Mi1",
    "post": "Mi14",
-   "strength": 0.037354983389377594,
+   "strength": 0.03745498135685921,
    "sign": 1.0
   },
   {
    "pre": "Mi1",
    "post": "Mi15",
-   "strength": 0.0513097308576107,
+   "strength": 0.05140974000096321,
    "sign": 1.0
   },
   {
    "pre": "Mi1",
    "post": "T2",
-   "strength": 0.005086474120616913,
+   "strength": 0.0051864744164049625,
    "sign": 1.0
   },
   {
    "pre": "Mi1",
    "post": "T2a",
-   "strength": 0.03770289197564125,
+   "strength": 0.03780289366841316,
    "sign": 1.0
   },
   {
    "pre": "Mi1",
    "post": "T3",
-   "strength": 0.01896604523062706,
+   "strength": 0.019066045060753822,
    "sign": 1.0
   },
   {
    "pre": "Mi1",
    "post": "T4a",
-   "strength": 0.05337567627429962,
+   "strength": 0.05347567796707153,
    "sign": 1.0
   },
   {
    "pre": "Mi1",
    "post": "T4b",
-   "strength": 0.06907478719949722,
+   "strength": 0.06917479634284973,
    "sign": 1.0
   },
   {
    "pre": "Mi1",
    "post": "T4c",
-   "strength": 0.04169793054461479,
+   "strength": 0.041797932237386703,
    "sign": 1.0
   },
   {
    "pre": "Mi1",
    "post": "T4d",
-   "strength": 0.0018761098617687821,
+   "strength": 0.00197611004114151,
    "sign": 1.0
   },
   {
    "pre": "Mi1",
    "post": "Tm1",
-   "strength": 0.009357246570289135,
+   "strength": 0.009457246400415897,
    "sign": 1.0
   },
   {
    "pre": "Mi1",
    "post": "Tm3",
-   "strength": 0.02877565287053585,
+   "strength": 0.02887565642595291,
    "sign": 1.0
   },
   {
    "pre": "Mi1",
    "post": "Tm20",
-   "strength": 0.01569092646241188,
+   "strength": 0.015790926292538643,
    "sign": 1.0
   },
   {
    "pre": "Mi1",
    "post": "TmY3",
-   "strength": 0.000873422424774617,
+   "strength": 0.000973422487732023,
    "sign": 1.0
   },
   {
    "pre": "Mi1",
    "post": "TmY9",
-   "strength": 0.13174881041049957,
+   "strength": 0.1318487972021103,
    "sign": 1.0
   },
   {
    "pre": "Mi1",
    "post": "TmY13",
-   "strength": 0.03890756517648697,
+   "strength": 0.03900756314396858,
    "sign": 1.0
   },
   {
    "pre": "Mi1",
    "post": "TmY14",
-   "strength": 0.06753111630678177,
+   "strength": 0.06763113290071487,
    "sign": 1.0
   },
   {
    "pre": "Mi1",
    "post": "TmY15",
-   "strength": 0.005314607638865709,
+   "strength": 0.00541460607200861,
    "sign": 1.0
   },
   {
    "pre": "Mi1",
    "post": "TmY18",
-   "strength": 0.01999288983643055,
+   "strength": 0.02009289152920246,
    "sign": 1.0
   },
   {
    "pre": "Mi2",
    "post": "Mi1",
-   "strength": 0.007364447228610516,
+   "strength": 0.007464446593075991,
    "sign": -1.0
   },
   {
    "pre": "Mi2",
    "post": "T2",
-   "strength": 0.7487388849258423,
+   "strength": 0.7488388419151306,
    "sign": -1.0
   },
   {
    "pre": "Mi2",
    "post": "T2a",
-   "strength": 0.24654845893383026,
+   "strength": 0.24664846062660217,
    "sign": -1.0
   },
   {
    "pre": "Mi2",
    "post": "T3",
-   "strength": 0.4462937116622925,
+   "strength": 0.4463937282562256,
    "sign": -1.0
   },
   {
    "pre": "Mi2",
    "post": "Tm1",
-   "strength": 0.00041988250450231135,
+   "strength": 0.000519882480148226,
    "sign": -1.0
   },
   {
    "pre": "Mi2",
    "post": "TmY18",
-   "strength": 0.003071523504331708,
+   "strength": 0.0031715231016278267,
    "sign": -1.0
   },
   {
    "pre": "Mi3",
    "post": "T2",
-   "strength": 0.05372564122080803,
+   "strength": 0.05382564663887024,
    "sign": -1.0
   },
   {
    "pre": "Mi3",
    "post": "Tm5b",
-   "strength": 0.0313173308968544,
+   "strength": 0.03141733258962631,
    "sign": -1.0
   },
   {
    "pre": "Mi4",
    "post": "L2",
-   "strength": 0.03999524936079979,
+   "strength": 0.0400952473282814,
    "sign": -1.0
   },
   {
    "pre": "Mi4",
    "post": "C3",
-   "strength": 0.06433330476284027,
+   "strength": 0.06443330645561218,
    "sign": -1.0
   },
   {
    "pre": "Mi4",
    "post": "Mi1",
-   "strength": 0.07515460252761841,
+   "strength": 0.07525459676980972,
    "sign": -1.0
   },
   {
    "pre": "Mi4",
    "post": "Mi4",
-   "strength": 0.0015155342407524586,
+   "strength": 0.0016155341872945428,
    "sign": -1.0
   },
   {
    "pre": "Mi4",
    "post": "Mi9",
-   "strength": 0.00016953577869571745,
+   "strength": 0.00026953587075695395,
    "sign": -1.0
   },
   {
    "pre": "Mi4",
    "post": "T1",
-   "strength": 0.09943898022174835,
+   "strength": 0.09953898191452026,
    "sign": -1.0
   },
   {
    "pre": "Mi4",
    "post": "T4a",
-   "strength": 0.14667043089866638,
+   "strength": 0.1467704325914383,
    "sign": -1.0
   },
   {
    "pre": "Mi4",
    "post": "T4b",
-   "strength": 0.12085357308387756,
+   "strength": 0.12095355987548828,
    "sign": -1.0
   },
   {
    "pre": "Mi4",
    "post": "T4c",
-   "strength": 0.12676668167114258,
+   "strength": 0.1268666684627533,
    "sign": -1.0
   },
   {
    "pre": "Mi4",
    "post": "T4d",
-   "strength": 0.08969230949878693,
+   "strength": 0.08979231864213943,
    "sign": -1.0
   },
   {
    "pre": "Mi4",
    "post": "Tm1",
-   "strength": 0.001410081284120679,
+   "strength": 0.0015100814634934068,
    "sign": -1.0
   },
   {
    "pre": "Mi4",
    "post": "Tm2",
-   "strength": 0.0365782268345356,
+   "strength": 0.03667822480201721,
    "sign": -1.0
   },
   {
    "pre": "Mi4",
    "post": "Tm5Y",
-   "strength": 0.2372983992099762,
+   "strength": 0.23739838600158691,
    "sign": -1.0
   },
   {
    "pre": "Mi4",
    "post": "Tm5a",
-   "strength": 0.04519200325012207,
+   "strength": 0.04529200494289398,
    "sign": -1.0
   },
   {
    "pre": "Mi4",
    "post": "Tm5b",
-   "strength": 0.057115379720926285,
+   "strength": 0.0572153739631176,
    "sign": -1.0
   },
   {
    "pre": "Mi4",
    "post": "Tm5c",
-   "strength": 0.00042690124246291816,
+   "strength": 0.000526901101693511,
    "sign": -1.0
   },
   {
    "pre": "Mi4",
    "post": "Tm9",
-   "strength": 0.05646902322769165,
+   "strength": 0.05656902492046356,
    "sign": -1.0
   },
   {
    "pre": "Mi4",
    "post": "Tm16",
-   "strength": 0.009236601181328297,
+   "strength": 0.009336602874100208,
    "sign": -1.0
   },
   {
    "pre": "Mi4",
    "post": "Tm20",
-   "strength": 7.593991904286668e-05,
+   "strength": 0.00017593998927623034,
    "sign": -1.0
   },
   {
    "pre": "Mi4",
    "post": "Tm28",
-   "strength": 0.18032726645469666,
+   "strength": 0.18042726814746857,
    "sign": -1.0
   },
   {
    "pre": "Mi4",
    "post": "TmY3",
-   "strength": 0.014929107390344143,
+   "strength": 0.01502911001443863,
    "sign": -1.0
   },
   {
    "pre": "Mi4",
    "post": "TmY4",
-   "strength": 0.05480657145380974,
+   "strength": 0.05490657314658165,
    "sign": -1.0
   },
   {
    "pre": "Mi4",
    "post": "TmY5a",
-   "strength": 0.031190229579806328,
+   "strength": 0.03129022940993309,
    "sign": -1.0
   },
   {
    "pre": "Mi4",
    "post": "TmY10",
-   "strength": 0.02989916130900383,
+   "strength": 0.02999916300177574,
    "sign": -1.0
   },
   {
    "pre": "Mi4",
    "post": "TmY13",
-   "strength": 0.002550133503973484,
+   "strength": 0.0026501340325921774,
    "sign": -1.0
   },
   {
    "pre": "Mi4",
    "post": "TmY15",
-   "strength": 0.10451708734035492,
+   "strength": 0.10461708158254623,
    "sign": -1.0
   },
   {
    "pre": "Mi4",
    "post": "TmY18",
-   "strength": 0.08792798221111298,
+   "strength": 0.08802799135446548,
    "sign": -1.0
   },
   {
    "pre": "Mi9",
    "post": "L3",
-   "strength": 0.01002466306090355,
+   "strength": 0.010124661959707737,
    "sign": -1.0
   },
   {
    "pre": "Mi9",
    "post": "Lawf1",
-   "strength": 0.10313892364501953,
+   "strength": 0.10323893278837204,
    "sign": -1.0
   },
   {
    "pre": "Mi9",
    "post": "C3",
-   "strength": 0.0002846008283086121,
+   "strength": 0.00038460083305835724,
    "sign": -1.0
   },
   {
    "pre": "Mi9",
    "post": "CT1",
-   "strength": 0.14872710406780243,
+   "strength": 0.14882710576057434,
    "sign": -1.0
   },
   {
    "pre": "Mi9",
    "post": "Mi1",
-   "strength": 1.1187305450439453,
+   "strength": 1.1188305616378784,
    "sign": -1.0
   },
   {
    "pre": "Mi9",
    "post": "Mi4",
-   "strength": 0.09118470549583435,
+   "strength": 0.09128469228744507,
    "sign": -1.0
   },
   {
    "pre": "Mi9",
    "post": "Mi10",
-   "strength": 0.010441690683364868,
+   "strength": 0.010541691444814205,
    "sign": -1.0
   },
   {
    "pre": "Mi9",
    "post": "Mi15",
-   "strength": 0.2474212944507599,
+   "strength": 0.2475212812423706,
    "sign": -1.0
   },
   {
    "pre": "Mi9",
    "post": "T2",
-   "strength": 0.024869509041309357,
+   "strength": 0.024969512596726418,
    "sign": -1.0
   },
   {
    "pre": "Mi9",
    "post": "T2a",
-   "strength": 0.1676507145166397,
+   "strength": 0.16775073111057281,
    "sign": -1.0
   },
   {
    "pre": "Mi9",
    "post": "T4a",
-   "strength": 0.05755201727151871,
+   "strength": 0.057652026414871216,
    "sign": -1.0
   },
   {
    "pre": "Mi9",
    "post": "T4b",
-   "strength": 0.04265203699469566,
+   "strength": 0.04275203496217728,
    "sign": -1.0
   },
   {
    "pre": "Mi9",
    "post": "T4c",
-   "strength": 0.061012230813503265,
+   "strength": 0.06111223250627518,
    "sign": -1.0
   },
   {
    "pre": "Mi9",
    "post": "T4d",
-   "strength": 0.06057743728160858,
+   "strength": 0.060677435249090195,
    "sign": -1.0
   },
   {
    "pre": "Mi9",
    "post": "Tm1",
-   "strength": 0.001331545296125114,
+   "strength": 0.00143154535908252,
    "sign": -1.0
   },
   {
    "pre": "Mi9",
    "post": "Tm2",
-   "strength": 0.01746808923780918,
+   "strength": 0.017568087205290794,
    "sign": -1.0
   },
   {
    "pre": "Mi9",
    "post": "Tm4",
-   "strength": 0.04277215898036957,
+   "strength": 0.04287216439843178,
    "sign": -1.0
   },
   {
    "pre": "Mi9",
    "post": "Tm5a",
-   "strength": 0.0015441791620105505,
+   "strength": 0.0016441793413832784,
    "sign": -1.0
   },
   {
    "pre": "Mi9",
    "post": "Tm5b",
-   "strength": 0.0020319661125540733,
+   "strength": 0.0021319661755114794,
    "sign": -1.0
   },
   {
    "pre": "Mi9",
    "post": "Tm16",
-   "strength": 0.12059475481510162,
+   "strength": 0.12069477140903473,
    "sign": -1.0
   },
   {
    "pre": "Mi9",
    "post": "TmY3",
-   "strength": 0.009440787136554718,
+   "strength": 0.009540787898004055,
    "sign": -1.0
   },
   {
    "pre": "Mi9",
    "post": "TmY4",
-   "strength": 0.1790476143360138,
+   "strength": 0.1791476160287857,
    "sign": -1.0
   },
   {
    "pre": "Mi9",
    "post": "TmY5a",
-   "strength": 0.023537682369351387,
+   "strength": 0.0236376840621233,
    "sign": -1.0
   },
   {
    "pre": "Mi9",
    "post": "TmY13",
-   "strength": 0.00856248289346695,
+   "strength": 0.008662481792271137,
    "sign": -1.0
   },
   {
    "pre": "Mi9",
    "post": "TmY18",
-   "strength": 0.027011768892407417,
+   "strength": 0.02711176872253418,
    "sign": -1.0
   },
   {
    "pre": "Mi10",
    "post": "Lawf1",
-   "strength": 0.012053769081830978,
+   "strength": 0.012153767049312592,
    "sign": -1.0
   },
   {
    "pre": "Mi10",
    "post": "Mi9",
-   "strength": 0.0008659181767143309,
+   "strength": 0.000965918181464076,
    "sign": -1.0
   },
   {
    "pre": "Mi10",
    "post": "Mi14",
-   "strength": 1.089943289756775,
+   "strength": 1.0900431871414185,
    "sign": -1.0
   },
   {
    "pre": "Mi10",
    "post": "T4a",
-   "strength": 0.127875417470932,
+   "strength": 0.12797541916370392,
    "sign": -1.0
   },
   {
    "pre": "Mi10",
    "post": "T4b",
-   "strength": 0.2188480794429779,
+   "strength": 0.218948096036911,
    "sign": -1.0
   },
   {
    "pre": "Mi10",
    "post": "T4c",
-   "strength": 0.17053696513175964,
+   "strength": 0.17063698172569275,
    "sign": -1.0
   },
   {
    "pre": "Mi10",
    "post": "T4d",
-   "strength": 0.000595603312831372,
+   "strength": 0.0006956033757887781,
    "sign": -1.0
   },
   {
    "pre": "Mi10",
    "post": "Tm5b",
-   "strength": 0.0033914598170667887,
+   "strength": 0.003491459647193551,
    "sign": -1.0
   },
   {
    "pre": "Mi10",
    "post": "TmY3",
-   "strength": 0.0877922996878624,
+   "strength": 0.0878923088312149,
    "sign": -1.0
   },
   {
    "pre": "Mi10",
    "post": "TmY5a",
-   "strength": 0.00041583593701943755,
+   "strength": 0.0005158359999768436,
    "sign": -1.0
   },
   {
    "pre": "Mi10",
    "post": "TmY14",
-   "strength": 0.03700250759720802,
+   "strength": 0.037102509289979935,
    "sign": -1.0
   },
   {
    "pre": "Mi12",
    "post": "Mi1",
-   "strength": 0.09575725346803665,
+   "strength": 0.09585725516080856,
    "sign": -1.0
   },
   {
    "pre": "Mi12",
    "post": "Mi9",
-   "strength": 0.002414504298940301,
+   "strength": 0.002514504361897707,
    "sign": -1.0
   },
   {
    "pre": "Mi12",
    "post": "Tm1",
-   "strength": 0.00042652685078792274,
+   "strength": 0.0005265268846414983,
    "sign": -1.0
   },
   {
    "pre": "Mi12",
    "post": "Tm2",
-   "strength": 0.003626368474215269,
+   "strength": 0.003726369235664606,
    "sign": -1.0
   },
   {
    "pre": "Mi12",
    "post": "Tm3",
-   "strength": 0.09809441864490509,
+   "strength": 0.0981944277882576,
    "sign": -1.0
   },
   {
    "pre": "Mi12",
    "post": "Tm4",
-   "strength": 0.005860542878508568,
+   "strength": 0.005960541777312756,
    "sign": -1.0
   },
   {
    "pre": "Mi13",
    "post": "L5",
-   "strength": 0.03157598152756691,
+   "strength": 0.03167597949504852,
    "sign": -1.0
   },
   {
    "pre": "Mi13",
    "post": "Mi1",
-   "strength": 0.07706926017999649,
+   "strength": 0.0771692618727684,
    "sign": -1.0
   },
   {
    "pre": "Mi13",
    "post": "T2",
-   "strength": 0.012591264210641384,
+   "strength": 0.012691264972090721,
    "sign": -1.0
   },
   {
    "pre": "Mi13",
    "post": "Tm1",
-   "strength": 0.0005273399874567986,
+   "strength": 0.0006273399339988828,
    "sign": -1.0
   },
   {
    "pre": "Mi13",
    "post": "Tm2",
-   "strength": 0.03012767992913723,
+   "strength": 0.03022768162190914,
    "sign": -1.0
   },
   {
    "pre": "Mi13",
    "post": "Tm3",
-   "strength": 0.1405842900276184,
+   "strength": 0.14068429172039032,
    "sign": -1.0
   },
   {
    "pre": "Mi13",
    "post": "Tm4",
-   "strength": 0.07138613611459732,
+   "strength": 0.07148613780736923,
    "sign": -1.0
   },
   {
    "pre": "Mi13",
    "post": "Tm9",
-   "strength": 0.04506290331482887,
+   "strength": 0.04516289755702019,
    "sign": -1.0
   },
   {
    "pre": "Mi14",
    "post": "Tm1",
-   "strength": 0.048416413366794586,
+   "strength": 0.0485164113342762,
    "sign": -1.0
   },
   {
    "pre": "Mi14",
    "post": "Tm4",
-   "strength": 0.0014717639423906803,
+   "strength": 0.0015717637725174427,
    "sign": -1.0
   },
   {
    "pre": "Mi14",
    "post": "TmY3",
-   "strength": 0.008538558147847652,
+   "strength": 0.00863855704665184,
    "sign": -1.0
   },
   {
    "pre": "Mi15",
    "post": "C3",
-   "strength": 0.00023269327357411385,
+   "strength": 0.00033269336563535035,
    "sign": 1.0
   },
   {
    "pre": "Mi15",
    "post": "Mi4",
-   "strength": 0.1295468807220459,
+   "strength": 0.12964686751365662,
    "sign": 1.0
   },
   {
    "pre": "Mi15",
    "post": "Mi10",
-   "strength": 0.11059876531362534,
+   "strength": 0.11069877445697784,
    "sign": 1.0
   },
   {
    "pre": "Mi15",
    "post": "Mi15",
-   "strength": 0.00038125476567074656,
+   "strength": 0.00048125474131666124,
    "sign": 1.0
   },
   {
    "pre": "Mi15",
    "post": "Tm5c",
-   "strength": 0.025697840377688408,
+   "strength": 0.02579784020781517,
    "sign": 1.0
   },
   {
    "pre": "T1",
    "post": "L2",
-   "strength": 0.0003961170732509345,
+   "strength": 0.0004961169324815273,
    "sign": 1.0
   },
   {
    "pre": "T1",
    "post": "L5",
-   "strength": 0.00047584346611984074,
+   "strength": 0.0005758433835580945,
    "sign": 1.0
   },
   {
    "pre": "T1",
    "post": "Tm20",
-   "strength": 0.0004183947457931936,
+   "strength": 0.0005183947505429387,
    "sign": 1.0
   },
   {
    "pre": "T2",
    "post": "Lawf2",
-   "strength": 0.017088210210204124,
+   "strength": 0.017188213765621185,
    "sign": 1.0
   },
   {
    "pre": "T2",
    "post": "Mi1",
-   "strength": 0.0005362479714676738,
+   "strength": 0.0006362478015944362,
    "sign": 1.0
   },
   {
    "pre": "T2",
    "post": "T2",
-   "strength": 0.07500303536653519,
+   "strength": 0.0751030296087265,
    "sign": 1.0
   },
   {
    "pre": "T2",
    "post": "Tm5c",
-   "strength": 0.010656035505235195,
+   "strength": 0.010756038129329681,
    "sign": 1.0
   },
   {
    "pre": "T2",
    "post": "TmY5a",
-   "strength": 0.0010944184614345431,
+   "strength": 0.0011944184079766273,
    "sign": 1.0
   },
   {
    "pre": "T2",
    "post": "TmY15",
-   "strength": 0.0031090681441128254,
+   "strength": 0.003209068439900875,
    "sign": 1.0
   },
   {
    "pre": "T2a",
    "post": "Mi1",
-   "strength": 0.0009414920350536704,
+   "strength": 0.0010414918651804328,
    "sign": 1.0
   },
   {
    "pre": "T2a",
    "post": "T3",
-   "strength": 0.05806366354227066,
+   "strength": 0.05816366896033287,
    "sign": 1.0
   },
   {
    "pre": "T2a",
    "post": "Tm3",
-   "strength": 0.18467387557029724,
+   "strength": 0.18477387726306915,
    "sign": 1.0
   },
   {
    "pre": "T2a",
    "post": "Tm5Y",
-   "strength": 0.03501563519239426,
+   "strength": 0.03511564061045647,
    "sign": 1.0
   },
   {
    "pre": "T2a",
    "post": "Tm5b",
-   "strength": 0.036376215517520905,
+   "strength": 0.036476217210292816,
    "sign": 1.0
   },
   {
    "pre": "T2a",
    "post": "Tm28",
-   "strength": 0.000449058337835595,
+   "strength": 0.0005490581970661879,
    "sign": 1.0
   },
   {
    "pre": "T2a",
    "post": "TmY4",
-   "strength": 0.0010630578035488725,
+   "strength": 0.0011630576336756349,
    "sign": 1.0
   },
   {
    "pre": "T2a",
    "post": "TmY5a",
-   "strength": 0.022173525765538216,
+   "strength": 0.022273525595664978,
    "sign": 1.0
   },
   {
    "pre": "T2a",
    "post": "TmY9",
-   "strength": 0.40786007046699524,
+   "strength": 0.40796005725860596,
    "sign": 1.0
   },
   {
    "pre": "T3",
    "post": "T2",
-   "strength": 0.017353348433971405,
+   "strength": 0.01745334453880787,
    "sign": 1.0
   },
   {
    "pre": "T3",
    "post": "T2a",
-   "strength": 0.1701377034187317,
+   "strength": 0.1702377051115036,
    "sign": 1.0
   },
   {
    "pre": "T3",
    "post": "Tm3",
-   "strength": 0.04663462191820145,
+   "strength": 0.04673461988568306,
    "sign": 1.0
   },
   {
    "pre": "T4a",
    "post": "C3",
-   "strength": 0.009385189041495323,
+   "strength": 0.009485187940299511,
    "sign": 1.0
   },
   {
    "pre": "T4a",
    "post": "CT1",
-   "strength": 0.03909832611680031,
+   "strength": 0.03919832780957222,
    "sign": 1.0
   },
   {
    "pre": "T4a",
    "post": "Mi9",
-   "strength": 0.00010163230763282627,
+   "strength": 0.00020163232693448663,
    "sign": 1.0
   },
   {
    "pre": "T4a",
    "post": "Mi12",
-   "strength": 0.026797518134117126,
+   "strength": 0.026897519826889038,
    "sign": 1.0
   },
   {
    "pre": "T4a",
    "post": "T4a",
-   "strength": 0.07711715996265411,
+   "strength": 0.07721715420484543,
    "sign": 1.0
   },
   {
    "pre": "T4a",
    "post": "T4c",
-   "strength": 0.14603830873966217,
+   "strength": 0.14613831043243408,
    "sign": 1.0
   },
   {
    "pre": "T4a",
    "post": "T5a",
-   "strength": 0.27269455790519714,
+   "strength": 0.27279454469680786,
    "sign": 1.0
   },
   {
    "pre": "T4a",
    "post": "TmY14",
-   "strength": 0.009219321422278881,
+   "strength": 0.009319322183728218,
    "sign": 1.0
   },
   {
    "pre": "T4a",
    "post": "TmY18",
-   "strength": 0.04561503231525421,
+   "strength": 0.045715030282735825,
    "sign": 1.0
   },
   {
    "pre": "T4b",
    "post": "CT1",
-   "strength": 0.0311747957020998,
+   "strength": 0.03127479925751686,
    "sign": 1.0
   },
   {
    "pre": "T4b",
    "post": "Mi9",
-   "strength": 0.00011303765495540574,
+   "strength": 0.00021303768153302372,
    "sign": 1.0
   },
   {
    "pre": "T4b",
    "post": "T4b",
-   "strength": 0.04949113726615906,
+   "strength": 0.04959113523364067,
    "sign": 1.0
   },
   {
    "pre": "T4b",
    "post": "T4c",
-   "strength": 0.01693297177553177,
+   "strength": 0.01703297346830368,
    "sign": 1.0
   },
   {
    "pre": "T4b",
    "post": "T5b",
-   "strength": 0.15937893092632294,
+   "strength": 0.15947893261909485,
    "sign": 1.0
   },
   {
    "pre": "T4b",
    "post": "TmY15",
-   "strength": 0.003458025399595499,
+   "strength": 0.003558026161044836,
    "sign": 1.0
   },
   {
    "pre": "T4c",
    "post": "CT1",
-   "strength": 0.046048156917095184,
+   "strength": 0.046148158609867096,
    "sign": 1.0
   },
   {
    "pre": "T4c",
    "post": "Mi9",
-   "strength": 0.00026776239974424243,
+   "strength": 0.00036776240449398756,
    "sign": 1.0
   },
   {
    "pre": "T4c",
    "post": "T4c",
-   "strength": 0.10586834698915482,
+   "strength": 0.10596834868192673,
    "sign": 1.0
   },
   {
    "pre": "T4c",
    "post": "T5c",
-   "strength": 0.24491241574287415,
+   "strength": 0.24501243233680725,
    "sign": 1.0
   },
   {
    "pre": "T4c",
    "post": "TmY4",
-   "strength": 0.05276469886302948,
+   "strength": 0.05286470428109169,
    "sign": 1.0
   },
   {
    "pre": "T4c",
    "post": "TmY14",
-   "strength": 0.000363669591024518,
+   "strength": 0.0004636696830857545,
    "sign": 1.0
   },
   {
    "pre": "T4c",
    "post": "TmY15",
-   "strength": 0.03819310665130615,
+   "strength": 0.03829311206936836,
    "sign": 1.0
   },
   {
    "pre": "T4d",
    "post": "CT1",
-   "strength": 0.056397099047899246,
+   "strength": 0.05649710074067116,
    "sign": 1.0
   },
   {
    "pre": "T4d",
    "post": "T4a",
-   "strength": 0.012658966705203056,
+   "strength": 0.012758970260620117,
    "sign": 1.0
   },
   {
    "pre": "T4d",
    "post": "T4d",
-   "strength": 0.07232561707496643,
+   "strength": 0.07242561131715775,
    "sign": 1.0
   },
   {
    "pre": "T4d",
    "post": "T5d",
-   "strength": 0.3564719557762146,
+   "strength": 0.3565719723701477,
    "sign": 1.0
   },
   {
    "pre": "T4d",
    "post": "TmY4",
-   "strength": 0.002861390123143792,
+   "strength": 0.002961390418931842,
    "sign": 1.0
   },
   {
    "pre": "T4d",
    "post": "TmY15",
-   "strength": 0.015941528603434563,
+   "strength": 0.016041526570916176,
    "sign": 1.0
   },
   {
    "pre": "T5a",
    "post": "CT1",
-   "strength": 0.01297533418983221,
+   "strength": 0.013075335882604122,
    "sign": 1.0
   },
   {
    "pre": "T5a",
    "post": "T4a",
-   "strength": 0.00028536340687423944,
+   "strength": 0.00038536335341632366,
    "sign": 1.0
   },
   {
    "pre": "T5a",
    "post": "T5a",
-   "strength": 0.03216163069009781,
+   "strength": 0.03226163610816002,
    "sign": 1.0
   },
   {
    "pre": "T5a",
    "post": "T5b",
-   "strength": 0.0002549391647335142,
+   "strength": 0.00035493922769092023,
    "sign": 1.0
   },
   {
    "pre": "T5a",
    "post": "TmY9",
-   "strength": 0.023359891027212143,
+   "strength": 0.023459890857338905,
    "sign": 1.0
   },
   {
    "pre": "T5a",
    "post": "TmY14",
-   "strength": 0.00021570765238720924,
+   "strength": 0.00031570770079270005,
    "sign": 1.0
   },
   {
    "pre": "T5a",
    "post": "TmY15",
-   "strength": 0.0027326433919370174,
+   "strength": 0.0028326441533863544,
    "sign": 1.0
   },
   {
    "pre": "T5b",
    "post": "CT1",
-   "strength": 0.17073823511600494,
+   "strength": 0.17083823680877686,
    "sign": 1.0
   },
   {
    "pre": "T5b",
    "post": "T2",
-   "strength": 0.0946769192814827,
+   "strength": 0.09477692097425461,
    "sign": 1.0
   },
   {
    "pre": "T5b",
    "post": "T4b",
-   "strength": 0.01600574515759945,
+   "strength": 0.01610574685037136,
    "sign": 1.0
   },
   {
    "pre": "T5b",
    "post": "T5b",
-   "strength": 0.023577852174639702,
+   "strength": 0.023677853867411613,
    "sign": 1.0
   },
   {
    "pre": "T5b",
    "post": "T5d",
-   "strength": 0.0011370459105819464,
+   "strength": 0.001237045624293387,
    "sign": 1.0
   },
   {
    "pre": "T5b",
    "post": "Tm2",
-   "strength": 0.859356164932251,
+   "strength": 0.8594561815261841,
    "sign": 1.0
   },
   {
    "pre": "T5b",
    "post": "TmY14",
-   "strength": 0.00021264045790303499,
+   "strength": 0.00031264053541235626,
    "sign": 1.0
   },
   {
    "pre": "T5b",
    "post": "TmY15",
-   "strength": 0.017223656177520752,
+   "strength": 0.017323657870292664,
    "sign": 1.0
   },
   {
    "pre": "T5c",
    "post": "CT1",
-   "strength": 0.0038631439674645662,
+   "strength": 0.00396314263343811,
    "sign": 1.0
   },
   {
    "pre": "T5c",
    "post": "T4c",
-   "strength": 0.02545529045164585,
+   "strength": 0.025555290281772614,
    "sign": 1.0
   },
   {
    "pre": "T5c",
    "post": "T5c",
-   "strength": 0.040653254836797714,
+   "strength": 0.04075325280427933,
    "sign": 1.0
   },
   {
    "pre": "T5c",
    "post": "Tm2",
-   "strength": 0.05496371164917946,
+   "strength": 0.05506371334195137,
    "sign": 1.0
   },
   {
    "pre": "T5c",
    "post": "TmY4",
-   "strength": 0.017967242747545242,
+   "strength": 0.018067244440317154,
    "sign": 1.0
   },
   {
    "pre": "T5c",
    "post": "TmY14",
-   "strength": 0.0003170815180055797,
+   "strength": 0.0004170814936514944,
    "sign": 1.0
   },
   {
    "pre": "T5c",
    "post": "TmY15",
-   "strength": 0.00033951568184420466,
+   "strength": 0.0004395158030092716,
    "sign": 1.0
   },
   {
    "pre": "T5d",
    "post": "CT1",
-   "strength": 0.00040000013541430235,
+   "strength": 0.0005000001983717084,
    "sign": 1.0
   },
   {
    "pre": "T5d",
    "post": "T2",
-   "strength": 0.00032883931999094784,
+   "strength": 0.00042883926653303206,
    "sign": 1.0
   },
   {
    "pre": "T5d",
    "post": "T4d",
-   "strength": 0.0006426316685974598,
+   "strength": 0.0007426316733472049,
    "sign": 1.0
   },
   {
    "pre": "T5d",
    "post": "T5d",
-   "strength": 0.02514868788421154,
+   "strength": 0.025248689576983452,
    "sign": 1.0
   },
   {
    "pre": "T5d",
    "post": "TmY4",
-   "strength": 0.0005137930857017636,
+   "strength": 0.0006137931486591697,
    "sign": 1.0
   },
   {
    "pre": "T5d",
    "post": "TmY15",
-   "strength": 0.058246515691280365,
+   "strength": 0.05834651738405228,
    "sign": 1.0
   },
   {
    "pre": "Tm1",
    "post": "L2",
-   "strength": 0.0003729755408130586,
+   "strength": 0.0004729755164589733,
    "sign": 1.0
   },
   {
    "pre": "Tm1",
    "post": "L5",
-   "strength": 0.03048771247267723,
+   "strength": 0.030587714165449142,
    "sign": 1.0
   },
   {
    "pre": "Tm1",
    "post": "Lawf2",
-   "strength": 0.027366846799850464,
+   "strength": 0.027466842904686928,
    "sign": 1.0
   },
   {
    "pre": "Tm1",
    "post": "C3",
-   "strength": 0.01084491703659296,
+   "strength": 0.010944915935397148,
    "sign": 1.0
   },
   {
    "pre": "Tm1",
    "post": "CT1",
-   "strength": 0.03984658792614937,
+   "strength": 0.03994658961892128,
    "sign": 1.0
   },
   {
    "pre": "Tm1",
    "post": "Mi1",
-   "strength": 0.03566760942339897,
+   "strength": 0.03576761111617088,
    "sign": 1.0
   },
   {
    "pre": "Tm1",
    "post": "Mi2",
-   "strength": 0.44183817505836487,
+   "strength": 0.441938191652298,
    "sign": 1.0
   },
   {
    "pre": "Tm1",
    "post": "Mi4",
-   "strength": 0.030556298792362213,
+   "strength": 0.030656296759843826,
    "sign": 1.0
   },
   {
    "pre": "Tm1",
    "post": "Mi9",
-   "strength": 0.0014363263035193086,
+   "strength": 0.0015363264828920364,
    "sign": 1.0
   },
   {
    "pre": "Tm1",
    "post": "Mi12",
-   "strength": 0.0939166471362114,
+   "strength": 0.0940166562795639,
    "sign": 1.0
   },
   {
    "pre": "Tm1",
    "post": "Mi13",
-   "strength": 0.020527316257357597,
+   "strength": 0.02062731608748436,
    "sign": 1.0
   },
   {
    "pre": "Tm1",
    "post": "T1",
-   "strength": 0.014967997558414936,
+   "strength": 0.01506799552589655,
    "sign": 1.0
   },
   {
    "pre": "Tm1",
    "post": "T2",
-   "strength": 0.016509711742401123,
+   "strength": 0.016609711572527885,
    "sign": 1.0
   },
   {
    "pre": "Tm1",
    "post": "T2a",
-   "strength": 0.010471956804394722,
+   "strength": 0.01057195570319891,
    "sign": 1.0
   },
   {
    "pre": "Tm1",
    "post": "T3",
-   "strength": 0.008418908342719078,
+   "strength": 0.008518907241523266,
    "sign": 1.0
   },
   {
    "pre": "Tm1",
    "post": "T5a",
-   "strength": 0.0003312004264444113,
+   "strength": 0.0004312003729864955,
    "sign": 1.0
   },
   {
    "pre": "Tm1",
    "post": "T5b",
-   "strength": 0.00035598911927081645,
+   "strength": 0.0004559890367090702,
    "sign": 1.0
   },
   {
    "pre": "Tm1",
    "post": "T5c",
-   "strength": 0.0012588627869263291,
+   "strength": 0.0013588627334684134,
    "sign": 1.0
   },
   {
    "pre": "Tm1",
    "post": "T5d",
-   "strength": 0.0023318955209106207,
+   "strength": 0.0024318951182067394,
    "sign": 1.0
   },
   {
    "pre": "Tm1",
    "post": "Tm2",
-   "strength": 0.005089470651000738,
+   "strength": 0.005189470015466213,
    "sign": 1.0
   },
   {
    "pre": "Tm1",
    "post": "Tm4",
-   "strength": 0.0005507873138412833,
+   "strength": 0.0006507874350063503,
    "sign": 1.0
   },
   {
    "pre": "Tm1",
    "post": "Tm5Y",
-   "strength": 0.004697559867054224,
+   "strength": 0.004797560628503561,
    "sign": 1.0
   },
   {
    "pre": "Tm1",
    "post": "Tm9",
-   "strength": 0.005142296198755503,
+   "strength": 0.005242296494543552,
    "sign": 1.0
   },
   {
    "pre": "Tm1",
    "post": "Tm20",
-   "strength": 0.0005691275582648814,
+   "strength": 0.0006691274465993047,
    "sign": 1.0
   },
   {
    "pre": "Tm1",
    "post": "Tm28",
-   "strength": 0.0005030965548940003,
+   "strength": 0.0006030966178514063,
    "sign": 1.0
   },
   {
    "pre": "Tm1",
    "post": "TmY4",
-   "strength": 0.011392113752663136,
+   "strength": 0.011492117308080196,
    "sign": 1.0
   },
   {
    "pre": "Tm1",
    "post": "TmY9",
-   "strength": 0.00044011283898726106,
+   "strength": 0.0005401127273216844,
    "sign": 1.0
   },
   {
    "pre": "Tm1",
    "post": "TmY15",
-   "strength": 0.026859793812036514,
+   "strength": 0.026959795504808426,
    "sign": 1.0
   },
   {
    "pre": "Tm2",
    "post": "L2",
-   "strength": 0.0003960024332627654,
+   "strength": 0.0004960024380125105,
    "sign": 1.0
   },
   {
    "pre": "Tm2",
    "post": "L5",
-   "strength": 0.0017442769603803754,
+   "strength": 0.001844276674091816,
    "sign": 1.0
   },
   {
    "pre": "Tm2",
    "post": "Lawf1",
-   "strength": 0.0004000369517598301,
+   "strength": 0.0005000369274057448,
    "sign": 1.0
   },
   {
    "pre": "Tm2",
    "post": "C3",
-   "strength": 0.18409889936447144,
+   "strength": 0.18419890105724335,
    "sign": 1.0
   },
   {
    "pre": "Tm2",
    "post": "CT1",
-   "strength": 0.016864405944943428,
+   "strength": 0.01696440950036049,
    "sign": 1.0
   },
   {
    "pre": "Tm2",
    "post": "Mi4",
-   "strength": 0.014811896719038486,
+   "strength": 0.014911896549165249,
    "sign": 1.0
   },
   {
    "pre": "Tm2",
    "post": "Mi9",
-   "strength": 0.0003638551861513406,
+   "strength": 0.00046385519090108573,
    "sign": 1.0
   },
   {
    "pre": "Tm2",
    "post": "T2",
-   "strength": 0.0023462355602532625,
+   "strength": 0.0024462351575493813,
    "sign": 1.0
   },
   {
    "pre": "Tm2",
    "post": "T2a",
-   "strength": 0.09916006773710251,
+   "strength": 0.09926007688045502,
    "sign": 1.0
   },
   {
    "pre": "Tm2",
    "post": "T5a",
-   "strength": 0.00029139715479686856,
+   "strength": 0.0003913970722351223,
    "sign": 1.0
   },
   {
    "pre": "Tm2",
    "post": "T5b",
-   "strength": 0.00042334990575909615,
+   "strength": 0.0005233499687165022,
    "sign": 1.0
   },
   {
    "pre": "Tm2",
    "post": "T5c",
-   "strength": 0.034731850028038025,
+   "strength": 0.03483184799551964,
    "sign": 1.0
   },
   {
    "pre": "Tm2",
    "post": "T5d",
-   "strength": 0.030620219185948372,
+   "strength": 0.030720215290784836,
    "sign": 1.0
   },
   {
    "pre": "Tm2",
    "post": "Tm1",
-   "strength": 0.009480254724621773,
+   "strength": 0.00958025362342596,
    "sign": 1.0
   },
   {
    "pre": "Tm2",
    "post": "Tm4",
-   "strength": 0.01655365154147148,
+   "strength": 0.016653653234243393,
    "sign": 1.0
   },
   {
    "pre": "Tm2",
    "post": "Tm9",
-   "strength": 0.026712633669376373,
+   "strength": 0.026812631636857986,
    "sign": 1.0
   },
   {
    "pre": "Tm2",
    "post": "Tm28",
-   "strength": 0.14992663264274597,
+   "strength": 0.15002664923667908,
    "sign": 1.0
   },
   {
    "pre": "Tm2",
    "post": "TmY3",
-   "strength": 0.015010610222816467,
+   "strength": 0.015110610984265804,
    "sign": 1.0
   },
   {
    "pre": "Tm2",
    "post": "TmY4",
-   "strength": 0.006726845633238554,
+   "strength": 0.006826844532042742,
    "sign": 1.0
   },
   {
    "pre": "Tm2",
    "post": "TmY13",
-   "strength": 0.12961852550506592,
+   "strength": 0.12971851229667664,
    "sign": 1.0
   },
   {
    "pre": "Tm2",
    "post": "TmY15",
-   "strength": 0.0004776541900355369,
+   "strength": 0.0005776541074737906,
    "sign": 1.0
   },
   {
    "pre": "Tm2",
    "post": "TmY18",
-   "strength": 0.10510040819644928,
+   "strength": 0.10520040988922119,
    "sign": 1.0
   },
   {
    "pre": "Tm3",
    "post": "L1",
-   "strength": 0.0004033379373140633,
+   "strength": 0.0005033379420638084,
    "sign": 1.0
   },
   {
    "pre": "Tm3",
    "post": "Lawf1",
-   "strength": 0.04723328724503517,
+   "strength": 0.04733329266309738,
    "sign": 1.0
   },
   {
    "pre": "Tm3",
    "post": "Lawf2",
-   "strength": 0.035218141973018646,
+   "strength": 0.03531814366579056,
    "sign": 1.0
   },
   {
    "pre": "Tm3",
    "post": "Mi1",
-   "strength": 0.006105652078986168,
+   "strength": 0.006205651443451643,
    "sign": 1.0
   },
   {
    "pre": "Tm3",
    "post": "Mi11",
-   "strength": 0.010400000028312206,
+   "strength": 0.01049999799579382,
    "sign": 1.0
   },
   {
    "pre": "Tm3",
    "post": "Mi14",
-   "strength": 0.0001494330062996596,
+   "strength": 0.00024943306925706565,
    "sign": 1.0
   },
   {
    "pre": "Tm3",
    "post": "T2",
-   "strength": 0.0024389196187257767,
+   "strength": 0.0025389199145138264,
    "sign": 1.0
   },
   {
    "pre": "Tm3",
    "post": "T2a",
-   "strength": 0.0624956339597702,
+   "strength": 0.06259563565254211,
    "sign": 1.0
   },
   {
    "pre": "Tm3",
    "post": "T3",
-   "strength": 0.02429824322462082,
+   "strength": 0.024398241192102432,
    "sign": 1.0
   },
   {
    "pre": "Tm3",
    "post": "T4a",
-   "strength": 0.00108106539119035,
+   "strength": 0.001181065570563078,
    "sign": 1.0
   },
   {
    "pre": "Tm3",
    "post": "T4b",
-   "strength": 0.0016582494135946035,
+   "strength": 0.001758249243721366,
    "sign": 1.0
   },
   {
    "pre": "Tm3",
    "post": "T4c",
-   "strength": 0.0011699906317517161,
+   "strength": 0.0012699903454631567,
    "sign": 1.0
   },
   {
    "pre": "Tm3",
    "post": "T4d",
-   "strength": 0.054560527205467224,
+   "strength": 0.054660532623529434,
    "sign": 1.0
   },
   {
    "pre": "Tm3",
    "post": "Tm3",
-   "strength": 0.0011319845216348767,
+   "strength": 0.0012319843517616391,
    "sign": 1.0
   },
   {
    "pre": "Tm3",
    "post": "Tm4",
-   "strength": 0.06414828449487686,
+   "strength": 0.06424829363822937,
    "sign": 1.0
   },
   {
    "pre": "Tm3",
    "post": "Tm30",
-   "strength": 0.008705089800059795,
+   "strength": 0.008805090561509132,
    "sign": 1.0
   },
   {
    "pre": "Tm3",
    "post": "TmY3",
-   "strength": 0.0007697487017139792,
+   "strength": 0.0008697488810867071,
    "sign": 1.0
   },
   {
    "pre": "Tm3",
    "post": "TmY5a",
-   "strength": 0.037343330681324005,
+   "strength": 0.03744333237409592,
    "sign": 1.0
   },
   {
    "pre": "Tm3",
    "post": "TmY13",
-   "strength": 0.03237444534897804,
+   "strength": 0.03247445076704025,
    "sign": 1.0
   },
   {
    "pre": "Tm3",
    "post": "TmY14",
-   "strength": 0.0007881459314376116,
+   "strength": 0.0008881460526026785,
    "sign": 1.0
   },
   {
    "pre": "Tm3",
    "post": "TmY15",
-   "strength": 0.0003210477880202234,
+   "strength": 0.0004210477927699685,
    "sign": 1.0
   },
   {
    "pre": "Tm3",
    "post": "TmY18",
-   "strength": 0.021661357954144478,
+   "strength": 0.021761354058980942,
    "sign": 1.0
   },
   {
    "pre": "Tm4",
    "post": "Lawf2",
-   "strength": 0.0004018282925244421,
+   "strength": 0.0005018283845856786,
    "sign": 1.0
   },
   {
    "pre": "Tm4",
    "post": "C3",
-   "strength": 0.00015567570517305285,
+   "strength": 0.00025567569537088275,
    "sign": 1.0
   },
   {
    "pre": "Tm4",
    "post": "Mi4",
-   "strength": 0.09215261042118073,
+   "strength": 0.09225261211395264,
    "sign": 1.0
   },
   {
    "pre": "Tm4",
    "post": "Mi10",
-   "strength": 0.27724283933639526,
+   "strength": 0.27734285593032837,
    "sign": 1.0
   },
   {
    "pre": "Tm4",
    "post": "Mi12",
-   "strength": 0.3229347765445709,
+   "strength": 0.32303476333618164,
    "sign": 1.0
   },
   {
    "pre": "Tm4",
    "post": "Mi13",
-   "strength": 0.4624783992767334,
+   "strength": 0.4625784158706665,
    "sign": 1.0
   },
   {
    "pre": "Tm4",
    "post": "Mi14",
-   "strength": 0.0003349958569742739,
+   "strength": 0.0004349959490355104,
    "sign": 1.0
   },
   {
    "pre": "Tm4",
    "post": "T2",
-   "strength": 0.0438784696161747,
+   "strength": 0.04397847130894661,
    "sign": 1.0
   },
   {
    "pre": "Tm4",
    "post": "T2a",
-   "strength": 0.09714338183403015,
+   "strength": 0.09724339097738266,
    "sign": 1.0
   },
   {
    "pre": "Tm4",
    "post": "T3",
-   "strength": 0.007580609992146492,
+   "strength": 0.007680610287934542,
    "sign": 1.0
   },
   {
    "pre": "Tm4",
    "post": "T5a",
-   "strength": 0.013069022446870804,
+   "strength": 0.013169024139642715,
    "sign": 1.0
   },
   {
    "pre": "Tm4",
    "post": "T5b",
-   "strength": 0.03613230213522911,
+   "strength": 0.03623230755329132,
    "sign": 1.0
   },
   {
    "pre": "Tm4",
    "post": "T5c",
-   "strength": 0.0004998442600481212,
+   "strength": 0.0005998443230055273,
    "sign": 1.0
   },
   {
    "pre": "Tm4",
    "post": "T5d",
-   "strength": 0.015440231189131737,
+   "strength": 0.015540234744548798,
    "sign": 1.0
   },
   {
    "pre": "Tm4",
    "post": "Tm3",
-   "strength": 0.03373561426997185,
+   "strength": 0.033835623413324356,
    "sign": 1.0
   },
   {
    "pre": "Tm4",
    "post": "Tm4",
-   "strength": 0.10030776262283325,
+   "strength": 0.10040775686502457,
    "sign": 1.0
   },
   {
    "pre": "Tm4",
    "post": "TmY3",
-   "strength": 0.027172863483428955,
+   "strength": 0.027272861450910568,
    "sign": 1.0
   },
   {
    "pre": "Tm4",
    "post": "TmY4",
-   "strength": 0.00040432249079458416,
+   "strength": 0.0005043224664404988,
    "sign": 1.0
   },
   {
    "pre": "Tm4",
    "post": "TmY5a",
-   "strength": 0.029720747843384743,
+   "strength": 0.029820749536156654,
    "sign": 1.0
   },
   {
    "pre": "Tm4",
    "post": "TmY13",
-   "strength": 0.00579464714974165,
+   "strength": 0.00589464558288455,
    "sign": 1.0
   },
   {
    "pre": "Tm4",
    "post": "TmY14",
-   "strength": 0.05226295068860054,
+   "strength": 0.05236295610666275,
    "sign": 1.0
   },
   {
    "pre": "Tm4",
    "post": "TmY15",
-   "strength": 0.004481895826756954,
+   "strength": 0.004581895656883717,
    "sign": 1.0
   },
   {
    "pre": "Tm5Y",
    "post": "Tm5a",
-   "strength": 0.0004335912817623466,
+   "strength": 0.0005335911992006004,
    "sign": 1.0
   },
   {
    "pre": "Tm5Y",
    "post": "Tm5b",
-   "strength": 0.00038153413333930075,
+   "strength": 0.00048153407988138497,
    "sign": 1.0
   },
   {
    "pre": "Tm5Y",
    "post": "Tm20",
-   "strength": 0.0002944330626633018,
+   "strength": 0.0003944329801015556,
    "sign": 1.0
   },
   {
    "pre": "Tm5Y",
    "post": "TmY5a",
-   "strength": 0.009134931489825249,
+   "strength": 0.009234932251274586,
    "sign": 1.0
   },
   {
    "pre": "Tm5Y",
    "post": "TmY10",
-   "strength": 0.027466027066111565,
+   "strength": 0.027566025033593178,
    "sign": 1.0
   },
   {
    "pre": "Tm5a",
    "post": "Tm5a",
-   "strength": 0.01958465203642845,
+   "strength": 0.019684650003910065,
    "sign": 1.0
   },
   {
    "pre": "Tm5a",
    "post": "Tm5b",
-   "strength": 0.06733041256666183,
+   "strength": 0.06743041425943375,
    "sign": 1.0
   },
   {
    "pre": "Tm5b",
    "post": "Mi3",
-   "strength": 0.10608098655939102,
+   "strength": 0.10618098825216293,
    "sign": 1.0
   },
   {
    "pre": "Tm5b",
    "post": "Mi10",
-   "strength": 0.0004383383202366531,
+   "strength": 0.0005383383249863982,
    "sign": 1.0
   },
   {
    "pre": "Tm5b",
    "post": "Tm5a",
-   "strength": 0.0004003762733191252,
+   "strength": 0.0005003763362765312,
    "sign": 1.0
   },
   {
    "pre": "Tm5b",
    "post": "Tm5b",
-   "strength": 0.050853829830884933,
+   "strength": 0.050953835248947144,
    "sign": 1.0
   },
   {
    "pre": "Tm5b",
    "post": "Tm5c",
-   "strength": 0.030563365668058395,
+   "strength": 0.030663365498185158,
    "sign": 1.0
   },
   {
    "pre": "Tm5c",
    "post": "Mi4",
-   "strength": 0.044648751616477966,
+   "strength": 0.044748760759830475,
    "sign": -1.0
   },
   {
    "pre": "Tm5c",
    "post": "Mi15",
-   "strength": 0.07820906490087509,
+   "strength": 0.0783090591430664,
    "sign": -1.0
   },
   {
    "pre": "Tm5c",
    "post": "Tm5Y",
-   "strength": 0.008085640147328377,
+   "strength": 0.008185641840100288,
    "sign": -1.0
   },
   {
    "pre": "Tm5c",
    "post": "Tm5b",
-   "strength": 0.0034269618336111307,
+   "strength": 0.003526962362229824,
    "sign": -1.0
   },
   {
    "pre": "Tm5c",
    "post": "Tm16",
-   "strength": 0.026060760021209717,
+   "strength": 0.026160763576626778,
    "sign": -1.0
   },
   {
    "pre": "Tm9",
    "post": "CT1",
-   "strength": 0.05639456585049629,
+   "strength": 0.0564945712685585,
    "sign": 1.0
   },
   {
    "pre": "Tm9",
    "post": "Mi9",
-   "strength": 0.0016500927740707994,
+   "strength": 0.001750093069858849,
    "sign": 1.0
   },
   {
    "pre": "Tm9",
    "post": "T5a",
-   "strength": 0.021559178829193115,
+   "strength": 0.021659180521965027,
    "sign": 1.0
   },
   {
    "pre": "Tm9",
    "post": "T5b",
-   "strength": 0.05678684264421463,
+   "strength": 0.05688684433698654,
    "sign": 1.0
   },
   {
    "pre": "Tm9",
    "post": "T5c",
-   "strength": 0.009116111323237419,
+   "strength": 0.00921611301600933,
    "sign": 1.0
   },
   {
    "pre": "Tm9",
    "post": "T5d",
-   "strength": 0.04549878090620041,
+   "strength": 0.04559878632426262,
    "sign": 1.0
   },
   {
    "pre": "Tm9",
    "post": "Tm1",
-   "strength": 0.0026357686147093773,
+   "strength": 0.0027357684448361397,
    "sign": 1.0
   },
   {
    "pre": "Tm9",
    "post": "Tm2",
-   "strength": 0.04286983236670494,
+   "strength": 0.04296983778476715,
    "sign": 1.0
   },
   {
    "pre": "Tm9",
    "post": "Tm5Y",
-   "strength": 0.0004552601312752813,
+   "strength": 0.0005552601651288569,
    "sign": 1.0
   },
   {
    "pre": "Tm9",
    "post": "Tm28",
-   "strength": 0.048201560974121094,
+   "strength": 0.048301566392183304,
    "sign": 1.0
   },
   {
    "pre": "Tm9",
    "post": "TmY4",
-   "strength": 0.00040864848415367305,
+   "strength": 0.0005086484015919268,
    "sign": 1.0
   },
   {
    "pre": "Tm9",
    "post": "TmY9",
-   "strength": 0.0004732318047899753,
+   "strength": 0.0005732316640205681,
    "sign": 1.0
   },
   {
    "pre": "Tm9",
    "post": "TmY15",
-   "strength": 0.035455476492643356,
+   "strength": 0.03555547446012497,
    "sign": 1.0
   },
   {
    "pre": "Tm16",
    "post": "Lawf1",
-   "strength": 0.0004175323701929301,
+   "strength": 0.0005175322876311839,
    "sign": 1.0
   },
   {
    "pre": "Tm16",
    "post": "Lawf2",
-   "strength": 0.00040223627001978457,
+   "strength": 0.0005022363038733602,
    "sign": 1.0
   },
   {
    "pre": "Tm16",
    "post": "Mi9",
-   "strength": 0.0008351663127541542,
+   "strength": 0.0009351662010885775,
    "sign": 1.0
   },
   {
    "pre": "Tm16",
    "post": "T2",
-   "strength": 0.011709712445735931,
+   "strength": 0.01180970948189497,
    "sign": 1.0
   },
   {
    "pre": "Tm16",
    "post": "Tm1",
-   "strength": 0.15271665155887604,
+   "strength": 0.15281665325164795,
    "sign": 1.0
   },
   {
    "pre": "Tm16",
    "post": "Tm2",
-   "strength": 0.00047084319521673024,
+   "strength": 0.000570843112654984,
    "sign": 1.0
   },
   {
    "pre": "Tm16",
    "post": "Tm4",
-   "strength": 0.0004774387343786657,
+   "strength": 0.0005774387391284108,
    "sign": 1.0
   },
   {
    "pre": "Tm16",
    "post": "Tm5Y",
-   "strength": 0.022182725369930267,
+   "strength": 0.02228272333741188,
    "sign": 1.0
   },
   {
    "pre": "Tm16",
    "post": "Tm5c",
-   "strength": 0.007527221459895372,
+   "strength": 0.0076272194273769855,
    "sign": 1.0
   },
   {
    "pre": "Tm16",
    "post": "Tm9",
-   "strength": 0.00036083138547837734,
+   "strength": 0.000460831361124292,
    "sign": 1.0
   },
   {
    "pre": "Tm16",
    "post": "TmY3",
-   "strength": 0.03473253920674324,
+   "strength": 0.03483254089951515,
    "sign": 1.0
   },
   {
    "pre": "Tm16",
    "post": "TmY5a",
-   "strength": 0.0005496620433405042,
+   "strength": 0.0006496619316749275,
    "sign": 1.0
   },
   {
    "pre": "Tm16",
    "post": "TmY10",
-   "strength": 0.0281810462474823,
+   "strength": 0.02828104794025421,
    "sign": 1.0
   },
   {
    "pre": "Tm16",
    "post": "TmY13",
-   "strength": 0.10468582063913345,
+   "strength": 0.10478582978248596,
    "sign": 1.0
   },
   {
    "pre": "Tm16",
    "post": "TmY14",
-   "strength": 0.016078682616353035,
+   "strength": 0.016178684309124947,
    "sign": 1.0
   },
   {
    "pre": "Tm20",
    "post": "Mi2",
-   "strength": 0.1878509819507599,
+   "strength": 0.1879509687423706,
    "sign": 1.0
   },
   {
    "pre": "Tm20",
    "post": "Mi9",
-   "strength": 0.10941509157419205,
+   "strength": 0.10951510816812515,
    "sign": 1.0
   },
   {
    "pre": "Tm20",
    "post": "Tm5Y",
-   "strength": 0.029799997806549072,
+   "strength": 0.029900001361966133,
    "sign": 1.0
   },
   {
    "pre": "Tm20",
    "post": "Tm9",
-   "strength": 0.07030914723873138,
+   "strength": 0.0704091489315033,
    "sign": 1.0
   },
   {
    "pre": "Tm20",
    "post": "Tm20",
-   "strength": 0.01874404214322567,
+   "strength": 0.018844040110707283,
    "sign": 1.0
   },
   {
    "pre": "Tm28",
    "post": "Tm5Y",
-   "strength": 0.010584666393697262,
+   "strength": 0.010684666223824024,
    "sign": 1.0
   },
   {
    "pre": "Tm28",
    "post": "TmY4",
-   "strength": 0.0004041170177515596,
+   "strength": 0.0005041169351898134,
    "sign": 1.0
   },
   {
    "pre": "Tm28",
    "post": "TmY9",
-   "strength": 0.00045019161188974977,
+   "strength": 0.0005501917330548167,
    "sign": 1.0
   },
   {
    "pre": "TmY3",
    "post": "T2",
-   "strength": 0.00040432612877339125,
+   "strength": 0.0005043260753154755,
    "sign": 1.0
   },
   {
    "pre": "TmY3",
    "post": "Tm4",
-   "strength": 0.00035488506546244025,
+   "strength": 0.00045488515752367675,
    "sign": 1.0
   },
   {
    "pre": "TmY3",
    "post": "TmY3",
-   "strength": 0.19810448586940765,
+   "strength": 0.19820448756217957,
    "sign": 1.0
   },
   {
    "pre": "TmY3",
    "post": "TmY4",
-   "strength": 0.046973247081041336,
+   "strength": 0.047073252499103546,
    "sign": 1.0
   },
   {
    "pre": "TmY3",
    "post": "TmY5a",
-   "strength": 0.048925090581178665,
+   "strength": 0.04902508854866028,
    "sign": 1.0
   },
   {
    "pre": "TmY3",
    "post": "TmY13",
-   "strength": 0.015382221899926662,
+   "strength": 0.015482224524021149,
    "sign": 1.0
   },
   {
    "pre": "TmY3",
    "post": "TmY14",
-   "strength": 0.00032169942278414965,
+   "strength": 0.0004216993984300643,
    "sign": 1.0
   },
   {
    "pre": "TmY3",
    "post": "TmY15",
-   "strength": 0.00331298029050231,
+   "strength": 0.003412979654967785,
    "sign": 1.0
   },
   {
    "pre": "TmY4",
    "post": "Mi3",
-   "strength": 0.1519346982240677,
+   "strength": 0.1520346999168396,
    "sign": 1.0
   },
   {
    "pre": "TmY4",
    "post": "Mi4",
-   "strength": 0.000380832701921463,
+   "strength": 0.00048083264846354723,
    "sign": 1.0
   },
   {
    "pre": "TmY4",
    "post": "Mi13",
-   "strength": 0.00022870083921588957,
+   "strength": 0.00032870075665414333,
    "sign": 1.0
   },
   {
    "pre": "TmY4",
    "post": "T2",
-   "strength": 0.054830461740493774,
+   "strength": 0.054930463433265686,
    "sign": 1.0
   },
   {
    "pre": "TmY4",
    "post": "T5d",
-   "strength": 0.003364701522514224,
+   "strength": 0.0034647018183022738,
    "sign": 1.0
   },
   {
    "pre": "TmY4",
    "post": "TmY4",
-   "strength": 0.03201669454574585,
+   "strength": 0.03211669623851776,
    "sign": 1.0
   },
   {
    "pre": "TmY4",
    "post": "TmY5a",
-   "strength": 0.03858708217740059,
+   "strength": 0.0386870875954628,
    "sign": 1.0
   },
   {
    "pre": "TmY4",
    "post": "TmY9",
-   "strength": 0.00047473047743551433,
+   "strength": 0.0005747305112890899,
    "sign": 1.0
   },
   {
    "pre": "TmY4",
    "post": "TmY14",
-   "strength": 0.0003664717369247228,
+   "strength": 0.00046647185808978975,
    "sign": 1.0
   },
   {
    "pre": "TmY5a",
    "post": "Mi2",
-   "strength": 0.010976149700582027,
+   "strength": 0.01107614953070879,
    "sign": -1.0
   },
   {
    "pre": "TmY5a",
    "post": "Mi3",
-   "strength": 0.04799738898873329,
+   "strength": 0.0480973944067955,
    "sign": -1.0
   },
   {
    "pre": "TmY5a",
    "post": "T2",
-   "strength": 0.19740860164165497,
+   "strength": 0.19750860333442688,
    "sign": -1.0
   },
   {
    "pre": "TmY5a",
    "post": "T2a",
-   "strength": 0.06482367217540741,
+   "strength": 0.06492368131875992,
    "sign": -1.0
   },
   {
    "pre": "TmY5a",
    "post": "Tm16",
-   "strength": 0.016264071688055992,
+   "strength": 0.016364071518182755,
    "sign": -1.0
   },
   {
    "pre": "TmY5a",
    "post": "TmY3",
-   "strength": 0.009778378531336784,
+   "strength": 0.009878379292786121,
    "sign": -1.0
   },
   {
    "pre": "TmY5a",
    "post": "TmY4",
-   "strength": 0.1876700520515442,
+   "strength": 0.1877700388431549,
    "sign": -1.0
   },
   {
    "pre": "TmY5a",
    "post": "TmY14",
-   "strength": 0.0026370822452008724,
+   "strength": 0.002737082540988922,
    "sign": -1.0
   },
   {
    "pre": "TmY5a",
    "post": "TmY15",
-   "strength": 0.017416058108210564,
+   "strength": 0.017516057938337326,
    "sign": -1.0
   },
   {
    "pre": "TmY5a",
    "post": "TmY18",
-   "strength": 0.03610119968652725,
+   "strength": 0.03620120510458946,
    "sign": -1.0
   },
   {
    "pre": "TmY9",
    "post": "Mi13",
-   "strength": 0.0007344643236137927,
+   "strength": 0.0008344645029865205,
    "sign": 1.0
   },
   {
    "pre": "TmY9",
    "post": "TmY4",
-   "strength": 0.0005250779795460403,
+   "strength": 0.0006250780425034463,
    "sign": 1.0
   },
   {
    "pre": "TmY9",
    "post": "TmY9",
-   "strength": 0.0192632544785738,
+   "strength": 0.01936325430870056,
    "sign": 1.0
   },
   {
    "pre": "TmY10",
    "post": "Mi4",
-   "strength": 0.011727504432201385,
+   "strength": 0.011827506124973297,
    "sign": 1.0
   },
   {
    "pre": "TmY10",
    "post": "T2a",
-   "strength": 0.009907309897243977,
+   "strength": 0.010007311590015888,
    "sign": 1.0
   },
   {
    "pre": "TmY10",
    "post": "Tm5b",
-   "strength": 0.002582371002063155,
+   "strength": 0.002682370599359274,
    "sign": 1.0
   },
   {
    "pre": "TmY10",
    "post": "Tm5c",
-   "strength": 0.01181385014206171,
+   "strength": 0.011913849972188473,
    "sign": 1.0
   },
   {
    "pre": "TmY10",
    "post": "Tm9",
-   "strength": 0.2641758322715759,
+   "strength": 0.26427584886550903,
    "sign": 1.0
   },
   {
    "pre": "TmY10",
    "post": "Tm16",
-   "strength": 0.00093839131295681,
+   "strength": 0.0010383910266682506,
    "sign": 1.0
   },
   {
    "pre": "TmY10",
    "post": "Tm20",
-   "strength": 0.0005160851869732141,
+   "strength": 0.0006160852499306202,
    "sign": 1.0
   },
   {
    "pre": "TmY10",
    "post": "Tm28",
-   "strength": 0.033184975385665894,
+   "strength": 0.033284977078437805,
    "sign": 1.0
   },
   {
    "pre": "TmY10",
    "post": "TmY4",
-   "strength": 0.0003982229973189533,
+   "strength": 0.0004982231184840202,
    "sign": 1.0
   },
   {
    "pre": "TmY10",
    "post": "TmY9",
-   "strength": 0.00039915242814458907,
+   "strength": 0.0004991524037905037,
    "sign": 1.0
   },
   {
    "pre": "TmY13",
    "post": "Mi4",
-   "strength": 0.11058156937360764,
+   "strength": 0.11068156361579895,
    "sign": 1.0
   },
   {
    "pre": "TmY13",
    "post": "T2",
-   "strength": 0.01081577967852354,
+   "strength": 0.010915781371295452,
    "sign": 1.0
   },
   {
    "pre": "TmY13",
    "post": "Tm5b",
-   "strength": 0.00040096184238791466,
+   "strength": 0.0005009619635529816,
    "sign": 1.0
   },
   {
    "pre": "TmY13",
    "post": "Tm16",
-   "strength": 0.2443682998418808,
+   "strength": 0.2444683015346527,
    "sign": 1.0
   },
   {
    "pre": "TmY13",
    "post": "TmY5a",
-   "strength": 0.2532232105731964,
+   "strength": 0.25332316756248474,
    "sign": 1.0
   },
   {
    "pre": "TmY14",
    "post": "C3",
-   "strength": 0.008525271899998188,
+   "strength": 0.008625270798802376,
    "sign": -1.0
   },
   {
    "pre": "TmY14",
    "post": "Mi12",
-   "strength": 0.2028954029083252,
+   "strength": 0.2029954046010971,
    "sign": -1.0
   },
   {
    "pre": "TmY14",
    "post": "Mi13",
-   "strength": 0.0001239643170265481,
+   "strength": 0.00022396424901671708,
    "sign": -1.0
   },
   {
    "pre": "TmY14",
    "post": "Tm9",
-   "strength": 0.20803172886371613,
+   "strength": 0.20813170075416565,
    "sign": -1.0
   },
   {
    "pre": "TmY14",
    "post": "Tm16",
-   "strength": 0.02519363909959793,
+   "strength": 0.025293640792369843,
    "sign": -1.0
   },
   {
    "pre": "TmY14",
    "post": "TmY4",
-   "strength": 0.005359223578125238,
+   "strength": 0.0054592229425907135,
    "sign": -1.0
   },
   {
    "pre": "TmY15",
    "post": "Mi4",
-   "strength": 0.00299074430949986,
+   "strength": 0.003090745070949197,
    "sign": -1.0
   },
   {
    "pre": "TmY15",
    "post": "Mi9",
-   "strength": 0.1975943148136139,
+   "strength": 0.1976943165063858,
    "sign": -1.0
   },
   {
    "pre": "TmY15",
    "post": "T2",
-   "strength": 0.0004997620708309114,
+   "strength": 0.0005997619591653347,
    "sign": -1.0
   },
   {
    "pre": "TmY15",
    "post": "T2a",
-   "strength": 0.03333733603358269,
+   "strength": 0.0334373414516449,
    "sign": -1.0
   },
   {
    "pre": "TmY15",
    "post": "T4a",
-   "strength": 0.0010981023078784347,
+   "strength": 0.0011981022544205189,
    "sign": -1.0
   },
   {
    "pre": "TmY15",
    "post": "T4b",
-   "strength": 0.0007356259156949818,
+   "strength": 0.0008356260368600488,
    "sign": -1.0
   },
   {
    "pre": "TmY15",
    "post": "T4c",
-   "strength": 0.015229619108140469,
+   "strength": 0.015329618006944656,
    "sign": -1.0
   },
   {
    "pre": "TmY15",
    "post": "T4d",
-   "strength": 0.06105310469865799,
+   "strength": 0.061153098940849304,
    "sign": -1.0
   },
   {
    "pre": "TmY15",
    "post": "T5a",
-   "strength": 0.005025599617511034,
+   "strength": 0.005125600378960371,
    "sign": -1.0
   },
   {
    "pre": "TmY15",
    "post": "T5b",
-   "strength": 0.0025822699535638094,
+   "strength": 0.0026822693180292845,
    "sign": -1.0
   },
   {
    "pre": "TmY15",
    "post": "T5c",
-   "strength": 0.04910478740930557,
+   "strength": 0.049204789102077484,
    "sign": -1.0
   },
   {
    "pre": "TmY15",
    "post": "T5d",
-   "strength": 0.10863466560840607,
+   "strength": 0.10873466730117798,
    "sign": -1.0
   },
   {
    "pre": "TmY15",
    "post": "Tm1",
-   "strength": 0.0038646641187369823,
+   "strength": 0.003964664414525032,
    "sign": -1.0
   },
   {
    "pre": "TmY15",
    "post": "Tm2",
-   "strength": 0.1447056531906128,
+   "strength": 0.1448056399822235,
    "sign": -1.0
   },
   {
    "pre": "TmY15",
    "post": "Tm3",
-   "strength": 0.09377780556678772,
+   "strength": 0.09387780725955963,
    "sign": -1.0
   },
   {
    "pre": "TmY15",
    "post": "Tm4",
-   "strength": 0.06278086453676224,
+   "strength": 0.06288086622953415,
    "sign": -1.0
   },
   {
    "pre": "TmY15",
    "post": "Tm9",
-   "strength": 0.0007572423783130944,
+   "strength": 0.0008572422666475177,
    "sign": -1.0
   },
   {
    "pre": "TmY15",
    "post": "TmY3",
-   "strength": 0.008466998115181923,
+   "strength": 0.008566996082663536,
    "sign": -1.0
   },
   {
    "pre": "TmY15",
    "post": "TmY14",
-   "strength": 0.07078885287046432,
+   "strength": 0.07088886201381683,
    "sign": -1.0
   },
   {
    "pre": "TmY15",
    "post": "TmY18",
-   "strength": 0.004224998876452446,
+   "strength": 0.004324997775256634,
    "sign": -1.0
   },
   {
    "pre": "TmY18",
    "post": "Mi4",
-   "strength": 0.2902108132839203,
+   "strength": 0.290310800075531,
    "sign": 1.0
   },
   {
    "pre": "TmY18",
    "post": "Mi10",
-   "strength": 0.2402353435754776,
+   "strength": 0.2403353452682495,
    "sign": 1.0
   },
   {
    "pre": "TmY18",
    "post": "T2",
-   "strength": 0.0004528409044723958,
+   "strength": 0.0005528409383259714,
    "sign": 1.0
   },
   {
    "pre": "TmY18",
    "post": "TmY5a",
-   "strength": 0.03703634440898895,
+   "strength": 0.03713634982705116,
    "sign": 1.0
   },
   {
    "pre": "TmY18",
    "post": "TmY9",
-   "strength": 0.12082072347402573,
+   "strength": 0.12092072516679764,
    "sign": 1.0
   },
   {
    "pre": "TmY18",
    "post": "TmY15",
-   "strength": 0.0005162257584743202,
+   "strength": 0.0006162257632240653,
    "sign": 1.0
   },
   {
    "pre": "TmY18",
    "post": "TmY18",
-   "strength": 0.12178162485361099,
+   "strength": 0.12188161164522171,
    "sign": 1.0
   },
   {
    "pre": "LC4",
    "post": "LC4",
-   "strength": 0.008621545508503914,
+   "strength": 0.008721547201275826,
    "sign": 1.0
   },
   {
    "pre": "LC4",
    "post": "LPLC2",
-   "strength": 0.006204500328749418,
+   "strength": 0.006304500158876181,
    "sign": 1.0
   },
   {
    "pre": "LPLC2",
    "post": "LC4",
-   "strength": 0.013440464623272419,
+   "strength": 0.013540467247366905,
    "sign": 1.0
   },
   {
    "pre": "LPLC2",
    "post": "LPLC2",
-   "strength": 0.0049474043771624565,
+   "strength": 0.005047403741627932,
    "sign": 1.0
   },
   {
    "pre": "Mi1",
    "post": "LPLC2",
-   "strength": 0.001254018978215754,
+   "strength": 0.0013540189247578382,
    "sign": 1.0
   },
   {
    "pre": "T2",
    "post": "LC4",
-   "strength": 0.0018237283220514655,
+   "strength": 0.001923728734254837,
    "sign": 1.0
   },
   {
    "pre": "T2",
    "post": "LPLC2",
-   "strength": 0.009019019082188606,
+   "strength": 0.009119019843637943,
    "sign": 1.0
   },
   {
    "pre": "T2a",
    "post": "LC4",
-   "strength": 0.0012857666006311774,
+   "strength": 0.0013857664307579398,
    "sign": 1.0
   },
   {
    "pre": "T2a",
    "post": "LPLC2",
-   "strength": 0.0012439149431884289,
+   "strength": 0.001343914889730513,
    "sign": 1.0
   },
   {
    "pre": "T3",
    "post": "LC4",
-   "strength": 0.001308379927650094,
+   "strength": 0.0014083799906075,
    "sign": 1.0
   },
   {
    "pre": "T3",
    "post": "LPLC2",
-   "strength": 0.001299828290939331,
+   "strength": 0.0013998281210660934,
    "sign": 1.0
   },
   {
    "pre": "T4a",
    "post": "LPLC2",
-   "strength": 0.000436311966041103,
+   "strength": 0.0005363118834793568,
    "sign": 1.0
   },
   {
    "pre": "T4b",
    "post": "LC4",
-   "strength": 0.001300057047046721,
+   "strength": 0.0014000569935888052,
    "sign": 1.0
   },
   {
    "pre": "T4b",
    "post": "LPLC2",
-   "strength": 0.00034398509887978435,
+   "strength": 0.0004439851618371904,
    "sign": 1.0
   },
   {
    "pre": "T4c",
    "post": "LC4",
-   "strength": 0.0013004328357055783,
+   "strength": 0.0014004330150783062,
    "sign": 1.0
   },
   {
    "pre": "T4c",
    "post": "LPLC2",
-   "strength": 0.0004614994104485959,
+   "strength": 0.0005614993278868496,
    "sign": 1.0
   },
   {
    "pre": "T4d",
    "post": "LPLC2",
-   "strength": 0.0004341865424066782,
+   "strength": 0.0005341866635717452,
    "sign": 1.0
   },
   {
    "pre": "T5a",
    "post": "LC4",
-   "strength": 0.0009773758938536048,
+   "strength": 0.0010773756075650454,
    "sign": 1.0
   },
   {
    "pre": "T5a",
    "post": "LPLC2",
-   "strength": 0.0005637383437715471,
+   "strength": 0.0006637382321059704,
    "sign": 1.0
   },
   {
    "pre": "T5b",
    "post": "LC4",
-   "strength": 0.0015735694905743003,
+   "strength": 0.0016735695535317063,
    "sign": 1.0
   },
   {
    "pre": "T5b",
    "post": "LPLC2",
-   "strength": 0.0019129732390865684,
+   "strength": 0.0020129734184592962,
    "sign": 1.0
   },
   {
    "pre": "T5c",
    "post": "LC4",
-   "strength": 0.00031561561627313495,
+   "strength": 0.00041561550460755825,
    "sign": 1.0
   },
   {
    "pre": "T5c",
    "post": "LPLC2",
-   "strength": 0.00029346984229050577,
+   "strength": 0.0003934698470402509,
    "sign": 1.0
   },
   {
    "pre": "T5d",
    "post": "LC4",
-   "strength": 0.0007562987157143652,
+   "strength": 0.0008562985458411276,
    "sign": 1.0
   },
   {
    "pre": "T5d",
    "post": "LPLC2",
-   "strength": 0.0007410766556859016,
+   "strength": 0.0008410766604356468,
    "sign": 1.0
   },
   {
    "pre": "Tm1",
    "post": "LC4",
-   "strength": 0.00129535177256912,
+   "strength": 0.0013953517191112041,
    "sign": 1.0
   },
   {
    "pre": "Tm16",
    "post": "LC4",
-   "strength": 0.0012994763674214482,
+   "strength": 0.0013994764303788543,
    "sign": 1.0
   },
   {
    "pre": "Tm16",
    "post": "LPLC2",
-   "strength": 0.0012233649613335729,
+   "strength": 0.0013233646750450134,
    "sign": 1.0
   },
   {
    "pre": "Tm2",
    "post": "LC4",
-   "strength": 0.0005437711370177567,
+   "strength": 0.0006437710835598409,
    "sign": 1.0
   },
   {
    "pre": "Tm2",
    "post": "LPLC2",
-   "strength": 0.0013000210747122765,
+   "strength": 0.0014000209048390388,
    "sign": 1.0
   },
   {
    "pre": "Tm20",
    "post": "LC4",
-   "strength": 0.0012321511749178171,
+   "strength": 0.0013321512378752232,
    "sign": 1.0
   },
   {
    "pre": "Tm20",
    "post": "LPLC2",
-   "strength": 0.00111754413228482,
+   "strength": 0.0012175441952422261,
    "sign": 1.0
   },
   {
    "pre": "Tm3",
    "post": "LC4",
-   "strength": 0.00015347660519182682,
+   "strength": 0.0002534765808377415,
    "sign": 1.0
   },
   {
    "pre": "Tm3",
    "post": "LPLC2",
-   "strength": 0.001209245529025793,
+   "strength": 0.0013092455919831991,
    "sign": 1.0
   },
   {
    "pre": "Tm30",
    "post": "LC4",
-   "strength": 0.001363830640912056,
+   "strength": 0.0014638305874541402,
    "sign": -1.0
   },
   {
    "pre": "Tm30",
    "post": "LPLC2",
-   "strength": 0.009575722739100456,
+   "strength": 0.009675721637904644,
    "sign": -1.0
   },
   {
    "pre": "Tm4",
    "post": "LC4",
-   "strength": 0.0003748267481569201,
+   "strength": 0.0004748266946990043,
    "sign": 1.0
   },
   {
    "pre": "Tm4",
    "post": "LPLC2",
-   "strength": 0.0007905997335910797,
+   "strength": 0.0008905998547561467,
    "sign": 1.0
   },
   {
    "pre": "Tm5Y",
    "post": "LC4",
-   "strength": 0.006532890722155571,
+   "strength": 0.006632890086621046,
    "sign": 1.0
   },
   {
    "pre": "Tm5Y",
    "post": "LPLC2",
-   "strength": 0.009081094525754452,
+   "strength": 0.00918109342455864,
    "sign": 1.0
   },
   {
    "pre": "Tm5a",
    "post": "LPLC2",
-   "strength": 0.001299459021538496,
+   "strength": 0.0013994589680805802,
    "sign": 1.0
   },
   {
    "pre": "Tm5b",
    "post": "LC4",
-   "strength": 0.0010856982553377748,
+   "strength": 0.0011856983182951808,
    "sign": 1.0
   },
   {
    "pre": "Tm5b",
    "post": "LPLC2",
-   "strength": 0.18739475309848785,
+   "strength": 0.18749475479125977,
    "sign": 1.0
   },
   {
    "pre": "Tm5c",
    "post": "LC4",
-   "strength": 0.001128808711655438,
+   "strength": 0.0012288085417822003,
    "sign": -1.0
   },
   {
    "pre": "Tm5c",
    "post": "LPLC2",
-   "strength": 0.000776825356297195,
+   "strength": 0.000876825419254601,
    "sign": -1.0
   },
   {
    "pre": "Tm9",
    "post": "LC4",
-   "strength": 0.0012804869329556823,
+   "strength": 0.0013804868794977665,
    "sign": 1.0
   },
   {
    "pre": "Tm9",
    "post": "LPLC2",
-   "strength": 0.0012972129043191671,
+   "strength": 0.0013972126180306077,
    "sign": 1.0
   },
   {
    "pre": "TmY10",
    "post": "LC4",
-   "strength": 0.0012108872178941965,
+   "strength": 0.0013108872808516026,
    "sign": 1.0
   },
   {
    "pre": "TmY10",
    "post": "LPLC2",
-   "strength": 0.012147328816354275,
+   "strength": 0.012247331440448761,
    "sign": 1.0
   },
   {
    "pre": "TmY13",
    "post": "LC4",
-   "strength": 0.0013128221035003662,
+   "strength": 0.0014128219336271286,
    "sign": 1.0
   },
   {
    "pre": "TmY13",
    "post": "LPLC2",
-   "strength": 0.0011833548778668046,
+   "strength": 0.0012833550572395325,
    "sign": 1.0
   },
   {
    "pre": "TmY14",
    "post": "LC4",
-   "strength": 0.0010808267397806048,
+   "strength": 0.0011808268027380109,
    "sign": 1.0
   },
   {
    "pre": "TmY14",
    "post": "LPLC2",
-   "strength": 0.0013278202386572957,
+   "strength": 0.0014278204180300236,
    "sign": 1.0
   },
   {
    "pre": "TmY15",
    "post": "LC4",
-   "strength": 0.07868407666683197,
+   "strength": 0.07878408581018448,
    "sign": -1.0
   },
   {
    "pre": "TmY15",
    "post": "LPLC2",
-   "strength": 0.00274648517370224,
+   "strength": 0.0028464847709983587,
    "sign": -1.0
   },
   {
    "pre": "TmY18",
    "post": "LC4",
-   "strength": 0.0005130363861098886,
+   "strength": 0.0006130364490672946,
    "sign": 1.0
   },
   {
    "pre": "TmY18",
    "post": "LPLC2",
-   "strength": 0.0006151653360575438,
+   "strength": 0.0007151653990149498,
    "sign": 1.0
   },
   {
    "pre": "TmY3",
    "post": "LC4",
-   "strength": 0.0009427884942851961,
+   "strength": 0.0010427882662042975,
    "sign": 1.0
   },
   {
    "pre": "TmY3",
    "post": "LPLC2",
-   "strength": 0.001363575691357255,
+   "strength": 0.001463575754314661,
    "sign": 1.0
   },
   {
    "pre": "TmY4",
    "post": "LC4",
-   "strength": 0.0007787977810949087,
+   "strength": 0.0008787977276369929,
    "sign": 1.0
   },
   {
    "pre": "TmY4",
    "post": "LPLC2",
-   "strength": 0.0009158063330687582,
+   "strength": 0.0010158062214031816,
    "sign": 1.0
   },
   {
    "pre": "TmY5a",
    "post": "LC4",
-   "strength": 0.004984787665307522,
+   "strength": 0.00508478656411171,
    "sign": -1.0
   },
   {
    "pre": "TmY5a",
    "post": "LPLC2",
-   "strength": 0.021670248359441757,
+   "strength": 0.02177025005221367,
    "sign": -1.0
   },
   {
    "pre": "TmY9",
    "post": "LC4",
-   "strength": 0.0008677968289703131,
+   "strength": 0.0009677968919277191,
    "sign": 1.0
   },
   {
    "pre": "TmY9",
    "post": "LPLC2",
-   "strength": 0.0007024735095910728,
+   "strength": 0.0008024733979254961,
+   "sign": 1.0
+  },
+  {
+   "pre": "HSE",
+   "post": "HSN",
+   "strength": 0.0006665636319667101,
+   "sign": 1.0
+  },
+  {
+   "pre": "HSN",
+   "post": "HSE",
+   "strength": 0.0006223475211299956,
+   "sign": 1.0
+  },
+  {
+   "pre": "HSS",
+   "post": "HSE",
+   "strength": 0.23327332735061646,
+   "sign": 1.0
+  },
+  {
+   "pre": "LPLC2",
+   "post": "HSE",
+   "strength": 0.0010999998776242137,
+   "sign": 1.0
+  },
+  {
+   "pre": "LPLC2",
+   "post": "HSN",
+   "strength": 0.00513275433331728,
+   "sign": 1.0
+  },
+  {
+   "pre": "LPLC2",
+   "post": "HSS",
+   "strength": 0.0010888432152569294,
+   "sign": 1.0
+  },
+  {
+   "pre": "T2",
+   "post": "HSE",
+   "strength": 0.0019617455545812845,
+   "sign": 1.0
+  },
+  {
+   "pre": "T2",
+   "post": "HSS",
+   "strength": 0.006443567108362913,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4a",
+   "post": "HSE",
+   "strength": 0.000511710939463228,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4a",
+   "post": "HSN",
+   "strength": 6.331538315862417e-05,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4a",
+   "post": "HSS",
+   "strength": 0.0004101760860066861,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4b",
+   "post": "HSS",
+   "strength": 0.00045743025839328766,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4d",
+   "post": "HSN",
+   "strength": 0.000691437569912523,
+   "sign": 1.0
+  },
+  {
+   "pre": "T4d",
+   "post": "HSS",
+   "strength": 0.0011068794410675764,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5a",
+   "post": "HSE",
+   "strength": 6.238563219085336e-05,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5a",
+   "post": "HSN",
+   "strength": 3.152385033899918e-05,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5a",
+   "post": "HSS",
+   "strength": 6.860311987111345e-05,
+   "sign": 1.0
+  },
+  {
+   "pre": "T5c",
+   "post": "HSE",
+   "strength": 0.0012116576544940472,
+   "sign": 1.0
+  },
+  {
+   "pre": "Tm2",
+   "post": "HSS",
+   "strength": 0.001112764235585928,
+   "sign": 1.0
+  },
+  {
+   "pre": "Tm3",
+   "post": "HSN",
+   "strength": 0.6235051155090332,
+   "sign": 1.0
+  },
+  {
+   "pre": "Tm4",
+   "post": "HSN",
+   "strength": 0.0010993748437613249,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY10",
+   "post": "HSE",
+   "strength": 0.001051519881002605,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY13",
+   "post": "HSS",
+   "strength": 0.0010114918695762753,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY14",
+   "post": "HSE",
+   "strength": 0.01452566497027874,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY14",
+   "post": "HSN",
+   "strength": 0.1584016978740692,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY15",
+   "post": "HSS",
+   "strength": 0.004000779706984758,
+   "sign": -1.0
+  },
+  {
+   "pre": "TmY18",
+   "post": "HSN",
+   "strength": 0.00254042143933475,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY18",
+   "post": "HSS",
+   "strength": 0.0008994850795716047,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY3",
+   "post": "HSE",
+   "strength": 0.0006684265099465847,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY3",
+   "post": "HSS",
+   "strength": 0.0006449306383728981,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY4",
+   "post": "HSN",
+   "strength": 0.028991132974624634,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY5a",
+   "post": "HSE",
+   "strength": 0.005645817145705223,
+   "sign": -1.0
+  },
+  {
+   "pre": "TmY5a",
+   "post": "HSN",
+   "strength": 0.006188266910612583,
+   "sign": -1.0
+  },
+  {
+   "pre": "TmY5a",
+   "post": "HSS",
+   "strength": 0.010097869671881199,
+   "sign": -1.0
+  },
+  {
+   "pre": "TmY9",
+   "post": "HSE",
+   "strength": 0.0023542228154838085,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY9",
+   "post": "HSN",
+   "strength": 0.17657116055488586,
+   "sign": 1.0
+  },
+  {
+   "pre": "TmY9",
+   "post": "HSS",
+   "strength": 0.0182914100587368,
    "sign": 1.0
   }
  ],

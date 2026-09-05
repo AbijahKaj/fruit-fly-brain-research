@@ -56,6 +56,17 @@ class Graph:
         return g
 
 
+def is_pooling(g: Graph) -> np.ndarray:
+    """Units that pool thousands of synapses (the browser's isPooling): role "input", or type LPi*."""
+    tn = np.array([g.types[t] for t in g.unit_type])
+    return (g.unit_role == g.roles.index("input")) | np.char.startswith(tn.astype(str), "LPi")
+
+
+def pooling_types(g: Graph) -> list[str]:
+    tn = np.array([g.types[t] for t in g.unit_type])
+    return sorted(set(tn[is_pooling(g)].tolist()))
+
+
 class FlyvisModel(torch.nn.Module):
     """
     tau_i dx_i/dt = -x_i + bias_type(i) + sum_j w_ij relu(x_j) + ext_i
@@ -65,11 +76,13 @@ class FlyvisModel(torch.nn.Module):
     """
 
     def __init__(self, g: Graph, fv: dict, default_scale: float = 0.02, device: str = "cpu", r_max: float = 10.0,
-                 extra_post_types: list[str] | None = None, extra_scale: float = 0.001):
+                 extra_post_types: list[str] | None = None, extra_scale: float = 0.001, pool_scale: float = 0.001):
         """
         extra_post_types: graph types flyvis does not know whose *input* pairs become trainable
         (init: transmitter sign of the pre type x extra_scale, the browser's pooling scale).
         Their tau/bias are trainable too and exported alongside the flyvis types.
+        pool_scale: fixed scale for uncovered edges onto pooling cells (role "input" or LPi*),
+        the browser's lptcScale; default_scale applies to the other uncovered edges.
         """
         super().__init__()
         self.g = g
@@ -109,7 +122,9 @@ class FlyvisModel(torch.nn.Module):
         eidx = np.array([pair_key.get((a, b), -1) for a, b in zip(tp, tq)], np.int64)
         self.register_buffer("edge_pair", torch.tensor(eidx))
         self.register_buffer("edge_count", torch.tensor(g.count, dtype=torch.float32))
-        fixed = torch.tensor(g.count * g.unit_sign[g.pre] * default_scale, dtype=torch.float32)
+        pooling = is_pooling(g)
+        scale = np.where(pooling[g.post], pool_scale, default_scale)
+        fixed = torch.tensor(g.count * g.unit_sign[g.pre] * scale, dtype=torch.float32)
         fixed[torch.tensor(eidx >= 0)] = 0.0
         self.register_buffer("edge_fixed", fixed)
         self.register_buffer("e_pre", torch.tensor(g.pre.astype(np.int64)))
@@ -126,7 +141,40 @@ class FlyvisModel(torch.nn.Module):
         pmask = torch.ones_like(self.log_strength)
         if train_extra_pairs_only:
             pmask[: self.n_fv_pairs] = 0.0
+        if train_types is not None:
+            # extra pairs only move when their postsynaptic type is being trained
+            for k, (_a, b) in enumerate(self.pairs[self.n_fv_pairs:]):
+                if b not in train_types:
+                    pmask[self.n_fv_pairs + k] = 0.0
         return {"log_tau": tmask, "bias": tmask, "log_strength": pmask}
+
+    @torch.no_grad()
+    def settle_membrane(self, ext: torch.Tensor, dt: float, steps: int) -> torch.Tensor:
+        """Membrane x (n,) after `steps` Euler steps under a constant ext (n,), from the bias rest."""
+        w = self.weights()
+        tau = torch.exp(self.log_tau)[self.unit_type_t].clamp_min(dt)
+        bias = self.bias[self.unit_type_t]
+        x = bias.clone()
+        for _ in range(steps):
+            r = self.r_max * torch.tanh(torch.relu(x) / self.r_max)
+            drive = torch.zeros_like(x).index_add_(0, self.e_post, r[self.e_pre] * w)
+            x = x + (dt / tau) * (-x + bias + drive + ext)
+        return x
+
+    @torch.no_grad()
+    def init_type_bias(self, ext: torch.Tensor, dt: float, types: list[str], target: float = 0.3,
+                       rounds: int = 8, eta: float = 0.5, steps: int = 200) -> dict[str, float]:
+        """The browser's homeostat, per type: nudge the bias of each listed type so its cells rest
+        at membrane `target` under `ext` (grey). Returns the mean membrane per type afterwards."""
+        tidx = {t: k for k, t in enumerate(self.g.types)}
+        sel = {t: torch.tensor(np.where(self.g.unit_type == tidx[t])[0], device=self.bias.device) for t in types if t in tidx}
+        for _ in range(rounds):
+            x = self.settle_membrane(ext, dt, steps)
+            for t, u in sel.items():
+                if len(u):
+                    self.bias[tidx[t]] += eta * (target - x[u].mean())
+        x = self.settle_membrane(ext, dt, steps)
+        return {t: float(x[u].mean()) for t, u in sel.items() if len(u)}
 
     def weights(self) -> torch.Tensor:
         s = torch.exp(self.log_strength)

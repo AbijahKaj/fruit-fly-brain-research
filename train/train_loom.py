@@ -30,7 +30,7 @@ import argparse, json, math, time
 from pathlib import Path
 import numpy as np
 import torch
-from graph_torch import Graph, FlyvisModel
+from graph_torch import Graph, FlyvisModel, pooling_types
 from train_optic import PD
 
 HERE = Path(__file__).parent
@@ -195,10 +195,17 @@ class Stimuli:
         return self.to_ext(torch.full((self.T, B, len(self.g.col_az)), 0.5, device=self.dev))
 
 
-def load_model(graph: str, params: str, dev: str, max_el: float = 90, extra_types: list[str] | None = None):
+def load_model(graph: str, params: str, dev: str, max_el: float = 90, extra_types: list[str] | None = None,
+               dt: float = 0.005, T: int = 160):
+    """Graph (optic lobe + every pooling cell), params, model. Pooling types flyvis does not cover
+    become extra types: their inputs at the browser's pooling scale, their bias set like the
+    browser's homeostat (rest membrane 0.3 under grey) and exported, so the browser runs the same
+    operating point instead of re-centring them itself."""
     extra_types = list(extra_types or LC_TYPES)
     g0 = Graph(Path(graph))
     fv = json.load(open(params))
+    pool = [t for t in pooling_types(g0) if t not in fv["types"]]
+    extra_types = extra_types + [t for t in pool if t not in extra_types]
     tn0 = np.array([g0.types[t] for t in g0.unit_type])
     keep = (g0.unit_role == g0.roles.index("optic")) | np.isin(tn0, extra_types)
     if max_el < 90:
@@ -206,7 +213,12 @@ def load_model(graph: str, params: str, dev: str, max_el: float = 90, extra_type
         keep &= ((g0.unit_col >= 0) & col_ok[np.clip(g0.unit_col, 0, None)]) | np.isin(tn0, extra_types)
     g = g0.subgraph(keep)
     # new input pairs start at the browser's pooling scale (lptcScale)
-    model = FlyvisModel(g, fv, device=dev, extra_post_types=extra_types, extra_scale=0.001)
+    model = FlyvisModel(g, fv, device=dev, extra_post_types=extra_types, extra_scale=0.001, pool_scale=0.001)
+    if pool:
+        stim = Stimuli(g, fv, dev, T, dt)
+        rest = model.init_type_bias(stim.grey()[0, 0], dt, pool)
+        print(f"pooling types without fitted params: {len(pool)}; homeostat-style bias set, rest membrane e.g. "
+              + ", ".join(f"{t} {v:.2f}" for t, v in list(rest.items())[:6]))
     return g, fv, model
 
 
@@ -246,14 +258,11 @@ def main() -> None:
     dev = args.device
 
     extra = LC_TYPES + (HS_TYPES if args.hs else [])
-    g, fv, model = load_model(args.graph, args.params, dev, args.max_el, extra_types=extra)
+    g, fv, model = load_model(args.graph, args.params, dev, args.max_el, extra_types=extra, dt=args.dt, T=args.T)
     print(f"model: {g.n} units, {len(g.pre)} edges on {dev}")
     if args.hs and not args.joint:
-        # stage 3 alone: only the HS cells' inputs, tau and bias move (pairs onto HS are the extra
-        # pairs beyond those of the LC stage, which are frozen with everything else)
+        # stage 3 alone: only the HS cells' inputs, tau and bias move
         masks = model.grad_masks(HS_TYPES, train_extra_pairs_only=True)
-        n_lc_pairs = sum(1 for a, b in model.pairs[model.n_fv_pairs:] if b in LC_TYPES)
-        masks["log_strength"][model.n_fv_pairs: model.n_fv_pairs + n_lc_pairs] = 0.0
     else:
         masks = model.grad_masks(None if args.joint else LC_TYPES, train_extra_pairs_only=not args.joint)
     init = {k: v.detach().clone() for k, v in model.named_parameters()}
@@ -413,7 +422,8 @@ def main() -> None:
             r = model.r_max * torch.tanh(torch.relu(x) / model.r_max)
             drive = torch.zeros(1, g.n, device=dev).index_add_(1, model.e_post, r[:, model.e_pre] * w[None, :])
             x = x + (dt / tau) * (-x + bias + drive + ext[0])
-        rest_v = {st: float(x[0, torch.tensor(np.where(tn == st)[0], device=dev)].mean()) for st in extra}
+        rest_v = {st: float(x[0, torch.tensor(np.where(tn == st)[0], device=dev)].mean()) for st in model.extra_post_types
+                  if (tn == st).any()}
     print("rest membrane under grey:", rest_v)
     model.export(Path(args.out), fv, rest_v=rest_v, source="fitted on MaleCNS optic-v2 (train_optic.py + train_loom.py)")
     print("wrote", args.out)

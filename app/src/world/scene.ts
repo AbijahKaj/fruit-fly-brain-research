@@ -16,7 +16,10 @@ export interface World {
   obstacles: THREE.Mesh[];
   /** A denser pillar field for the obstacle course, hidden until `course.visible` is set. */
   course: THREE.Group;
+  /** Position + yaw only: the eye hangs here and stays level, like a fly's gaze-stabilised head. */
   flyRoot: THREE.Object3D;
+  /** The body meshes; banks into turns (cosmetic). */
+  flyBody: THREE.Object3D;
   wings: { left: THREE.Mesh; right: THREE.Mesh };
 }
 
@@ -110,20 +113,22 @@ export function buildWorld(): World {
 
   // The fly. Body on FLY_LAYER so its own eyes cannot see it.
   const flyRoot = new THREE.Object3D();
+  const flyBody = new THREE.Object3D();
+  flyRoot.add(flyBody);
   const body = new THREE.Mesh(
     new THREE.SphereGeometry(1, 16, 12),
     new THREE.MeshStandardMaterial({ color: "#3b2f27", roughness: 0.6 }),
   );
   body.scale.set(0.12, 0.1, 0.3);
   body.layers.set(FLY_LAYER);
-  flyRoot.add(body);
+  flyBody.add(body);
   const head = new THREE.Mesh(
     new THREE.SphereGeometry(0.09, 12, 10),
     new THREE.MeshStandardMaterial({ color: "#8c2b2b", roughness: 0.4 }),
   );
   head.position.set(0, 0.02, -0.32);
   head.layers.set(FLY_LAYER);
-  flyRoot.add(head);
+  flyBody.add(head);
 
   const wingMat = new THREE.MeshBasicMaterial({
     color: "#dfe8f0",
@@ -142,10 +147,10 @@ export function buildWorld(): World {
   right.rotation.x = -Math.PI / 2;
   right.position.set(0.05, 0.08, 0);
   right.layers.set(FLY_LAYER);
-  flyRoot.add(left, right);
+  flyBody.add(left, right);
   scene.add(flyRoot);
 
-  return { scene, drum, obstacles, course, flyRoot, wings: { left, right } };
+  return { scene, drum, obstacles, course, flyRoot, flyBody, wings: { left, right } };
 }
 
 function mulberry32(seed: number): () => number {

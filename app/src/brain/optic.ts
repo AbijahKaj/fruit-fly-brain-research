@@ -69,6 +69,8 @@ export interface OpticParams {
   loomTieBias: number;
   loomBrake: number;
   offsetTau: number;
+  warmSeconds: number;
+  readoutFloor: number;
 }
 
 export class OpticBrain implements Brain {
@@ -102,6 +104,10 @@ export class OpticBrain implements Brain {
      * and slow drifts of the pooled tonic drive are cancelled, optomotor transients pass.
      */
     offsetTau: 1e9,
+    /** Live warm-up in the scene, output off, before the readout offsets are taken (s). */
+    warmSeconds: 2.5,
+    /** Added to each side's rest in the relative readout (rate units), so a silent side is not infinitely sensitive. */
+    readoutFloor: 0.2,
     /** Head-on approaches drive both eyes equally: this fraction of the bilateral level becomes a turn to the right. */
     loomTieBias: 0.5,
     /** Bilateral looming lowers the mean wing amplitude by this times the bilateral level (brake). */
@@ -109,6 +115,9 @@ export class OpticBrain implements Brain {
   };
   readonly net: NetBackend;
   calibrated = false;
+  /** Network settled; running live with the output off until the warm-up ends. */
+  private armed = false;
+  private warm = 0;
   private homeostatDone = false;
 
   /** Per ommatidium (per side): lamina unit indices, flattened with offsets, and their R->L weight. */
@@ -298,6 +307,7 @@ export class OpticBrain implements Brain {
 
   reset(): void {
     this.calibrated = false;
+    this.armed = false;
     this.turn = 0;
     this.vR_L.fill(0);
     this.vR_R.fill(0);
@@ -315,11 +325,10 @@ export class OpticBrain implements Brain {
       } else {
         await this.net.settle(0.5);
       }
-      const sides = this.readoutSides();
-      this.offsetL = sides.L;
-      this.offsetR = sides.R;
-      this.loomRest = { L: this.topkRate(this.lc.L), R: this.topkRate(this.lc.R) };
-      this.calibrated = true;
+      // Now run live in the scene with the output off until photoreceptor adaptation and the
+      // pooling cells have settled; step() takes the offsets when the warm-up ends.
+      this.warm = 0;
+      this.armed = true;
     });
   }
 
@@ -371,15 +380,28 @@ export class OpticBrain implements Brain {
     this.injectEye(input.lumLeft, this.meanL, this.vR_L, this.lamPtrL, this.lamIdxL, this.lamWL, dt);
     this.injectEye(input.lumRight, this.meanR, this.vR_R, this.lamPtrR, this.lamIdxR, this.lamWR, dt);
     this.adapted = true;
-    if (this.calibrated) this.net.step(dt);
+    if (this.armed) this.net.step(dt);
+    if (this.armed && !this.calibrated) {
+      this.warm += dt;
+      if (this.warm >= p.warmSeconds) {
+        const sides = this.readoutSides();
+        this.offsetL = sides.L;
+        this.offsetR = sides.R;
+        this.loomRest = { L: this.topkRate(this.lc.L), R: this.topkRate(this.lc.R) };
+        this.calibrated = true;
+      }
+    }
 
     const sides = this.readoutSides();
     if (this.calibrated) {
       this.offsetL += ((sides.L - this.offsetL) * dt) / p.offsetTau;
       this.offsetR += ((sides.R - this.offsetR) * dt) / p.offsetTau;
     }
-    const dL = this.sideGain.L * (sides.L - this.offsetL);
-    const dR = this.sideGain.R * (sides.R - this.offsetR);
+    // Deviation from rest, relative to rest: when both sides collapse (fast self-rotation beyond
+    // the motion detectors' range) the readout goes to -1 on both sides and cancels, instead
+    // of leaving the difference of the two rest levels as a permanent turn command.
+    const dL = (this.sideGain.L * (sides.L - this.offsetL)) / (this.offsetL + p.readoutFloor);
+    const dR = (this.sideGain.R * (sides.R - this.offsetR)) / (this.offsetR + p.readoutFloor);
     const diff = dL - dR;
     this.loom.L = Math.max(0, this.topkRate(this.lc.L) - this.loomRest.L - p.loomThreshold);
     this.loom.R = Math.max(0, this.topkRate(this.lc.R) - this.loomRest.R - p.loomThreshold);

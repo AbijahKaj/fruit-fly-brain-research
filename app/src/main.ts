@@ -38,7 +38,7 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 
 const world = buildWorld();
 const body = new FlyBody();
-body.applyTo(world.flyRoot);
+body.applyTo(world.flyRoot, world.flyBody);
 
 const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.05, 500);
 camera.layers.enable(FLY_LAYER);
@@ -148,7 +148,7 @@ drumSlider.addEventListener("input", () => setDrum(parseFloat(drumSlider.value))
 
 const reset = (): void => {
   body.reset();
-  body.applyTo(world.flyRoot);
+  body.applyTo(world.flyRoot, world.flyBody);
   optic?.reset();
 };
 
@@ -260,7 +260,7 @@ const record = async (episodes: Episode[]): Promise<Array<Record<string, unknown
       body.state.position.z = ep.start.z;
       body.state.yaw = ep.start.yaw;
     }
-    body.applyTo(world.flyRoot);
+    body.applyTo(world.flyRoot, world.flyBody);
     const frames: Uint8Array[] = [];
     recorderHook = () => {
       if (!eyes) return;
@@ -333,7 +333,7 @@ const loop = new SimLoop({
       body.step(forces, h);
       remaining -= h;
     }
-    body.applyTo(world.flyRoot);
+    body.applyTo(world.flyRoot, world.flyBody);
 
     wingPhase += dt * 40;
     const flap = Math.sin(wingPhase);
