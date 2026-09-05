@@ -1,6 +1,6 @@
 # Research notes: Male *Drosophila* CNS connectome
 
-Local briefing pulled from the [Google Research announcement](https://research.google/blog/a-connectomics-milestone-mapping-the-complete-male-fruit-fly-brain/) and official project pages. The saved blog post is in [`a-connectomics-milestone-mapping-the-complete-male-fruit-fly-brain.md`](a-connectomics-milestone-mapping-the-complete-male-fruit-fly-brain.md).
+Local briefing pulled from the [Google Research announcement](https://research.google/blog/a-connectomics-milestone-mapping-the-complete-male-fruit-fly-brain/) and official project pages.
 
 ## What was released
 

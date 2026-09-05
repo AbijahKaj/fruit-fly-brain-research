@@ -54,14 +54,13 @@ Hosted MaleCNS scene (Chrome):
 
 | Path | What |
 | --- | --- |
-| [`a-connectomics-milestone-mapping-the-complete-male-fruit-fly-brain.md`](a-connectomics-milestone-mapping-the-complete-male-fruit-fly-brain.md) | Saved [Google Research blog](https://research.google/blog/a-connectomics-milestone-mapping-the-complete-male-fruit-fly-brain/) (2026-09-03) |
 | [`research-notes.md`](research-notes.md) | Paper, numbers, companion papers, download URLs |
 | [`sources/neuroglancer.md`](sources/neuroglancer.md) | How to use Neuroglancer on this data |
 | [`app/`](app/) | TypeScript web app: 3D scene, eye sampling, graph runtime on WebGPU with a Web Worker fallback, HUD |
 | [`data/`](data/) | Python extraction from the public MaleCNS tables → graph files, with reports of static checks |
 | [`train/`](train/) | PyTorch side: flyvis parameter transfer, reference simulations, the DS trainer for the GPU box |
 
-MaleCNS is **CC-BY**. Cite Berg et al., *Cell* 2026, and the [FlyEM project](https://www.janelia.org/project-team/flyem/male-cns-connectome).
+Code is MIT ([`LICENSE`](LICENSE)). The graph and parameter files are derived from MaleCNS, which is CC BY 4.0: see [`DATA-LICENSE.md`](DATA-LICENSE.md). Cite Berg et al., *Cell* 2026, and the [FlyEM project](https://www.janelia.org/project-team/flyem/male-cns-connectome). The graph and fitted parameters are also on Hugging Face: [AbijahKaj/fruit-fly-brain](https://huggingface.co/AbijahKaj/fruit-fly-brain).
 
 ## Explore the data
 
