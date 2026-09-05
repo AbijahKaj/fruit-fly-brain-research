@@ -216,7 +216,8 @@ export class OpticBrain implements Brain {
     this.t4aByOmm = { L: lists(ommL, t4a), R: lists(ommR, t4a) };
     this.t4bByOmm = { L: lists(ommL, t4b), R: lists(ommR, t4b) };
 
-    this.lptc = unitsWhere(graph, (t) => LPTC.test(t));
+    // tonic drive only for LPTCs whose parameters are not fitted (fitted ones carry their bias)
+    this.lptc = unitsWhere(graph, (t) => LPTC.test(t) && !(fv.source.startsWith("fitted") && hasFlyvisType(fv, t)));
     this.hsL = unitsWhere(graph, (t, s) => /^HS[ENS]$/.test(t) && s === "L");
     this.hsR = unitsWhere(graph, (t, s) => /^HS[ENS]$/.test(t) && s === "R");
     this.dnL = unitsWhere(graph, (t, s) => DNG02.test(t) && s === "L");

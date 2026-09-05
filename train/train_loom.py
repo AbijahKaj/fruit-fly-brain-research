@@ -236,6 +236,7 @@ def main() -> None:
                     help="stage 3: fit the HS cells' inputs, tau and bias so each side is bidirectional "
                          "(up for progressive, below rest for regressive motion); L-R then reads rotation")
     ap.add_argument("--hs-weight", type=float, default=1.0)
+    ap.add_argument("--hs-tau-max", type=float, default=0.05, help="upper bound on the HS membrane time constant (s)")
     args = ap.parse_args()
     dev = args.device
 
@@ -369,6 +370,11 @@ def main() -> None:
                        + torch.relu(0.8 - restL) + torch.relu(0.8 - restR)    # room to go down
                        + torch.relu(-dL[k["transFwd"]]) + torch.relu(-dR[k["transFwd"]])  # translation: not below rest
                        ) * args.hs_weight
+            # fast membranes (real HS cells respond within tens of ms) and matched eyes
+            hs_t = torch.tensor([i for i, t in enumerate(g.types) if t in HS_TYPES], device=dev)
+            tau_hs = torch.exp(model.log_tau)[hs_t]
+            loss_hs = loss_hs + (torch.relu(tau_hs - args.hs_tau_max).sum() * 20
+                                 + (rotL.abs() - rotR.abs()).abs() + (restL - restR).abs()) * args.hs_weight
             rot = (rotL - rotR).abs() / 2
             trans = (dL - dR)[[k["transFwd"], k["transAsym"]]]
             report["HS rot/trans"] = (rot.item(), trans.abs().max().item())
